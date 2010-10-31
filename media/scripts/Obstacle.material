@@ -1,0 +1,29 @@
+material Obstacle/Essai
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{		
+				texture Obstacle-Essai.jpg
+//				env_map cubic
+			}
+		}
+	}
+}
+
+material Obstacle/Stairway
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{		
+				texture stairway.jpg
+//				env_map cubic
+			}
+		}
+	}
+}

@@ -1,0 +1,5 @@
+* TODO unfrench the rarely comments
+* TODO make the ressource.cfg get working easily
+  change the $OGRE_MEDIA_PATH
+* TODO replace the missing textures
+* TODO organise the code in a better way

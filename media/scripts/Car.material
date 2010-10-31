@@ -1,0 +1,27 @@
+material Car/Subframe
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{		
+				texture subframe.jpg
+			}
+		}
+	}
+}
+
+material Car/Body
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{		
+				texture body.jpg
+			}
+		}
+	}
+}
