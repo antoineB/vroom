@@ -62,8 +62,8 @@ void Wheel::create(dSpaceID s, Wheel::Position p, Ogre::SceneNode *node)
   e->setMaterialName("Wheels/Tire");
   e->setCastShadows(true);
   n->attachObject(e);
-  e = _sceneMgr->createEntity((name+"_rim").c_str(), "wheel_rim.mesh");
-  e->setMaterialName("Wheels/Rim");
+  e = _sceneMgr->createEntity((name+"_hubcap").c_str(), "wheel_hubcap.mesh");
+  e->setMaterialName("Wheels/Hubcap");
   n->attachObject(e);
   //n->scale();
   //  n->yaw(Ogre::Degree(90));

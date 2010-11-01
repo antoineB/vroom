@@ -11,7 +11,6 @@ material Wheels/Test
 	emissive 0.000000 0.000000 0.000000 1.000000
 			texture_unit
 			{
-			//texture Obstacle-Essai.jpg
 			texture wheel_tire.png
 			filtering trilinear
 			colour_op alpha_blend
@@ -34,7 +33,6 @@ material Wheels/Tire
 	emissive 0.000000 0.000000 0.000000 1.000000
 			texture_unit
 			{
-			//texture Obstacle-Essai.jpg
 			texture wheel_tire.png
 			filtering trilinear
 			colour_op alpha_blend
@@ -44,7 +42,7 @@ material Wheels/Tire
 	}
 }
 
-material Wheels/Rim
+material Wheels/Hubcap
 {
 	technique
 	{
@@ -52,7 +50,7 @@ material Wheels/Rim
 		{
 			texture_unit
 			{
-			texture subframe_Cylinder.jpg
+			texture wheel_hubcap.jpg
 			}
 		}
 	}
