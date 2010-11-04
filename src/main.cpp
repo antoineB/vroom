@@ -8,7 +8,7 @@
 
 struct Global _glb;
  
-//partie physique
+//physical part
 std::vector<dGeomID> geoms;
 std::vector<std::string> names;
 
@@ -28,9 +28,6 @@ int main(int argc, char **argv){
   catch(std::exception& e){
     fprintf(stderr, "An exception has occurred: %s\n", e.what());
   }
-
-  
-  World::getSingletonPtr()->printCst();
 
   delete World::getSingletonPtr();
   return 0;

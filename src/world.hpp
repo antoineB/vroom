@@ -25,9 +25,6 @@ class World : public Space, public Ogre::Singleton<World> {
   dWorldID world;
   dJointGroupID contactGroup;
 
-  //des listes des different space contenue dans le group?
-  //des different geom body?
-
   //  World(){}
   World();
   World(const World&);

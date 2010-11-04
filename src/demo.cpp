@@ -88,7 +88,7 @@ void createBox(std::string name, dReal x, dReal y, dReal z){
   
   dGeomSetData(g,(void*)&contact);
 
-  names.push_back(name);//pour l'update
+  names.push_back(name);//for updating
   geoms.push_back(g);
   dBodySetPosition (b, x, y, z);
   MyTools::byOdeToOgre(b, n);
@@ -211,7 +211,7 @@ void demo::runDemo(){
 	timeSinceLastFrame = _timer->getMillisecondsCPU() - startTime;
 	int lazyTime=timeForEachFrame-timeSinceLastFrame;
 	if(lazyTime>0){
-	  usleep(lazyTime*1000);//usleep meaning micro
+	  usleep(lazyTime*1000);//usleep mean micro
 	}
       }
       else{

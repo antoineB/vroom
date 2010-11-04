@@ -1,2 +1,15 @@
 * what is the vroom projet?
   it's a personal whim making a 4 wheeled car.
+* how to get it functional?
+** libraries
+   ODE - collision and dynamic engine - www.ode.org
+   OGRE - 3D engine - www.ogre3d.org/
+   TinyXML - xml parser - www.grinninglizard.com/tinyxml/
+   OIS - object oriented input system - provided with ogre sdk
+** src/Makefile
+   change the INCDIRS variable to suit your ode and ogre includes directories
+   change the LIBDIRS variable to suit your libraries directories
+** src/resources.cfg
+   change the $OGRE_MEDIA_PATH to the path of ogre sdk media file
+** src/plugins.cfg
+   change the pluginFolder to your Ogre's plugins folder

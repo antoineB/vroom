@@ -1,6 +1,3 @@
-* TODO ensure the projet compile and work
-** configure the src/ressource.cfg
-** configure the src/Makefile
 * TODO unfrench the rarely comments
 * TODO make the ressource.cfg get working easily
   change the $OGRE_MEDIA_PATH

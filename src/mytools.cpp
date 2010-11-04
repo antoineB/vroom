@@ -127,7 +127,7 @@ dTriMeshDataID MyTools::dTriMeshDataFromMesh(Ogre::Entity* e){
     return NULL;
   }
   if(e->getMesh()->sharedVertexData){
-    _dbg("ya du shared vertex");
+    _dbg("shared vertex found");
     return NULL;
   }
   

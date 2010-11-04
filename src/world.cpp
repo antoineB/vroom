@@ -14,7 +14,6 @@ using namespace std;
 #define GRAVITY_Z 0.0
 #define CFM 1e-5
 
-//what is this?
 template<> World* Ogre::Singleton<World>::ms_Singleton = 0;
 
 void World::printCst(){
@@ -194,14 +193,12 @@ static void mixdContact(dContact* res, dContact* c1, dContact* c2){
 
   if(m1 & dContactSlip1){
     res->surface.mode |= dContactSlip1;
-    //    std::cout<<"fuck u dicky head : "<<c1->surface.slip1<<std::endl;
     res->surface.slip1 += c1->surface.slip1;
     
   }
   
   if(m2 & dContactSlip1){
     res->surface.mode |= dContactSlip1;
-    //    std::cout<<"fuck u dicky head2: "<<c2->surface.slip1<<std::endl;
     res->surface.slip1 += c2->surface.slip1;
   }
 
@@ -218,7 +215,7 @@ static void mixdContact(dContact* res, dContact* c1, dContact* c2){
 
   if(m1 & dContactMu2){
     res->surface.mode |= dContactMu2;
-    if(!res->surface.mu2 == dInfinity)//foireux
+    if(!res->surface.mu2 == dInfinity)//crappy
       res->surface.mu2 += c1->surface.mu2;
   }
 
@@ -237,7 +234,7 @@ static void mixdContact(dContact* res, dContact* c1, dContact* c2){
 
   res->surface.bounce_vel = (c1->surface.bounce_vel < c2->surface.bounce_vel)? c1->surface.bounce_vel : c2->surface.bounce_vel ;
 
-  //take care of possible result
+  //take care of possibles results
   if(res->surface.mu <0) res->surface.mu =0;
   if(res->surface.bounce_vel < 0) res->surface.bounce_vel =0;
 
@@ -258,7 +255,7 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2){
 
   if(dGeomGetSpace(o1)==dGeomGetSpace(o2)
      && dGeomGetSpace(o1)!= World::getSingletonPtr()->getSpace())
-    std::cout<<"deux object dans le même space"<<std::endl;
+    std::cout<<"two object in the same space"<<std::endl;
 
   if( o1==(dGeomID)car.getSpace() || o2==(dGeomID)car.getSpace() )
       dSpaceCollide2( o1, o2, NULL, &nearCallback);
@@ -266,19 +263,19 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2){
   dGeomID plane = Ground::getSingletonPtr()->getPlane();
 
   if(car.isWheel(o1)){
-    std::cout<<"contact avec une roue"<<std::endl;
+    std::cout<<"contact with a wheel"<<std::endl;
     if(o2==plane)
-      std::cout<<"contact roue sol"<<std::endl;
+      std::cout<<"contact wheel to ground"<<std::endl;
     else if(o2==(dGeomID)car.getSpace())
       std::cout<<"contact roue et space"<<std::endl;
 
   }
   else if(car.isWheel(o2)){
-    std::cout<<"contact avec une roue"<<std::endl;
+    std::cout<<"contact with a wheel"<<std::endl;
     if(o1==plane)
-      std::cout<<"contact roue sol"<<std::endl;
+      std::cout<<"contact wheel to ground"<<std::endl;
     else if(o1==(dGeomID)car.getSpace())
-      std::cout<<"contact roue et space"<<std::endl;
+      std::cout<<"contact wheel and space"<<std::endl;
   }
 
 
@@ -289,7 +286,7 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2){
   dContact * c2 = (dContact*) dGeomGetData(o2);
 
   if( !c1 || !c2){
-    std::cout<<"un elemen null"<<std::endl;
+    std::cout<<"an null elemen"<<std::endl;
     return ;
   }
 
