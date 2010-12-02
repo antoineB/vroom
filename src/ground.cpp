@@ -39,7 +39,7 @@ void FlatGround::init(const char* material){
 
   dContact * c2 = (dContact*) dGeomGetData(plane);
   if(c2==NULL)
-    std::cout<<"plane est null"<<std::endl;
+    std::cout<<"plane is null"<<std::endl;
 
   
 }

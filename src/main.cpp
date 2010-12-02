@@ -5,7 +5,6 @@
 #include "car.hpp"
 
 //variables global
-
 struct Global _glb;
  
 //physical part

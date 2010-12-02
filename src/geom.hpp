@@ -11,10 +11,8 @@ protected:
   Geom & operator=(const Geom&);
   
 public:
-  Geom():geom(NULL){}
-  dGeomID getGeom();
-  virtual void init(void* ptr)=0;
-  virtual void update()=0;
+  Geom() : geom(NULL) {};
+  inline dGeomID& getGeom();
 };
 
 #endif

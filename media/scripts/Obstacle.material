@@ -13,6 +13,34 @@ material Obstacle/Essai
 	}
 }
 
+material Obstacle/Ramp
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{		
+				texture obstacle_ramp.jpg
+			}
+		}
+	}
+}
+
+material Obstacle/Ramp_Side
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{		
+				texture obstacle_ramp.jpg
+			}
+		}
+	}
+}
+
 material Obstacle/Stairway
 {
 	technique

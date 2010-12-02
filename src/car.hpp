@@ -18,19 +18,19 @@
 #define W_DENSITY 1
 
 #define W_FR_X 3.05
-#define W_FR_Y 0
+#define W_FR_Y 0 -0.2
 #define W_FR_Z -6.5
 
 #define W_FL_X -3.05
-#define W_FL_Y 0
+#define W_FL_Y 0 -0.2
 #define W_FL_Z -6.5
 
 #define W_BR_X 3.45
-#define W_BR_Y 0
+#define W_BR_Y 0 -0.2
 #define W_BR_Z 6.30
 
 #define W_BL_X -3.45
-#define W_BL_Y 0
+#define W_BL_Y 0 -0.2
 #define W_BL_Z 6.30
 
 
@@ -111,6 +111,8 @@ public:
   };
 
   void setBrake(bool b);
+
+  void swayBars();
 
 private:
   Wheel w[4];

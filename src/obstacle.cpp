@@ -4,14 +4,14 @@
 
 dContact Obstacle::contact;
 
-void Obstacle::init(void* ptr){
+void Obstacle::initGeom(void* ptr){
   char * cPtr=(char*)ptr;
   Ogre::SceneNode* n=_sceneMgr->getRootSceneNode()->createChildSceneNode(name);
   Ogre::Entity* e=_sceneMgr->createEntity(name, cPtr);
   e->setCastShadows(true);
   n->attachObject(e);
 
-  //creation du trimesh
+  //creating trimesh
   dTriMeshDataID data = MyTools::dTriMeshDataFromMesh(e);
     
   //  geom = World::getSingletonPtr()->addTriMesh(space,data,0,0,0);
@@ -31,7 +31,7 @@ void Obstacle::init(void* ptr){
 Obstacle::Obstacle(const char *n, const char *meshName, dReal x, dReal y, dReal z)
  : name(n)
 {
-  Obstacle::init((void*)meshName);
+  Obstacle::initGeom((void*)meshName);
   dGeomSetPosition (geom, x, y, z);
   MyTools::byOdeToOgre(geom,_sceneMgr->getSceneNode(name));
 }

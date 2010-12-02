@@ -130,6 +130,13 @@ void demo::setupDemoScene(){
   Obstacle o("obstacle","obstacle.mesh",1.0,1.0,-20.0);
   o.setMaterial("Obstacle/Essai");
 
+  Obstacle ramp("ramp","ramp.mesh",25.0,1.0,-20.0);
+  ramp.setMaterial("Obstacle/Ramp");
+
+  Obstacle ramp_side("ramp_side","ramp_side.mesh",60.0,1.0,-20.0);
+  ramp_side.setMaterial("Obstacle/Ramp_Side");
+
+
   Obstacle stair("starirway","stairway.mesh",-20.0, 3.5/2, 0.0);
   stair.setMaterial("Obstacle/Stairway");
 
@@ -177,6 +184,42 @@ void demo::setupDemoScene(){
   node->attachObject(e);
   node->yaw(Ogre::Degree(90));*/
 
+  /*  Ogre::SceneNode *node;
+  Ogre::Entity *e;  
+
+  node = _sceneMgr->getRootSceneNode()->createChildSceneNode("ford");
+
+  e = _sceneMgr->createEntity("ford_body","ford_body.mesh");
+  e->setMaterialName("Car/Body");
+  node->attachObject(e);
+
+  e = _sceneMgr->createEntity("ford_doors","ford_doors.mesh");
+  e->setMaterialName("Car/Door");
+  node->attachObject(e);
+  
+  e = _sceneMgr->createEntity("ford_bonnet","ford_bonnet.mesh");
+  e->setMaterialName("Car/Bonnet");
+  node->attachObject(e);
+
+  e = _sceneMgr->createEntity("ford_air_down","ford_air_down.mesh"); node->attachObject(e);
+  e = _sceneMgr->createEntity("ford_air_up","ford_air_up.mesh"); node->attachObject(e);
+
+  e = _sceneMgr->createEntity("ford_front","ford_front.mesh");
+  e->setMaterialName("Car/Front");
+  node->attachObject(e);
+
+  e = _sceneMgr->createEntity("ford_door_windows","ford_door_windows.mesh"); node->attachObject(e);
+
+  e = _sceneMgr->createEntity("ford_front_window","ford_front_window.mesh"); 
+  e->setMaterialName("Car/WindowFront");
+  node->attachObject(e);
+
+  e = _sceneMgr->createEntity("ford_back_window","ford_back_window.mesh"); 
+  e->setMaterialName("Car/WindowBack");
+  node->attachObject(e);
+
+  node->translate(0.0, 10.0, 0.0);*/
+
   extern Car car;
   car.init("car", _sceneMgr->getRootSceneNode());
 }
@@ -205,7 +248,7 @@ void demo::runDemo(){
 	OgreFramework::getSingletonPtr()->updateOgre(timeSinceLastFrame);
 	OgreFramework::getSingletonPtr()->m_pRoot->renderOneFrame();
 
-	const int timeForEachFrame = 17;
+	const int timeForEachFrame = 10;
 	forFrameDo(timeForEachFrame);
 		
 	timeSinceLastFrame = _timer->getMillisecondsCPU() - startTime;
@@ -229,7 +272,7 @@ void demo::forFrameDo(unsigned int time){
   //simulation loop
   World::getSingletonPtr()->update();
    
-  {//mise a jour des object visuels par les object physique
+  {//updating visuals objects with physicals ones
     for(int i=0; i<geoms.size(); i++){
       MyTools::byOdeToOgre(geoms[i] ,_sceneMgr->getSceneNode(names[i].c_str()));
     }

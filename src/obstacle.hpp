@@ -15,8 +15,8 @@ class Obstacle: public Geom{
 
 public:
   Obstacle(const char *n, const char* meshName, dReal x=.0, dReal y=.0, dReal z=.0);
-  virtual void init(void* ptr);
-  virtual void update();
+  inline void initGeom(void *ptr);
+  inline void update();
   void setMaterial(const char* name) const;
 };
 

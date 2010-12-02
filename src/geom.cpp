@@ -1,5 +1,5 @@
 #include "geom.hpp"
 
-dGeomID Geom::getGeom(){
+dGeomID& Geom::getGeom(){
   return geom;
 }

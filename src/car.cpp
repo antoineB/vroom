@@ -9,7 +9,9 @@ dContact Wheel::contact;
 dContact Car::contact;
 
 void Wheel::init(dSpaceID s){
-  g = dCreateSphere(0, W_RADIUS);
+  //g = dCreateSphere(0, W_RADIUS);
+  g = dCreateCylinder(0, W_RADIUS,0.5);
+
   Wheel::contact.surface.mode= dContactBounce | dContactSoftCFM
     | dContactSoftERP | dContactSlip1 | dContactSlip2;
   Wheel::contact.surface.mu = dInfinity;
@@ -27,8 +29,23 @@ void Wheel::init(dSpaceID s){
     std::cout<<"wheel est null"<<std::endl;
 
   dSpaceAdd(s,g);
-  dMassSetSphere (&m, W_DENSITY, W_RADIUS);
+  //  dMassSetSphere (&m, W_DENSITY, W_RADIUS);
+  dMassSetCylinder(&m, 1,W_DENSITY, W_RADIUS, 0.5);
   b=World::getSingletonPtr()->add(g,&m);
+
+  dMatrix3 R;
+  const dReal PI=3.14159265;
+  static short int nbWheel = 1;
+
+  if (nbWheel%2)
+    dRFromAxisAndAngle(R, 0.0, 1.0, 0.0, PI/2);
+  else
+    dRFromAxisAndAngle(R, 0.0, 1.0, 0.0, -PI/2);//beware of the sgn of PI/2
+  dBodySetRotation(b,R);
+  nbWheel+=1;
+
+  //  dRFromAxisAndAngle(R, 1.0, 0.0, 0.0, PI/20);
+  //  dBodySetRotation(b,R);
 }
 
 void Wheel::update(){
@@ -74,21 +91,27 @@ void Wheel::create(dSpaceID s, Wheel::Position p, Ogre::SceneNode *node)
   dMatrix3 R;
   const dReal PI=3.14159265;
   //ugly
-  if(nb%2==1){
+  /*  if(nb%2==1){
     //dRFromEulerAngles( R, 0.0, 0.0, -PI/2);
-    dRFromAxisAndAngle(R, 0.0, 0.0, 1.0, -PI/2);//beware of the sgn of PI/2
+    dRFromAxisAndAngle(R, 0.0, 1.0, 0.0, -PI/2);//beware of the sgn of PI/2
     dBodySetRotation(b,R);
   }else {
-    dRFromAxisAndAngle(R, 0.0, 0.0, 1.0, PI/2);
+    dRFromAxisAndAngle(R, 0.0, 1.0, 0.0, PI/2);
     dBodySetRotation(b,R);
-  }
+    }
+  */
   MyTools::byOdeToOgre(b, n);
 
   //ugly
-  if(nb>2)
-    n->scale(2.45, 2.9, 2.45);
-  else
-    n->scale(2.45, 2.4, 2.45);
+  if(nb>2) {
+    n->scale(2.45, 2.45, 2.45);
+
+  }
+  else {
+    n->scale(2.45, 2.45, 2.45);
+
+
+  }
 }
 
 void Car::update(){
@@ -113,13 +136,13 @@ Car::Car(): speed(0.0), steer(0.0), g(NULL), b(NULL) ,brake(false){}
 
 
 void Car::init(const char *n, Ogre::SceneNode *no){
-  //si ogre n'est pas lancer...
+  //if Ogre isn't set...
   if(_sceneMgr==NULL){
     _log("Ogre isn't lunched before the car is set up");
     exit(0);
   }
   
-  //si ode n'est pas lancer ...
+  //if Ode isn't set...
   if(_glb.worldUp==false){
     _log("Ode isn't lunched before the car is set up");
     exit(0);
@@ -143,8 +166,8 @@ void Car::init(const char *n, Ogre::SceneNode *no){
   //partie physique
   
   space=World::getSingletonPtr()->addSimpleSpace();
-  dSpaceSetCleanup(space,0); //pour eviter de detruire les geom quand le space est detruit
-  //mais quand est t'il detruit?
+  dSpaceSetCleanup(space,0); //to avoid destroying geoms when  the space is destroyed
+  //when is it destroyed?
 
   const dReal x=7.48 , y=0.72 , z=17.56 ;
   g= addBox ( x, y, z);
@@ -161,13 +184,13 @@ void Car::init(const char *n, Ogre::SceneNode *no){
 
   dContact * c2 = (dContact*) dGeomGetData(g);
   if(c2==NULL)
-    std::cout<<"car est null"<<std::endl;
+    std::cout<<"car is null"<<std::endl;
 
   dGeomSetData((dGeomID)space,(void*)&Car::contact);
 
   c2 = (dContact*) dGeomGetData((dGeomID)space);
   if(c2==NULL)
-    std::cout<<"space est null"<<std::endl;
+    std::cout<<"space is null"<<std::endl;
 
 
   dMassSetBox(&m, 1.0, x, 2*y, z);
@@ -205,7 +228,7 @@ void Car::init(const char *n, Ogre::SceneNode *no){
   //  dJointID c = dJointCreatePR( World::getSingletonPtr()->getWorld() ,0); wtf?
   // dJointAttach(c, w[0].getBody(), w[1].getBody());
 
-  //empécher toute rotation selon y pour j[3] j[4]
+  //forbid all Y rotation for j[3] j[4]
   for (int i=0; i<4; i++) {
     dJointSetHinge2Param (j[i],dParamLoStop,0);
     dJointSetHinge2Param (j[i],dParamHiStop,0);
@@ -288,7 +311,7 @@ void Car::updateMotor(){
   if(brake){
     for(int i = 2; i<4; i++){
       dJointSetHinge2Param(j[i], dParamVel2, 0);
-      dJointSetHinge2Param(j[i], dParamFMax2, 10.5);        
+      dJointSetHinge2Param(j[i], dParamFMax2, 5*10.5);        
     }
     return ;
   }
@@ -301,9 +324,9 @@ void Car::updateMotor(){
     return ;
   }
   else{
-    float y= speed <0 ? -10.0 : 11.0;
-    dBodyAddRelForceAtRelPos(b, 0.0, y, 0.0, 
-			     0.0, 0.0, W_FR_Z ); //permet d'ajouter un effet decolage de la voiture
+    float y= speed <0 ? -25.0 : 11.0;
+    /*    dBodyAddRelForceAtRelPos(b, 0.0, y, 0.0, 
+	  0.0, 0.0, W_FR_Z );*/ //adding a lift up effect of the car's acceleration
     sp+=speed;
   }
 
@@ -315,13 +338,13 @@ void Car::updateMotor(){
     dJointSetHinge2Param(j[i], dParamVel2, sp);
 
     if(sp<0)
-      dJointSetHinge2Param(j[i], dParamFMax2, 10.5);    
+      dJointSetHinge2Param(j[i], dParamFMax2, 1.5*10.5);    
     else if(sp>100*speed)
-      dJointSetHinge2Param(j[i], dParamFMax2, 1*10.5);
+      dJointSetHinge2Param(j[i], dParamFMax2, 1.0*10.5);
     else if(sp>50*speed)
       dJointSetHinge2Param(j[i], dParamFMax2, 1.5*10.5);
     else
-      dJointSetHinge2Param(j[i], dParamFMax2, 2*10.5);
+      dJointSetHinge2Param(j[i], dParamFMax2, 5.5*10.5);
   }
 }
 
@@ -332,82 +355,40 @@ Ogre::Vector3 Car::cam(){
 			 (Ogre::Real)pos[2]);
 }
 
-/*void Car::parseXml(std::string fileName){
-  TiXmlDocument doc(fileName);
-  if(!doc.LoadFile()){
-    ParseXml::logAndDie("probleme dans la lecture de "+fileName);
-  }
-  TiXmlHandle docH( &doc );
-  this->parseXml(docH);
-}
+void Car::swayBars() {
+  const float swayForce = 500.0;
+  const float swayForceLimit = 50.0;
 
-void Car::parseXml(TiXmlHandle handle){ 
-  handle=handle.FirstChild("car");
-  if(!handle.ToElement())
-    ParseXml::logAndDie("pas delemenr car");
-
-  ParseXml::parseXml(handle,&m);
-  //  ParseXml::parseXml(handle,&g,(Space)(*this));
-  ParseXml::parseXml(handle,&b,&g,&m);
-
-  {
-    std::string s;
-    if(!ParseXml::getValue(handle,&s,"name"))
-      ParseXml::logAndDie("pas de balise name dans Car");
-    nodeName=s;
-
-    if(!ParseXml::getValue(handle,&s,"mesh"))
-      ParseXml::logAndDie("pas de balise mesh dans Car");
-    setMesh(s);
-
-    if(ParseXml::getValue(handle,&s,"material"))
-      setMaterial(s);
+  for(int i = 0; i < 4; ++i) {
     
-  }
+    dVector3 tmpAnchor2, tmpAnchor1, tmpAxis;
+    dJointGetHinge2Anchor2( j[i], tmpAnchor2 );//not sure that the axis are the good one
+    dJointGetHinge2Anchor( j[i], tmpAnchor1 );
+    dJointGetHinge2Axis1( j[i], tmpAxis );
 
-  for(int i=0; i<4; i++)
-    w[i].parseXml(handle,i);
+    Ogre::Vector3 anchor2((Ogre::Real*)tmpAnchor2);
+    Ogre::Vector3 anchor1((Ogre::Real*)tmpAnchor1);
+    Ogre::Vector3 axis((Ogre::Real*)tmpAxis);
+    float displacement;      
 
-  for(int i=0; i<4; i++)
-    parseXml(handle, j[i], i,
-	     b, w[i].getBody() );
-  
+    displacement = (anchor1 - anchor2).dotProduct(axis);
+
+    if( displacement > 0 ) {
+      //      std::cout<<"displacement > 0"<<std::endl;
+      float amt = displacement * swayForce;
+      if( amt > swayForceLimit ) {
+	amt = swayForceLimit;
+	std::cout<<"limit reach"<<std::endl;
+      }
+      //the axis are inversed
+      //dBodyAddForce( w[i].getBody(), -axis.x * amt, -axis.y * amt, -axis.z * amt );
+      dReal const * wp = dBodyGetPosition( w[i].getBody() );
+      dBodyAddForceAtPos( b, -axis.x*amt, -axis.y*amt, -axis.z*amt, wp[0], wp[1], wp[2] );
+      //dBodyAddForce( w[i^1].getBody(), axis.x * amt, axis.y * amt, axis.z * amt );
+      wp = dBodyGetPosition( w[i^1].getBody() );
+      dBodyAddForceAtPos( b, axis.x*amt, axis.y*amt, axis.z*amt, wp[0], wp[1], wp[2] );
+      }
+   }
 }
 
-void Wheel::parseXml(TiXmlHandle handle, unsigned int number){
-  handle=handle.Child("wheel",number);
-  if(!handle.ToElement())
-    ParseXml::logAndDie("pas delemenr wheel");
-  
-  {
-    std::string s;
-    if(!ParseXml::parseXml(handle,&s,"name"))
-      ParseXml::logAndDie("pas de balise name dans Car");
-    name=s;
 
-    if(!ParseXml::parseXml(handle,&s,"mesh"))
-      ParseXml::logAndDie("pas de balise mesh dans Car");
-    setMesh(s);
-
-    if(ParseXml::parseXml(handle,&s,"material"))
-      setMaterial(s);
-    
-  }
-  
-  ParseXml::parseXml(handle,&g);
-  ParseXml::parseXml(handle,&b);
-  ParseXml::parseXml(handle,&m);
-
-}
-
-void Car::setMesh(std::string name){
-  Ogre::Entity* e=_sceneMgr->createEntity(nameNode);
-  Ogre::SceneNode* n=_sceneMgr->getRootSceneNode()->createChild(nameNode);
-  n->attachObject(e);
-}
-
-void Car::setMaterial(std::string name){
-  Ogre::Entity* e=_sceneMgr->getEntity(nameNode);
-  e->setMaterialName(name);
-}
-*/

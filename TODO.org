@@ -1,5 +1,16 @@
-* TODO unfrench the rarely comments
 * TODO make the ressource.cfg get working easily
   change the $OGRE_MEDIA_PATH
-* TODO replace the missing textures
 * TODO organise the code in a better way
+* TODO make a physic prop like a stop panel
+** it must resist to a certain force
+* TODO make the difference between front wheel and back wheel
+* TODO make schemas of axis of the car
+* TODO make a beforeCollid, afterCollid, afterIncStep function in world.cpp
+* TODO make sure after all dPSaceCollide that the back wheel don't change in Y direction
+* TODO understand what is the interest of swaybars
+
+* TODO make a swaybar like to the front wheel Y changing direction not together
+* TODO make sure that the sway bar can be implemented in wheel joint instead of wheel body
+* TODO correct the bug
+* TODO correct the fps managing system
+  the time to wait is in hard coded

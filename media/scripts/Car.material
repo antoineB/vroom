@@ -18,10 +18,110 @@ material Car/Body
 	{
 		pass
 		{
+      // Disables the culling of the back of the face:
+      cull_hardware none
+      cull_software none
+
 			texture_unit
 			{		
 				texture body.jpg
 			}
 		}
 	}
+}
+
+
+material Car/Front
+{
+  technique
+  {
+    pass
+    {
+      // Disables the culling of the back of the face:
+      cull_hardware none
+      cull_software none
+   
+        texture_unit
+        {
+        // Loading external image texture:
+        texture ford_front.jpg
+        }
+    }
+  }
+}
+
+material Car/Bonnet
+{
+  technique
+  {
+    pass
+    {
+      // Disables the culling of the back of the face:
+      cull_hardware none
+      cull_software none
+   
+        texture_unit
+        {
+        // Loading external image texture:
+        texture ford_bonnet.jpg
+        }
+    }
+  }
+}
+
+material Car/Door
+{
+  technique
+  {
+    pass
+    {
+      // Disables the culling of the back of the face:
+      cull_hardware none
+      cull_software none
+   
+        texture_unit
+        {
+        // Loading external image texture:
+        texture subframe.jpg
+        }
+    }
+  }
+}
+
+material Car/WindowFront
+{
+  technique
+  {
+    pass
+    {
+      // Disables the culling of the back of the face:
+      cull_hardware none
+      cull_software none
+   
+        texture_unit
+        {
+        // Loading external image texture:
+        texture subframe.jpg
+        }
+    }
+  }
+}
+
+material Car/WindowBack
+{
+  technique
+  {
+    pass
+    {
+      // Disables the culling of the back of the face:
+      cull_hardware none
+      cull_software none
+   
+        texture_unit
+        {
+        // Loading external image texture:
+        texture subframe.jpg
+        }
+    }
+  }
 }

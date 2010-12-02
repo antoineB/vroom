@@ -4,7 +4,7 @@ LIBSDIRS=-L/usr/local/lib/ -L.
 LIBS=-lOgreMain -lOIS -lCEGUIOgreRenderer -lode -ltinyxml
 CXXFLAGS=-Wall -Wextra -pedent
 CXXFLAGS=
-#CHK_SOURCES=%.cpp %.hpp
+CHK_SOURCES=%.cpp %.hpp
 
 main: main.cpp demo.o OgreFramework.o car.o mytools.o ground.o world.o space.o obstacle.o geom.o
 	g++ $(CXXFLAGS) -o $@ $^ $(INCDIRS) $(LIBSDIRS) $(LIBS)

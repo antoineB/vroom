@@ -25,7 +25,6 @@ class World : public Space, public Ogre::Singleton<World> {
   dWorldID world;
   dJointGroupID contactGroup;
 
-  //  World(){}
   World();
   World(const World&);
   World & operator=(const World&);
@@ -37,7 +36,6 @@ class World : public Space, public Ogre::Singleton<World> {
   friend void nearCallback (void *data, dGeomID o1, dGeomID o2);  
 
 public:
-  void printCst();
   ~World();
   World(std::string xmlFileName);
   World(dReal *cst); //cst[5] -> pi -> simutationPace -> gravity

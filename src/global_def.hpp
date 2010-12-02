@@ -1,4 +1,4 @@
-//necessaire pour etre inclue dans le main.cpp
+//this file is necessary to be included in main.cpp
 
 #ifndef global_def_HPP
 #define global_def_HPP

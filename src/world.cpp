@@ -2,7 +2,6 @@
 #include <tinyxml.h>
 #include "ground.hpp"
 
-//using namespace World;
 using namespace std;
 
 #define CONSTANT_SIZE sizeof(dReal)*6
@@ -15,15 +14,6 @@ using namespace std;
 #define CFM 1e-5
 
 template<> World* Ogre::Singleton<World>::ms_Singleton = 0;
-
-void World::printCst(){
-  std::cout<<"pi "<<cst.pi<<std::endl
-	   <<"grav "<<cst.gravity[0]<<" "
-	   <<cst.gravity[1]<<" "
-	   <<cst.gravity[2]<<" "<<std::endl
-	   <<"cfm "<<cst.cfm<<std::endl
-	   <<"pace "<<cst.simulationPace<<std::endl;
-}
 
 void World::preInit(){
   cst.pi=PI;
@@ -61,10 +51,10 @@ World::World(dReal *array){
 }
 
 void World::parseXml(string fileName) throw(std::string){
-  std::cout<<"verif"<<std::endl;
+  std::cout<<"verification"<<std::endl;
   TiXmlDocument doc(fileName);
   if(!doc.LoadFile()){
-    throw std::string("erreur de lecture de fichier xml");
+    throw std::string("IO error in xml file");
     return ;
   }
   TiXmlHandle docH( &doc );
@@ -83,15 +73,15 @@ void World::parseXml(string fileName) throw(std::string){
       if((elem=gravH.FirstChild( "x" ).ToElement()))
 	cst.gravity[0]=World::atodr(elem->GetText());
       else
-	throw std::string("parametre manquant dans <gravity>");
+	throw std::string("missing parameter for <gravity>");
       if((elem=gravH.FirstChild( "y" ).ToElement()))
 	cst.gravity[1]=World::atodr(elem->GetText());
       else
-	throw std::string("parametre manquant dans <gravity>");
+	throw std::string("missing parameter for <gravity>");
       if((elem=gravH.FirstChild( "z" ).ToElement())) 
 	cst.gravity[2]=World::atodr(elem->GetText());
       else
-	throw std::string("parametre manquant dans <gravity>");
+	throw std::string("missing parameter for <gravity>");
     }
   }
 }
@@ -139,15 +129,16 @@ dJointGroupID World::getContactGroup() const {
 
 World::~World(){
   dSpaceDestroy(space);
-  std::cout<<"end"<<std::endl;
   dWorldDestroy(world);
   dCloseODE();
   _glb.worldUp=false;
-  std::cout<<"endzz"<<std::endl;
 }
 
 void World::update(){
   dSpaceCollide(space, NULL/*what is this*/, &nearCallback);
+
+  extern Car car;  
+  car.swayBars();
 
   dWorldQuickStep(world,cst.simulationPace);
   dJointGroupEmpty(contactGroup);
@@ -248,40 +239,11 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2){
   #define MAX_CONTACT_POINTS 16
 
   extern Car car;  
-  
-  /*if( o1==car.getWheel(0).getGeom() || o2==car.getWheel(0).getGeom() )
-    if(o1==car.getGeom() || o2==car.getGeom())
-      std::cout<<"deux object dans le même space"<<std::endl;*/
 
-  if(dGeomGetSpace(o1)==dGeomGetSpace(o2)
-     && dGeomGetSpace(o1)!= World::getSingletonPtr()->getSpace())
-    std::cout<<"two object in the same space"<<std::endl;
 
   if( o1==(dGeomID)car.getSpace() || o2==(dGeomID)car.getSpace() )
       dSpaceCollide2( o1, o2, NULL, &nearCallback);
 
-  dGeomID plane = Ground::getSingletonPtr()->getPlane();
-
-  if(car.isWheel(o1)){
-    std::cout<<"contact with a wheel"<<std::endl;
-    if(o2==plane)
-      std::cout<<"contact wheel to ground"<<std::endl;
-    else if(o2==(dGeomID)car.getSpace())
-      std::cout<<"contact roue et space"<<std::endl;
-
-  }
-  else if(car.isWheel(o2)){
-    std::cout<<"contact with a wheel"<<std::endl;
-    if(o1==plane)
-      std::cout<<"contact wheel to ground"<<std::endl;
-    else if(o1==(dGeomID)car.getSpace())
-      std::cout<<"contact wheel and space"<<std::endl;
-  }
-
-
-  //  if( o1!=plane && o2!=plane)
-  //return ;
-  
   dContact * c1 = (dContact*) dGeomGetData(o1);
   dContact * c2 = (dContact*) dGeomGetData(o2);
 
