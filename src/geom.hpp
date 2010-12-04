@@ -12,7 +12,7 @@ protected:
   
 public:
   Geom() : geom(NULL) {};
-  inline dGeomID& getGeom();
+  dGeomID& getGeom();
 };
 
 #endif

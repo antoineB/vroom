@@ -5,7 +5,6 @@
 ** it must resist to a certain force
 * TODO make the difference between front wheel and back wheel
 * TODO make schemas of axis of the car
-* TODO make a beforeCollid, afterCollid, afterIncStep function in world.cpp
 * TODO make sure after all dPSaceCollide that the back wheel don't change in Y direction
 * TODO understand what is the interest of swaybars
 

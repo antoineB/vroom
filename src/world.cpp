@@ -134,14 +134,30 @@ World::~World(){
   _glb.worldUp=false;
 }
 
-void World::update(){
-  dSpaceCollide(space, NULL/*what is this*/, &nearCallback);
+inline void World::beforeCollidingSpaces() {}
 
+inline void World::afterCollidingSpaces() {
   extern Car car;  
   car.swayBars();
+}
+
+inline void World::beforePhysicalStep() {}
+
+inline void World::afterPhysicalStep() {}
+
+void World::update(){
+
+  beforeCollidingSpaces();
+
+  dSpaceCollide(space, NULL/*what is this*/, &nearCallback);
+
+  afterCollidingSpaces();
+  beforePhysicalStep();
 
   dWorldQuickStep(world,cst.simulationPace);
   dJointGroupEmpty(contactGroup);
+
+  afterPhysicalStep();
 }
 
 static void mixdContact(dContact* res, dContact* c1, dContact* c2){

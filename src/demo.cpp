@@ -136,15 +136,20 @@ void demo::setupDemoScene(){
   Obstacle ramp_side("ramp_side","ramp_side.mesh",60.0,1.0,-20.0);
   ramp_side.setMaterial("Obstacle/Ramp_Side");
 
-
+  dSpaceID stairSpace = World::getSingletonPtr()->addSimpleSpace();
+  dSpaceID space = World::getSingletonPtr()->getSpace();
   Obstacle stair("starirway","stairway.mesh",-20.0, 3.5/2, 0.0);
   stair.setMaterial("Obstacle/Stairway");
-
+  dSpaceRemove(space,stair.getGeom());
+  dSpaceAdd(stairSpace,stair.getGeom());
   Obstacle stair1("starirway1","stairway.mesh",-20.0, 3.5 +3.5/2 +0.01, -20.0);
   stair1.setMaterial("Obstacle/Stairway");
-
+  dSpaceRemove(space,stair1.getGeom());
+  dSpaceAdd(stairSpace,stair1.getGeom());
   Obstacle stair2("starirway2","stairway.mesh",-20.0, 3.5*2 +3.5/2 +0.01, -20.0*2);
   stair2.setMaterial("Obstacle/Stairway");
+  dSpaceRemove(space,stair2.getGeom());
+  dSpaceAdd(stairSpace,stair2.getGeom());
 
   /*
   createBox(std::string("ball1"), 6, 2.01, 3);

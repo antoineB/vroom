@@ -48,6 +48,12 @@ public:
   dJointGroupID getContactGroup() const;
 
   static dReal atodr(const char *str);
+
+  void beforeCollidingSpaces();
+  void afterCollidingSpaces();
+  void beforePhysicalStep();
+  void afterPhysicalStep();
+
 };
 
 #endif

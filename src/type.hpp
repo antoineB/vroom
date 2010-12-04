@@ -49,7 +49,9 @@ public:
       CAR_LEFT_WINDOW_DOOR,
       CAR_RIGHT_WINDOW_DOOR,
 
+    GROUND_SPACE,
     GROUND,
+    OBSTACLE_SPACE,
     OBSTACLE,
 
   };
