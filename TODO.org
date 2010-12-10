@@ -7,9 +7,16 @@
 * TODO make schemas of axis of the car
 * TODO make sure after all dPSaceCollide that the back wheel don't change in Y direction
 * TODO understand what is the interest of swaybars
-
 * TODO make a swaybar like to the front wheel Y changing direction not together
 * TODO make sure that the sway bar can be implemented in wheel joint instead of wheel body
-* TODO correct the bug
 * TODO correct the fps managing system
-  the time to wait is in hard coded
+  the time to wait between frames is hard coded
+* TODO correct the dNormalized4 bug
+** DONE the correction seems to work
+** the pb come from the car::updateMotor function
+** the problem seems happen if dParmaVel is set too high, or maybe if the gap between to dParamVel is too hight
+*** look at ODE's code, maybe help
+** search in documentation on paramVel and MaxForce for an anwser sa
+* TODO there is a little bounce when the car is stoped
+** happen only when wheels touching the ground (or other dGeom) 
+* TODO  back wheels turn in high speed turn

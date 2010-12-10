@@ -19,8 +19,8 @@ void FlatGround::init(const char* material){
     .createPlane("land", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
 		 oPlane, 4*150, 4*150, 20, 20, true, 1, 5, 5, Ogre::Vector3::UNIT_Z);
   
-  Ogre::Entity* entGround = _sceneMgr->createEntity(name, "land");
-  _sceneMgr->getRootSceneNode()->createChildSceneNode(name)
+  Ogre::Entity* entGround = sceneMgr_->createEntity(name, "land");
+  sceneMgr_->getRootSceneNode()->createChildSceneNode(name)
     ->attachObject(entGround);
   
   entGround->setMaterialName(material);

@@ -19,14 +19,12 @@ void Wheel::init(dSpaceID s){
   Wheel::contact.surface.bounce_vel = 0.1;
   Wheel::contact.surface.soft_cfm = 0.01;  
   Wheel::contact.surface.soft_erp = 0.3;  
-  Wheel::contact.surface.slip1 = 1.5;
-  Wheel::contact.surface.slip2 = 1.5;
+  Wheel::contact.surface.slip1 = 1.0;
+  Wheel::contact.surface.slip2 = 1.0;
 
   dGeomSetData(g,(void*)&Wheel::contact);
 
   dContact * c2 = (dContact*) dGeomGetData(g);
-  if(c2==NULL)
-    std::cout<<"wheel est null"<<std::endl;
 
   dSpaceAdd(s,g);
   //  dMassSetSphere (&m, W_DENSITY, W_RADIUS);
@@ -49,7 +47,7 @@ void Wheel::init(dSpaceID s){
 }
 
 void Wheel::update(){
-  Ogre::SceneNode *n=_sceneMgr->getSceneNode(name.c_str());
+  Ogre::SceneNode *n=sceneMgr_->getSceneNode(name.c_str());
   MyTools::byOdeToOgre(b, n );
 }
 
@@ -75,11 +73,11 @@ void Wheel::create(dSpaceID s, Wheel::Position p, Ogre::SceneNode *node)
   }
   pos=p;
   n  = node->createChildSceneNode(name.c_str());
-  e = _sceneMgr->createEntity((name+"_tire").c_str(), "wheel_tire.mesh");
+  e = sceneMgr_->createEntity((name+"_tire").c_str(), "wheel_tire.mesh");
   e->setMaterialName("Wheels/Tire");
   e->setCastShadows(true);
   n->attachObject(e);
-  e = _sceneMgr->createEntity((name+"_hubcap").c_str(), "wheel_hubcap.mesh");
+  e = sceneMgr_->createEntity((name+"_hubcap").c_str(), "wheel_hubcap.mesh");
   e->setMaterialName("Wheels/Hubcap");
   n->attachObject(e);
   //n->scale();
@@ -90,36 +88,22 @@ void Wheel::create(dSpaceID s, Wheel::Position p, Ogre::SceneNode *node)
   dBodySetPosition(b, d[0], d[1], d[2]);
   dMatrix3 R;
   const dReal PI=3.14159265;
-  //ugly
-  /*  if(nb%2==1){
-    //dRFromEulerAngles( R, 0.0, 0.0, -PI/2);
-    dRFromAxisAndAngle(R, 0.0, 1.0, 0.0, -PI/2);//beware of the sgn of PI/2
-    dBodySetRotation(b,R);
-  }else {
-    dRFromAxisAndAngle(R, 0.0, 1.0, 0.0, PI/2);
-    dBodySetRotation(b,R);
-    }
-  */
   MyTools::byOdeToOgre(b, n);
 
   //ugly
-  if(nb>2) {
+  if (nb > 2) {
     n->scale(2.45, 2.45, 2.45);
-
   }
   else {
     n->scale(2.45, 2.45, 2.45);
-
-
   }
 }
 
-void Car::update(){
-
+void Car::update() {
   //graphical
-  MyTools::byOdeToOgre(g, _sceneMgr->getSceneNode(nodeName.c_str() ));
+  MyTools::byOdeToOgre(g, sceneMgr_->getSceneNode(nodeName.c_str()));
   
-  for(int i=0; i<4; i++)
+  for (int i = 0; i < 4; i++)
     w[i].update();
 
   //physical
@@ -130,21 +114,16 @@ void Car::update(){
 Car::~Car(){}
 Car::Car(): speed(0.0), steer(0.0), g(NULL), b(NULL) ,brake(false){}
 
-/*Car::Car(std::string fileName){
-  parseXml(fileName);
-  } */ 
-
-
 void Car::init(const char *n, Ogre::SceneNode *no){
   //if Ogre isn't set...
-  if(_sceneMgr==NULL){
-    _log("Ogre isn't lunched before the car is set up");
+  if(sceneMgr_==NULL){
+    log_("Ogre isn't lunched before the car is set up");
     exit(0);
   }
   
   //if Ode isn't set...
   if(_glb.worldUp==false){
-    _log("Ode isn't lunched before the car is set up");
+    log_("Ode isn't lunched before the car is set up");
     exit(0);
   }
   
@@ -154,9 +133,9 @@ void Car::init(const char *n, Ogre::SceneNode *no){
   Ogre::Entity *e;  
   //  Ogre::Entity *b_car;    
 
-  e = _sceneMgr->createEntity("subframe","subframe.mesh");
+  e = sceneMgr_->createEntity("subframe","subframe.mesh");
   e->setMaterialName("Car/Subframe");
-  //  b_car = _sceneMgr->createEntity("body","body.mesh");
+  //  b_car = sceneMgr_->createEntity("body","body.mesh");
   //  b_car->setCastShadows(true);
   //  b_car->setMaterialName("Car/Body");
   node = no->createChildSceneNode(n);
@@ -183,15 +162,10 @@ void Car::init(const char *n, Ogre::SceneNode *no){
   dGeomSetData(g,(void*)&Car::contact);
 
   dContact * c2 = (dContact*) dGeomGetData(g);
-  if(c2==NULL)
-    std::cout<<"car is null"<<std::endl;
 
   dGeomSetData((dGeomID)space,(void*)&Car::contact);
 
   c2 = (dContact*) dGeomGetData((dGeomID)space);
-  if(c2==NULL)
-    std::cout<<"space is null"<<std::endl;
-
 
   dMassSetBox(&m, 1.0, x, 2*y, z);
   b=World::getSingletonPtr()->add(g,&m);
@@ -200,7 +174,7 @@ void Car::init(const char *n, Ogre::SceneNode *no){
   MyTools::byOdeToOgre(g, node);
   
   {
-    Ogre::SceneNode* carNode=_sceneMgr->getRootSceneNode();
+    Ogre::SceneNode* carNode=sceneMgr_->getRootSceneNode();
     struct Wheel::Position tmp[4]={
       {W_FR_X, W_FR_Y, W_FR_Z},
       {W_FL_X, W_FL_Y, W_FL_Z},
@@ -211,7 +185,7 @@ void Car::init(const char *n, Ogre::SceneNode *no){
       w[i].create(space, tmp[i], carNode);
   }
  
-  //partie jointure
+  //joints part
   for(int i=0;i<4; i++){
     j[i]=World::getSingletonPtr()->addHinge2(b,w[i].getBody(),0);
     const dReal *a=dBodyGetPosition(w[i].getBody());
@@ -229,11 +203,11 @@ void Car::init(const char *n, Ogre::SceneNode *no){
   // dJointAttach(c, w[0].getBody(), w[1].getBody());
 
   //forbid all Y rotation for j[3] j[4]
-  for (int i=0; i<4; i++) {
+  for (int i = 0; i < 4; i++) {
     dJointSetHinge2Param (j[i],dParamLoStop,0);
     dJointSetHinge2Param (j[i],dParamHiStop,0);
 
-    if(i>1){
+    if (i > 1) {
       dJointSetHinge2Param (j[i],dParamStopERP, 1.0); //normaly to get the the back wheel not rotate
       dJointSetHinge2Param (j[i],dParamStopCFM, 0.0);
     }
@@ -260,18 +234,16 @@ void Car::turnLeft(){ steer-=0.08; }
 
 void Car::setSteer(float s){ steer=s; }
 
-void Car::updateSteering(){
+void Car::updateSteering() {
   static float st=0.0;
-  if(steer==0){
+  if (steer == 0) {
     st=0;
-
-    for(int i=0; i<2; i++){
-      dJointSetHinge2Param (j[i],dParamLoStop,0);
-      dJointSetHinge2Param (j[i],dParamHiStop,0);
+    for (int i = 0; i < 2; i++) {
+      dJointSetHinge2Param (j[i], dParamLoStop, 0);
+      dJointSetHinge2Param (j[i], dParamHiStop, 0);
     }
-
   }
-  else{
+  else {
     st+=steer;
  
     for(int i=0; i<2; i++)
@@ -305,7 +277,7 @@ void Car::setBrake(bool b){
 }
 
 void Car::updateMotor(){
-  const float max=1000.0;
+  const float max=50.0;
   const float palier1=30.0;
 
   if(brake){
@@ -317,24 +289,36 @@ void Car::updateMotor(){
   }
 
   static float sp=0.0;
-  if(speed==0){
-    sp=0;
-    for(int i=2;i<4;i++)
-    dJointSetHinge2Param(j[i], dParamFMax2, 0.01);
+  if (speed == 0) {
+    sp = 0;
+    for (int i = 2; i < 4; i++)
+      dJointSetHinge2Param(j[i], dParamFMax2, 0.01);
     return ;
   }
-  else{
+  /*  else{
     float y= speed <0 ? -25.0 : 11.0;
-    /*    dBodyAddRelForceAtRelPos(b, 0.0, y, 0.0, 
-	  0.0, 0.0, W_FR_Z );*/ //adding a lift up effect of the car's acceleration
+    dBodyAddRelForceAtRelPos(b, 0.0, y, 0.0, 
+			     0.0, 0.0, W_FR_Z ); //adding a lift up effect of the car's acceleration
     sp+=speed;
+    }*/
+
+  if (speed < -10) speed = -10;
+  else if (speed > 10) speed = 10;
+
+  sp += speed;
+  if (sp < -100) sp = -100;
+  else if (sp > 10) sp = 10;
+
+  for (int i = 2; i < 4; i++) {
+    dJointSetHinge2Param(j[i], dParamVel2, sp);
+    dJointSetHinge2Param(j[i], dParamFMax2, 4.0 * 10.0);    
   }
 
-  if(sp<palier1) sp+=speed;
+  /*if (sp < palier1) sp+=speed;
   else if(sp>max) sp=max;
 
 
- for(int i=2;i<4;i++){
+ for (int i = 2; i < 4; i++) {
     dJointSetHinge2Param(j[i], dParamVel2, sp);
 
     if(sp<0)
@@ -345,10 +329,10 @@ void Car::updateMotor(){
       dJointSetHinge2Param(j[i], dParamFMax2, 1.5*10.5);
     else
       dJointSetHinge2Param(j[i], dParamFMax2, 5.5*10.5);
-  }
+      }*/
 }
 
-Ogre::Vector3 Car::cam(){
+Ogre::Vector3 Car::cam() {
     const dReal *pos = dBodyGetPosition (b);
     return Ogre::Vector3((Ogre::Real)pos[0],
 			 (Ogre::Real)pos[1]+1.5, 
@@ -356,8 +340,8 @@ Ogre::Vector3 Car::cam(){
 }
 
 void Car::swayBars() {
-  const float swayForce = 500.0;
-  const float swayForceLimit = 50.0;
+  const float swayForce = 400.0;
+  const float swayForceLimit = 40.0;
 
   for(int i = 0; i < 4; ++i) {
     
@@ -373,10 +357,10 @@ void Car::swayBars() {
 
     displacement = (anchor1 - anchor2).dotProduct(axis);
 
-    if( displacement > 0 ) {
+    if (displacement > 0) {
       //      std::cout<<"displacement > 0"<<std::endl;
       float amt = displacement * swayForce;
-      if( amt > swayForceLimit ) {
+      if (amt > swayForceLimit) {
 	amt = swayForceLimit;
 	std::cout<<"limit reach"<<std::endl;
       }

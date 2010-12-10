@@ -1,6 +1,8 @@
 #include "world.hpp"
-#include <tinyxml.h>
 #include "ground.hpp"
+
+#include <tinyxml.h>
+#include <assert.h>
 
 using namespace std;
 
@@ -251,22 +253,51 @@ static void mixdContact(dContact* res, dContact* c1, dContact* c2){
   
 }
 
+#define drawContactPoints_(BOOL)					\
+  if (BOOL) {								\
+  static int n = _glb.nbTurn;						\
+  static std::vector<Ogre::Entity*> ents;				\
+  if (n < _glb.nbTurn) {						\
+  n = _glb.nbTurn;							\
+  for (int i = ents.size()-1; i >= 0; i--) {				\
+      sceneMgr_->destroySceneNode(ents[i]->getParentSceneNode());	\
+      sceneMgr_->destroyEntity(ents[i]);				\
+      ents.pop_back();							\
+  }									\
+  }									\
+  Ogre::SceneNode* node;						\
+  try{ node = sceneMgr_->getSceneNode("contact_node"); }		\
+  catch (Ogre::Exception e) {						\
+    node=sceneMgr_->getRootSceneNode()					\
+      ->createChildSceneNode("contact_node");				\
+  }									\
+  for(int i=0; i < numc; i++) {						\
+  Ogre::Entity* e = sceneMgr_->createEntity("collision_point.mesh");	\
+  Ogre::SceneNode* n=node->createChildSceneNode(			\
+    Ogre::Vector3( (Ogre::Real)contact[i].geom.pos[0],			\
+		   (Ogre::Real)contact[i].geom.pos[1],			\
+		   (Ogre::Real)contact[i].geom.pos[2]) );		\
+  ents.push_back(e);							\
+  n->attachObject(e);							\
+  n->scale(0.35, 0.35, 0.35);						\
+  }    									\
+  }									\
+
+
 void nearCallback (void *data, dGeomID o1, dGeomID o2){
+  assert(dGeomGetData(o1) != NULL);
+  assert(dGeomGetData(o2) != NULL);
+
   #define MAX_CONTACT_POINTS 16
 
-  extern Car car;  
+  if (dGeomIsSpace(o1) || dGeomIsSpace(o2))  
+    dSpaceCollide2( o1, o2, NULL, &nearCallback);
 
-
-  if( o1==(dGeomID)car.getSpace() || o2==(dGeomID)car.getSpace() )
-      dSpaceCollide2( o1, o2, NULL, &nearCallback);
+  //assert(dGeomIsSpace(o1) == false); failed
+  //assert(dGeomIsSpace(o2) == false);
 
   dContact * c1 = (dContact*) dGeomGetData(o1);
   dContact * c2 = (dContact*) dGeomGetData(o2);
-
-  if( !c1 || !c2){
-    std::cout<<"an null elemen"<<std::endl;
-    return ;
-  }
 
   dBodyID b1 = dGeomGetBody(o1);
   dBodyID b2 = dGeomGetBody(o2);
@@ -276,63 +307,18 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2){
   for(int i=1; i<MAX_CONTACT_POINTS; i++)
     memcpy(contact+i, contact, sizeof(*contact));
 
-  static int n=_glb.nbTurn;
-  static std::vector<Ogre::Entity*> ents;
-  if(n<_glb.nbTurn){
-    n=_glb.nbTurn;
-    for(int i=ents.size()-1; i>=0; i--){
-      _sceneMgr->destroySceneNode(ents[i]->getParentSceneNode());
-      _sceneMgr->destroyEntity(ents[i]);
-      ents.pop_back();
-    }
-  }
-  Ogre::SceneNode* node;
-  try{ node=_sceneMgr->getSceneNode("contact_node"); }
-  catch(Ogre::Exception e){ node=_sceneMgr->getRootSceneNode()->createChildSceneNode("contact_node"); }
-
-  /*for(int i=0; i<MAX_CONTACT_POINTS; i++){
-    contact[i].surface.mode = dContactBounce | dContactSoftCFM
-      | dContactSoftERP | dContactSlip1 | dContactSlip2 ;
-    // friction parameter
-    contact[i].surface.mu = dInfinity;
-    // bounce is the amount of "bouncyness".
-    contact[i].surface.bounce = 0.7;
-    // bounce_vel is the minimum incoming velocity to cause a bounce
-    contact[i].surface.bounce_vel = 0.2;
-    // constraint force mixing parameter
-    contact[i].surface.soft_cfm = 0.01;  
-    contact[i].surface.soft_erp = 0.3;  
-    //ajoute un glissement
-    contact[i].surface.slip1 = 0.05;
-    contact[i].surface.slip2 = 0.05;
-    }*/
-  
   if (int numc = dCollide (o1,o2, MAX_CONTACT_POINTS,
 			   &contact[0].geom,sizeof(dContact))) {
-
-    //    std::cout<<"avant boucle"<<std::endl;
-
+    drawContactPoints_(true);
+    
     for(int i=0; i<numc; i++){
-      Ogre::Entity* e=_sceneMgr->createEntity("collision_point.mesh");
-      Ogre::SceneNode* n=node->createChildSceneNode( Ogre::Vector3( (Ogre::Real)contact[i].geom.pos[0],
-								    (Ogre::Real)contact[i].geom.pos[1],
-								    (Ogre::Real)contact[i].geom.pos[2]) );
-      ents.push_back(e);
-      n->attachObject(e);
-      //      n->scale(0.005, 0.005, 0.005); //pour les spheres
-      n->scale(0.35, 0.35, 0.35);
-
-
       dJointID c = dJointCreateContact (World::getSingletonPtr()->world, 
 					World::getSingletonPtr()->contactGroup,
 					contact+i);
-      //      dJointAttach (c,b1,b2);
       dJointAttach (c, dGeomGetBody(contact[i].geom.g1),
 		    dGeomGetBody(contact[i].geom.g2));
     }
-        
   }
-
 }
 
 

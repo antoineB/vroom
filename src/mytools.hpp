@@ -1,3 +1,6 @@
+#ifndef MY_TOOLS_HPP
+#define MY_TOOLS_HPP
+
 #include <ode/ode.h>
 #include "OgreFramework.hpp"
 #include "global.hpp"
@@ -14,3 +17,5 @@ namespace MyTools{
   void byOdeToOgre(dGeomID g, SceneNode* n);
   dTriMeshDataID dTriMeshDataFromMesh(Ogre::Entity* e);
 };
+
+#endif

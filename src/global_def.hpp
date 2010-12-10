@@ -1,7 +1,7 @@
 //this file is necessary to be included in main.cpp
 
-#ifndef global_def_HPP
-#define global_def_HPP
+#ifndef GLOBAL_DEF_HPP
+#define GLOBAL_DEF_HPP
 
 struct Global{
   bool ogreUp;

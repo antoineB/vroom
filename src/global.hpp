@@ -24,10 +24,10 @@ extern Car car;
 #endif
 
 //macros
-#define _log(X) OgreFramework::getSingletonPtr()->m_pLog->logMessage(X);
-#define _sceneMgr OgreFramework::getSingletonPtr()->m_pSceneMgr
-#define _timer OgreFramework::getSingletonPtr()->m_pTimer
-#define _renderWnd OgreFramework::getSingletonPtr()->m_pRenderWnd
+#define log_(X) OgreFramework::getSingletonPtr()->m_pLog->logMessage(X);
+#define sceneMgr_ OgreFramework::getSingletonPtr()->m_pSceneMgr
+#define timer_ OgreFramework::getSingletonPtr()->m_pTimer
+#define renderWnd_ OgreFramework::getSingletonPtr()->m_pRenderWnd
 
 //dirty
 #define HARD_DEBUG 0

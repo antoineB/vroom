@@ -6,8 +6,8 @@ dContact Obstacle::contact;
 
 void Obstacle::initGeom(void* ptr){
   char * cPtr=(char*)ptr;
-  Ogre::SceneNode* n=_sceneMgr->getRootSceneNode()->createChildSceneNode(name);
-  Ogre::Entity* e=_sceneMgr->createEntity(name, cPtr);
+  Ogre::SceneNode* n=sceneMgr_->getRootSceneNode()->createChildSceneNode(name);
+  Ogre::Entity* e=sceneMgr_->createEntity(name, cPtr);
   e->setCastShadows(true);
   n->attachObject(e);
 
@@ -33,12 +33,12 @@ Obstacle::Obstacle(const char *n, const char *meshName, dReal x, dReal y, dReal 
 {
   Obstacle::initGeom((void*)meshName);
   dGeomSetPosition (geom, x, y, z);
-  MyTools::byOdeToOgre(geom,_sceneMgr->getSceneNode(name));
+  MyTools::byOdeToOgre(geom,sceneMgr_->getSceneNode(name));
 }
 
 void Obstacle::update(){}
 
 void Obstacle::setMaterial(const char* na) const{
-  Ogre::Entity* e=_sceneMgr->getEntity(name);
+  Ogre::Entity* e=sceneMgr_->getEntity(name);
   e->setMaterialName(na);
 }

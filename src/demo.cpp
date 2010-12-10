@@ -23,9 +23,9 @@ static dContact ballContact(){
 
 void createBall(std::string name, dReal x, dReal y, dReal z){
   Ogre::Entity* e;
-  e=_sceneMgr->createEntity(name.c_str(), "sphere.mesh");
+  e=sceneMgr_->createEntity(name.c_str(), "sphere.mesh");
   Ogre::SceneNode* n;
-  n=_sceneMgr->getRootSceneNode()->createChildSceneNode(name.c_str());
+  n=sceneMgr_->getRootSceneNode()->createChildSceneNode(name.c_str());
 
   n->attachObject(e); 
   n->scale(0.01, 0.01, 0.01);
@@ -64,12 +64,13 @@ static dContact boxContact(){
   return contact;
 }
 
-void createBox(std::string name, dReal x, dReal y, dReal z){
+void createBox(std::string name, dReal x, dReal y, dReal z) 
+{
   Ogre::Entity* e;
-  e=_sceneMgr->createEntity(name.c_str(), "cube.mesh");
+  e=sceneMgr_->createEntity(name.c_str(), "cube.mesh");
 
   Ogre::SceneNode* n;
-  n=_sceneMgr->getRootSceneNode()->createChildSceneNode(name.c_str());
+  n=sceneMgr_->getRootSceneNode()->createChildSceneNode(name.c_str());
 
   n->attachObject(e); 
   n->scale(0.02, 0.02, 0.02);
@@ -112,7 +113,7 @@ void demo::startDemo(){
 
   _glb.nbTurn=0;
 
-  _log("Demo initialized");
+  log_("Demo initialized");
 	
   setupDemoScene();
   
@@ -120,10 +121,9 @@ void demo::startDemo(){
 }
 
 void demo::setupDemoScene(){
-  _sceneMgr->createLight("Light")->setPosition(75,75,75);
-  _sceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_MODULATIVE);
-  //  _sceneMgr->setSkyBox(true, "cloud" ,200, false);
-  _sceneMgr->setSkyDome(true, "Examples/CloudySky", 5, 8, 100);
+  sceneMgr_->createLight("Light")->setPosition(75,75,75);
+  sceneMgr_->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_MODULATIVE);
+  sceneMgr_->setSkyDome(true, "Examples/CloudySky", 5, 8, 100);
 
   new FlatGround("Examples/Rockwall");
   
@@ -136,21 +136,34 @@ void demo::setupDemoScene(){
   Obstacle ramp_side("ramp_side","ramp_side.mesh",60.0,1.0,-20.0);
   ramp_side.setMaterial("Obstacle/Ramp_Side");
 
-  dSpaceID stairSpace = World::getSingletonPtr()->addSimpleSpace();
-  dSpaceID space = World::getSingletonPtr()->getSpace();
-  Obstacle stair("starirway","stairway.mesh",-20.0, 3.5/2, 0.0);
-  stair.setMaterial("Obstacle/Stairway");
-  dSpaceRemove(space,stair.getGeom());
-  dSpaceAdd(stairSpace,stair.getGeom());
-  Obstacle stair1("starirway1","stairway.mesh",-20.0, 3.5 +3.5/2 +0.01, -20.0);
-  stair1.setMaterial("Obstacle/Stairway");
-  dSpaceRemove(space,stair1.getGeom());
-  dSpaceAdd(stairSpace,stair1.getGeom());
-  Obstacle stair2("starirway2","stairway.mesh",-20.0, 3.5*2 +3.5/2 +0.01, -20.0*2);
-  stair2.setMaterial("Obstacle/Stairway");
-  dSpaceRemove(space,stair2.getGeom());
-  dSpaceAdd(stairSpace,stair2.getGeom());
+  {
+    static dContact contact;
+    contact.surface.mode= dContactBounce | dContactSoftCFM
+      | dContactSoftERP | dContactSlip1 | dContactSlip2;
+    contact.surface.mu = dInfinity;
+    contact.surface.bounce = 1.0;
+    contact.surface.bounce_vel = 0.1;
+    contact.surface.soft_cfm = 0.01;  
+    contact.surface.soft_erp = 0.3;  
+    contact.surface.slip1 = 1.5;
+    contact.surface.slip2 = 1.5;
 
+    dSpaceID stairSpace = World::getSingletonPtr()->addSimpleSpace();
+    dGeomSetData((dGeomID)stairSpace,(void*)&contact);
+    dSpaceID space = World::getSingletonPtr()->getSpace();
+    Obstacle stair("starirway","stairway.mesh",-20.0, 3.5/2, 0.0);
+    stair.setMaterial("Obstacle/Stairway");
+    dSpaceRemove(space,stair.getGeom());
+    dSpaceAdd(stairSpace,stair.getGeom());
+    Obstacle stair1("starirway1","stairway.mesh",-20.0, 3.5 +3.5/2 +0.01, -20.0);
+    stair1.setMaterial("Obstacle/Stairway");
+    dSpaceRemove(space,stair1.getGeom());
+    dSpaceAdd(stairSpace,stair1.getGeom());
+    Obstacle stair2("starirway2","stairway.mesh",-20.0, 3.5*2 +3.5/2 +0.01, -20.0*2);
+    stair2.setMaterial("Obstacle/Stairway");
+    dSpaceRemove(space,stair2.getGeom());
+    dSpaceAdd(stairSpace,stair2.getGeom());
+  }
   /*
   createBox(std::string("ball1"), 6, 2.01, 3);
   createBox(std::string("ball2"), 6, 2.01, 5.1);
@@ -184,69 +197,87 @@ void demo::setupDemoScene(){
   /*  Ogre::SceneNode *node;
   Ogre::Entity *e;  
 
-  e = _sceneMgr->createEntity("test","subframe.mesh");
-  node = _sceneMgr->getRootSceneNode()->createChildSceneNode("test");
+  e = sceneMgr_->createEntity("test","subframe.mesh");
+  node = sceneMgr_->getRootSceneNode()->createChildSceneNode("test");
   node->attachObject(e);
   node->yaw(Ogre::Degree(90));*/
 
   /*  Ogre::SceneNode *node;
   Ogre::Entity *e;  
 
-  node = _sceneMgr->getRootSceneNode()->createChildSceneNode("ford");
+  node = sceneMgr_->getRootSceneNode()->createChildSceneNode("ford");
 
-  e = _sceneMgr->createEntity("ford_body","ford_body.mesh");
+  e = sceneMgr_->createEntity("ford_body","ford_body.mesh");
   e->setMaterialName("Car/Body");
   node->attachObject(e);
 
-  e = _sceneMgr->createEntity("ford_doors","ford_doors.mesh");
+  e = sceneMgr_->createEntity("ford_doors","ford_doors.mesh");
   e->setMaterialName("Car/Door");
   node->attachObject(e);
   
-  e = _sceneMgr->createEntity("ford_bonnet","ford_bonnet.mesh");
+  e = sceneMgr_->createEntity("ford_bonnet","ford_bonnet.mesh");
   e->setMaterialName("Car/Bonnet");
   node->attachObject(e);
 
-  e = _sceneMgr->createEntity("ford_air_down","ford_air_down.mesh"); node->attachObject(e);
-  e = _sceneMgr->createEntity("ford_air_up","ford_air_up.mesh"); node->attachObject(e);
+  e = sceneMgr_->createEntity("ford_air_down","ford_air_down.mesh"); node->attachObject(e);
+  e = sceneMgr_->createEntity("ford_air_up","ford_air_up.mesh"); node->attachObject(e);
 
-  e = _sceneMgr->createEntity("ford_front","ford_front.mesh");
+  e = sceneMgr_->createEntity("ford_front","ford_front.mesh");
   e->setMaterialName("Car/Front");
   node->attachObject(e);
 
-  e = _sceneMgr->createEntity("ford_door_windows","ford_door_windows.mesh"); node->attachObject(e);
+  e = sceneMgr_->createEntity("ford_door_windows","ford_door_windows.mesh"); node->attachObject(e);
 
-  e = _sceneMgr->createEntity("ford_front_window","ford_front_window.mesh"); 
+  e = sceneMgr_->createEntity("ford_front_window","ford_front_window.mesh"); 
   e->setMaterialName("Car/WindowFront");
   node->attachObject(e);
 
-  e = _sceneMgr->createEntity("ford_back_window","ford_back_window.mesh"); 
+  e = sceneMgr_->createEntity("ford_back_window","ford_back_window.mesh"); 
   e->setMaterialName("Car/WindowBack");
   node->attachObject(e);
 
   node->translate(0.0, 10.0, 0.0);*/
 
   extern Car car;
-  car.init("car", _sceneMgr->getRootSceneNode());
+  car.init("car", sceneMgr_->getRootSceneNode());
 }
 
+
+
+void demo::forFrameDo(unsigned int time){
+  _glb.nbTurn++;
+  
+  //simulation loop
+  World::getSingletonPtr()->update();
+   
+  {//updating visuals objects with physicals ones
+    for(int i=0; i<geoms.size(); i++){
+      MyTools::byOdeToOgre(geoms[i] ,sceneMgr_->getSceneNode(names[i].c_str()));
+    }
+
+    extern Car car;
+    car.update();
+  }
+    
+}
 void demo::runDemo(){
-  _log("Start main loop");
+  log_("Start main loop");
 	
   double timeSinceLastFrame =0;
 
-  _log("reset stats");
-  _renderWnd->resetStatistics();
+  log_("reset stats");
+  renderWnd_->resetStatistics();
 
   while(!m_bShutdown && !OgreFramework::getSingletonPtr()->isOgreToBeShutDown()){
 
-    if(_renderWnd->isClosed())
+    if(renderWnd_->isClosed())
       m_bShutdown = true;
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32 || OGRE_PLATFORM == OGRE_PLATFORM_LINUX
     Ogre::WindowEventUtilities::messagePump();
 #endif	
-      if(_renderWnd->isActive()){
-	double startTime = _timer->getMillisecondsCPU();
+      if(renderWnd_->isActive()){
+	double startTime = timer_->getMillisecondsCPU();
 	
 	OgreFramework::getSingletonPtr()->m_pKeyboard->capture();
 	OgreFramework::getSingletonPtr()->m_pMouse->capture();
@@ -256,7 +287,7 @@ void demo::runDemo(){
 	const int timeForEachFrame = 10;
 	forFrameDo(timeForEachFrame);
 		
-	timeSinceLastFrame = _timer->getMillisecondsCPU() - startTime;
+	timeSinceLastFrame = timer_->getMillisecondsCPU() - startTime;
 	int lazyTime=timeForEachFrame-timeSinceLastFrame;
 	if(lazyTime>0){
 	  usleep(lazyTime*1000);//usleep mean micro
@@ -267,25 +298,8 @@ void demo::runDemo(){
       }
   }
 
-  _log("Main loop quit");
-  _log("Shutdown OGRE");
-}
-
-void demo::forFrameDo(unsigned int time){
-  _glb.nbTurn++;
-  
-  //simulation loop
-  World::getSingletonPtr()->update();
-   
-  {//updating visuals objects with physicals ones
-    for(int i=0; i<geoms.size(); i++){
-      MyTools::byOdeToOgre(geoms[i] ,_sceneMgr->getSceneNode(names[i].c_str()));
-    }
-
-    extern Car car;
-    car.update();
-  }
-    
+  log_("Main loop quit");
+  log_("Shutdown OGRE");
 }
 
 bool demo::keyPressed(const OIS::KeyEvent &keyEventRef){
@@ -321,7 +335,6 @@ bool demo::keyPressed(const OIS::KeyEvent &keyEventRef){
     car.setBrake(true);
     break;
 
-
   case OIS::KC_B :
     static std::string ba("");
     ba+="a";
@@ -338,8 +351,6 @@ bool demo::keyPressed(const OIS::KeyEvent &keyEventRef){
 
   return true;
 }
-
-
 bool demo::keyReleased(const OIS::KeyEvent &keyEventRef){
   OgreFramework::getSingletonPtr()->keyReleased(keyEventRef);
 
@@ -371,3 +382,5 @@ bool demo::keyReleased(const OIS::KeyEvent &keyEventRef){
 	
   return true;
 }
+
+

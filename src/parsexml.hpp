@@ -1,5 +1,5 @@
-#ifndef PARSEXML_HPP
-#define PARSEXML_HPP
+#ifndef PARSE_XML_HPP
+#define PARSE_XML_HPP
 
 #include <tinyxml.h>
 #include <ode/ode.h>
