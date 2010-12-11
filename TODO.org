@@ -1,5 +1,3 @@
-* TODO make the ressource.cfg get working easily
-  change the $OGRE_MEDIA_PATH
 * TODO organise the code in a better way
 * TODO make a physic prop like a stop panel
 ** it must resist to a certain force
