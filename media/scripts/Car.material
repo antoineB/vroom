@@ -82,7 +82,7 @@ material Car/Door
         texture_unit
         {
         // Loading external image texture:
-        texture subframe.jpg
+        texture ford_door.jpg
         }
     }
   }
@@ -101,7 +101,7 @@ material Car/WindowFront
         texture_unit
         {
         // Loading external image texture:
-        texture subframe.jpg
+        texture ford_front_window.jpg
         }
     }
   }

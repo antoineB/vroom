@@ -18,20 +18,20 @@
 #define W_DENSITY 1
 
 #define W_FR_X 3.05
-#define W_FR_Y 0 -0.2
-#define W_FR_Z -6.5
+#define W_FR_Y -0.2
+#define W_FR_Z -5.85
 
 #define W_FL_X -3.05
-#define W_FL_Y 0 -0.2
-#define W_FL_Z -6.5
+#define W_FL_Y -0.2
+#define W_FL_Z -5.85
 
-#define W_BR_X 3.45
-#define W_BR_Y 0 -0.2
-#define W_BR_Z 6.30
+#define W_BR_X 3.15
+#define W_BR_Y -0.2
+#define W_BR_Z 5.0
 
-#define W_BL_X -3.45
-#define W_BL_Y 0 -0.2
-#define W_BL_Z 6.30
+#define W_BL_X -3.15
+#define W_BL_Y -0.2
+#define W_BL_Z 5.0
 
 
 class Wheel{
@@ -96,6 +96,10 @@ public:
   void turnRight();
   void turnLeft();
   void setSteer(float s);
+
+  void reset();
+  void lowRideFront();
+  void lowRideBack();
 
   Ogre::Vector3 cam();
 

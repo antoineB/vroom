@@ -26,7 +26,7 @@ OgreFramework::OgreFramework(){
   m_pTrayMgr                      = 0;
   m_FrameEvent                    = Ogre::FrameEvent();
 
-  inCarView = false;
+  inCarView = 1;
 }
 
 bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener,
@@ -165,7 +165,7 @@ bool OgreFramework::keyPressed(const OIS::KeyEvent &keyEventRef){
     break;
 
   case OIS::KC_C :
-    inCarView=!inCarView;
+    inCarView=(inCarView+1)%3;
     break;
   }
 
@@ -198,10 +198,12 @@ void OgreFramework::updateOgre(double timeSinceLastFrame){
   m_TranslateVector = Vector3::ZERO;
 
   getInput();
-  if(inCarView==0)
-    moveCamera();
-  else
-    myMoveCamera();
+  if (inCarView == 0)
+    myMoveCamera();   
+  else if (inCarView == 1) 
+    moveCamera();  
+  else 
+    myMoveCamera2();
 
   m_FrameEvent.timeSinceLastFrame = timeSinceLastFrame;
   m_pTrayMgr->frameRenderingQueued(m_FrameEvent);
@@ -221,6 +223,11 @@ void OgreFramework::moveCamera(){
 void OgreFramework::myMoveCamera(){
   extern Car car;
   m_pCamera->setPosition(car.cam());
+}
+
+void OgreFramework::myMoveCamera2() {
+  extern Car car;
+  m_pCamera->setDirection(car.cam());
 }
 
 void OgreFramework::getInput(){

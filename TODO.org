@@ -17,4 +17,4 @@
 ** search in documentation on paramVel and MaxForce for an anwser sa
 * TODO there is a little bounce when the car is stoped
 ** happen only when wheels touching the ground (or other dGeom) 
-* TODO  back wheels turn in high speed turn
+* TODO back wheels turn in high speed turn

@@ -1,0 +1,170 @@
+material Ford/Top
+{
+  technique
+  {
+    pass
+    {
+      // Disables the culling of the back of the face:
+      cull_hardware none
+      cull_software none
+
+          ambient   0.8 0.5 0.0 1.0
+      	  emissive  0.5 0.5 0.0 1.0
+   
+        texture_unit
+        {
+        // Loading external image texture:
+        texture ford_top.jpg
+        }
+    }
+  }
+}
+
+material Ford/Front
+{
+  technique
+  {
+    pass
+    {
+      // Disables the culling of the back of the face:
+      cull_hardware none
+      cull_software none
+
+          ambient   0.8 0.5 0.0 1.0
+      	  emissive  0.5 0.5 0.0 1.0
+   
+        texture_unit
+        {
+        // Loading external image texture:
+        texture ford_front.jpg
+        }
+    }
+  }
+}
+
+
+material Ford/TopWindow
+{
+  technique
+  {
+    pass
+    {
+      // Disables the culling of the back of the face:
+      cull_hardware none
+      cull_software none
+
+       lighting on
+       scene_blend alpha_blend
+       depth_write off
+
+       ambient   0.0 0.0 0.2 1.0
+       emissive  0.1 0.0 0.3 1.0
+   
+        texture_unit
+        {
+        // Loading external image texture:
+        texture ford_top_window.jpg
+	alpha_op_ex source1 src_manual src_texture 0.4
+        }
+    }
+  }
+}
+
+material Ford/LeftWindow
+{
+  technique
+  {
+    pass
+    {
+      // Disables the culling of the back of the face:
+      cull_hardware none
+      cull_software none
+
+       lighting on
+       scene_blend alpha_blend
+       depth_write off
+
+       ambient   0.0 0.0 0.2 1.0
+       emissive  0.1 0.0 0.3 1.0
+  
+        texture_unit
+        {
+        // Loading external image texture:
+        texture ford_left_window.jpg
+	alpha_op_ex source1 src_manual src_texture 0.4
+        }
+    }
+  }
+}            
+
+material Ford/LeftDoor
+{
+  technique
+  {
+    pass
+    {
+      // Disables the culling of the back of the face:
+      cull_hardware none
+      cull_software none
+
+          ambient   0.8 0.5 0.0 1.0
+      	  emissive  0.5 0.5 0.0 1.0
+    
+        texture_unit
+        {
+        // Loading external image texture:
+        texture ford_left_door.jpg
+        }
+    }
+  }
+}            
+
+material Ford/RightDoor
+{
+  technique
+  {
+    pass
+    {
+      // Disables the culling of the back of the face:
+      cull_hardware none
+      cull_software none
+
+
+          ambient   0.8 0.5 0.0 1.0
+      	  emissive  0.5 0.5 0.0 1.0
+    
+        texture_unit
+        {
+        // Loading external image texture:
+        texture ford_right_door.jpg
+        }
+    }
+  }
+}            
+
+material Ford/RightWindow
+{
+  technique
+  {
+    pass
+    {
+      // Disables the culling of the back of the face:
+      cull_hardware none
+      cull_software none
+
+       lighting on
+       scene_blend alpha_blend
+       depth_write off
+
+       ambient   0.0 0.0 0.2 1.0
+       emissive  0.1 0.0 0.3 1.0
+   
+        texture_unit
+        {
+        // Loading external image texture:
+        texture ford_right_window.jpg
+	alpha_op_ex source1 src_manual src_texture 0.4
+        }
+    }
+  }
+}            

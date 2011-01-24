@@ -101,7 +101,7 @@ void Wheel::create(dSpaceID s, Wheel::Position p, Ogre::SceneNode *node)
 
 void Car::update() {
   //graphical
-  MyTools::byOdeToOgre(g, sceneMgr_->getSceneNode(nodeName.c_str()));
+  MyTools::byOdeToOgre(b, sceneMgr_->getSceneNode(nodeName.c_str()));
   
   for (int i = 0; i < 4; i++)
     w[i].update();
@@ -133,15 +133,91 @@ void Car::init(const char *n, Ogre::SceneNode *no){
   Ogre::Entity *e;  
   //  Ogre::Entity *b_car;    
 
-  e = sceneMgr_->createEntity("subframe","subframe.mesh");
-  e->setMaterialName("Car/Subframe");
-  //  b_car = sceneMgr_->createEntity("body","body.mesh");
-  //  b_car->setCastShadows(true);
-  //  b_car->setMaterialName("Car/Body");
+  //  e = sceneMgr_->createEntity("subframe","subframe.mesh");
+  //  e->setMaterialName("Car/Subframe");
   node = no->createChildSceneNode(n);
-  node->attachObject(e);
-  //  node->attachObject(b_car);
+  //  node->attachObject(e);
+  //  node->scale(0.9, 0.9, 0.9);
 
+  Ogre::SceneNode *fnode = node->createChildSceneNode("ford");
+  fnode->scale(0.35, 0.35, 0.35);
+  fnode->yaw(Ogre::Degree(180));
+  fnode->translate(0.0, 1.9, 0.0);
+
+    e=sceneMgr_->createEntity("bonet", "bonet.mesh");
+    e->setMaterialName("Ford/Top");
+    fnode->attachObject(e); 
+
+    e=sceneMgr_->createEntity("back", "back.mesh");
+    fnode->attachObject(e); 
+
+    e=sceneMgr_->createEntity("front", "front.mesh");
+    e->setMaterialName("Ford/Front");
+    fnode->attachObject(e); 
+
+    e=sceneMgr_->createEntity("bottom", "bottom.mesh");
+    fnode->attachObject(e); 
+
+    e=sceneMgr_->createEntity("top", "top.mesh");
+    e->setMaterialName("Ford/Top");
+    fnode->attachObject(e); 
+
+    e=sceneMgr_->createEntity("wind_window", "wind_window.mesh");
+    e->setMaterialName("Ford/TopWindow");
+    fnode->attachObject(e); 
+
+    e=sceneMgr_->createEntity("back_top", "back_top.mesh");
+    e->setMaterialName("Ford/Top");
+    fnode->attachObject(e); 
+
+    e=sceneMgr_->createEntity("back_window", "back_window.mesh");
+    e->setMaterialName("Ford/TopWindow");
+    fnode->attachObject(e); 
+
+    e=sceneMgr_->createEntity("wind_window_frame", "wind_window_frame.mesh");
+    e->setMaterialName("Ford/Top");
+    fnode->attachObject(e); 
+
+    e=sceneMgr_->createEntity("left_back", "left_back.mesh");
+    e->setMaterialName("Ford/LeftDoor");
+    fnode->attachObject(e); 
+
+    e=sceneMgr_->createEntity("left_front", "left_front.mesh");
+    e->setMaterialName("Ford/LeftDoor");
+    fnode->attachObject(e); 
+
+    e=sceneMgr_->createEntity("left_door", "left_door.mesh");
+    e->setMaterialName("Ford/LeftDoor");
+    fnode->attachObject(e); 
+
+    e=sceneMgr_->createEntity("left_window", "left_window.mesh");
+    e->setMaterialName("Ford/LeftWindow");
+    fnode->attachObject(e); 
+
+    e=sceneMgr_->createEntity("left_little_window", "left_little_window.mesh");
+    e->setMaterialName("Ford/LeftWindow");
+    fnode->attachObject(e); 
+
+    e=sceneMgr_->createEntity("right_back", "right_back.mesh");
+    e->setMaterialName("Ford/RightDoor");
+    fnode->attachObject(e); 
+
+    e=sceneMgr_->createEntity("right_front", "right_front.mesh");
+    e->setMaterialName("Ford/RightDoor");
+    fnode->attachObject(e); 
+
+    e=sceneMgr_->createEntity("right_door", "right_door.mesh");
+    e->setMaterialName("Ford/RightDoor");
+    fnode->attachObject(e); 
+
+    e=sceneMgr_->createEntity("right_window", "right_window.mesh");
+    e->setMaterialName("Ford/RightWindow");
+    fnode->attachObject(e); 
+
+    e=sceneMgr_->createEntity("right_little_window", "right_little_window.mesh");
+    e->setMaterialName("Ford/RightWindow");
+    fnode->attachObject(e); 
+  
   //partie physique
   
   space=World::getSingletonPtr()->addSimpleSpace();
@@ -149,7 +225,7 @@ void Car::init(const char *n, Ogre::SceneNode *no){
   //when is it destroyed?
 
   const dReal x=7.48 , y=0.72 , z=17.56 ;
-  g= addBox ( x, y, z);
+  g= addBox ( x, 4.0*y, z);
   Car::contact.surface.mode= dContactBounce | dContactSoftCFM
     | dContactSoftERP | dContactSlip1 | dContactSlip2;
   Car::contact.surface.mu = dInfinity;
@@ -171,7 +247,9 @@ void Car::init(const char *n, Ogre::SceneNode *no){
   b=World::getSingletonPtr()->add(g,&m);
   dGeomSetPosition (g, C_X, C_Y, C_Z);
   
-  MyTools::byOdeToOgre(g, node);
+  dGeomSetOffsetPosition(g, 0.0, 1.4, 0.0);
+ 
+  MyTools::byOdeToOgre(b, node);
   
   {
     Ogre::SceneNode* carNode=sceneMgr_->getRootSceneNode();
@@ -192,10 +270,17 @@ void Car::init(const char *n, Ogre::SceneNode *no){
     dJointSetHinge2Anchor(j[i],a[0],a[1],a[2]);
     dJointSetHinge2Axis1(j[i],0,1,0);
     dJointSetHinge2Axis2(j[i],1,0,0);
-    
-    dJointSetHinge2Param(j[i], dParamSuspensionERP, 0.8);
-    dJointSetHinge2Param(j[i], dParamSuspensionCFM, 0.05);
 
+    /*
+      ERP = h kp / (h kp + kd)
+      CFM = 1 / (h kp + kd)
+    */
+
+#define KP 40.0
+#define KD 5.0
+
+    dJointSetHinge2Param(j[i], dParamSuspensionERP, 0.2 * KP / (0.2 * KP + KD));
+    dJointSetHinge2Param(j[i], dParamSuspensionCFM, 1 / (0.2 * KP + KD));
   }
 
   //prismatic & rotoid
@@ -208,6 +293,8 @@ void Car::init(const char *n, Ogre::SceneNode *no){
     dJointSetHinge2Param (j[i],dParamHiStop,0);
 
     if (i > 1) {
+      dJointSetHinge2Param (j[i],dParamLoStop2,0);//TEST
+      dJointSetHinge2Param (j[i],dParamHiStop2,0);//
       dJointSetHinge2Param (j[i],dParamStopERP, 1.0); //normaly to get the the back wheel not rotate
       dJointSetHinge2Param (j[i],dParamStopCFM, 0.0);
     }
@@ -220,6 +307,10 @@ void Car::init(const char *n, Ogre::SceneNode *no){
     dJointSetHinge2Param (j[i],dParamHiStop,PI/3);
     }*/
 
+}
+
+void Car::reset() {
+  dGeomSetPosition (g, C_X, C_Y, C_Z);
 }
 
 void Car::accelerate(){ speed+=10.5; }
@@ -270,6 +361,14 @@ void Car::updateSteering() {
   //   dJointSetHinge2Param (j[1],dParamFudgeFactor,0.1);
   // }
   }
+}
+
+void Car::lowRideFront() {
+  dBodyAddRelForceAtRelPos(b, 0.0, 500.0, 0.0, 0.0, 0.0, W_FR_Z);
+}
+
+void Car::lowRideBack() {
+  dBodyAddForceAtRelPos(b, 0.0, 500.0, 0.0, 0.0, 0.0, W_BR_Z);
 }
 
 void Car::setBrake(bool b){
@@ -335,7 +434,7 @@ void Car::updateMotor(){
 Ogre::Vector3 Car::cam() {
     const dReal *pos = dBodyGetPosition (b);
     return Ogre::Vector3((Ogre::Real)pos[0],
-			 (Ogre::Real)pos[1]+1.5, 
+			 (Ogre::Real)pos[1]+3.2, 
 			 (Ogre::Real)pos[2]);
 }
 

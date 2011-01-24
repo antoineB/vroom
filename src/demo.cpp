@@ -28,7 +28,7 @@ void createBall(std::string name, dReal x, dReal y, dReal z){
   n=sceneMgr_->getRootSceneNode()->createChildSceneNode(name.c_str());
 
   n->attachObject(e); 
-  n->scale(0.01, 0.01, 0.01);
+  n->scale(0.03, 0.03, 0.03);
   e->setMaterialName("MyOwn/Sphere");
 
   dBodyID b;
@@ -37,8 +37,8 @@ void createBall(std::string name, dReal x, dReal y, dReal z){
 
   static dContact contact=ballContact();
 
-  g = World::getSingletonPtr()->addSphere(1.0);
-  dMassSetSphere (&m,1,1.0);
+  g = World::getSingletonPtr()->addSphere(3.0);
+  dMassSetSphere (&m,1,3.0);
 
   b=World::getSingletonPtr()->add(g,&m);
   
@@ -68,7 +68,6 @@ void createBox(std::string name, dReal x, dReal y, dReal z)
 {
   Ogre::Entity* e;
   e=sceneMgr_->createEntity(name.c_str(), "cube.mesh");
-
   Ogre::SceneNode* n;
   n=sceneMgr_->getRootSceneNode()->createChildSceneNode(name.c_str());
 
@@ -136,6 +135,7 @@ void demo::setupDemoScene(){
   Obstacle ramp_side("ramp_side","ramp_side.mesh",60.0,1.0,-20.0);
   ramp_side.setMaterial("Obstacle/Ramp_Side");
 
+
   {
     static dContact contact;
     contact.surface.mode= dContactBounce | dContactSoftCFM
@@ -145,8 +145,8 @@ void demo::setupDemoScene(){
     contact.surface.bounce_vel = 0.1;
     contact.surface.soft_cfm = 0.01;  
     contact.surface.soft_erp = 0.3;  
-    contact.surface.slip1 = 1.5;
-    contact.surface.slip2 = 1.5;
+    contact.surface.slip1 = 0.01;
+    contact.surface.slip2 = 0.01;
 
     dSpaceID stairSpace = World::getSingletonPtr()->addSimpleSpace();
     dGeomSetData((dGeomID)stairSpace,(void*)&contact);
@@ -164,80 +164,7 @@ void demo::setupDemoScene(){
     dSpaceRemove(space,stair2.getGeom());
     dSpaceAdd(stairSpace,stair2.getGeom());
   }
-  /*
-  createBox(std::string("ball1"), 6, 2.01, 3);
-  createBox(std::string("ball2"), 6, 2.01, 5.1);
-  createBox(std::string("ball3"), 6, 2.01, 7.2);
-  createBox(std::string("ball4"), 6, 2.01, 9.3);
-  createBox(std::string("ball5"), 6, 2.01, 11.4);
-  createBox(std::string("ball6"), 6, 2.01, 13.5);
-
-  createBox(std::string("ball7"), 6, 4.01, 3);
-  createBox(std::string("ball8"), 6, 4.01, 5.1);
-  createBox(std::string("ball9"), 6, 4.01, 7.2);
-  createBox(std::string("ball10"), 6, 4.01, 9.3);
-  createBox(std::string("ball11"), 6, 4.01, 11.4);
-  createBox(std::string("ball12"), 6, 4.01, 13.5);
-
-  createBox(std::string("ball13"), 6, 6.01, 3);
-  createBox(std::string("ball14"), 6, 6.01, 5.1);
-  createBox(std::string("ball15"), 6, 6.01, 7.2);
-  createBox(std::string("ball16"), 6, 6.01, 9.3);
-  createBox(std::string("ball17"), 6, 6.01, 11.4);
-  createBox(std::string("ball18"), 6, 6.01, 13.5);
-
-  createBox(std::string("ball19"), 6, 8.01, 3);
-  createBox(std::string("ball20"), 6, 8.01, 5.1);
-  createBox(std::string("ball21"), 6, 8.01, 7.2);
-  createBox(std::string("ball22"), 6, 8.01, 9.3);
-  createBox(std::string("ball23"), 6, 8.01, 11.4);
-  createBox(std::string("ball24"), 6, 8.01, 13.5);
-  */
-
-  /*  Ogre::SceneNode *node;
-  Ogre::Entity *e;  
-
-  e = sceneMgr_->createEntity("test","subframe.mesh");
-  node = sceneMgr_->getRootSceneNode()->createChildSceneNode("test");
-  node->attachObject(e);
-  node->yaw(Ogre::Degree(90));*/
-
-  /*  Ogre::SceneNode *node;
-  Ogre::Entity *e;  
-
-  node = sceneMgr_->getRootSceneNode()->createChildSceneNode("ford");
-
-  e = sceneMgr_->createEntity("ford_body","ford_body.mesh");
-  e->setMaterialName("Car/Body");
-  node->attachObject(e);
-
-  e = sceneMgr_->createEntity("ford_doors","ford_doors.mesh");
-  e->setMaterialName("Car/Door");
-  node->attachObject(e);
-  
-  e = sceneMgr_->createEntity("ford_bonnet","ford_bonnet.mesh");
-  e->setMaterialName("Car/Bonnet");
-  node->attachObject(e);
-
-  e = sceneMgr_->createEntity("ford_air_down","ford_air_down.mesh"); node->attachObject(e);
-  e = sceneMgr_->createEntity("ford_air_up","ford_air_up.mesh"); node->attachObject(e);
-
-  e = sceneMgr_->createEntity("ford_front","ford_front.mesh");
-  e->setMaterialName("Car/Front");
-  node->attachObject(e);
-
-  e = sceneMgr_->createEntity("ford_door_windows","ford_door_windows.mesh"); node->attachObject(e);
-
-  e = sceneMgr_->createEntity("ford_front_window","ford_front_window.mesh"); 
-  e->setMaterialName("Car/WindowFront");
-  node->attachObject(e);
-
-  e = sceneMgr_->createEntity("ford_back_window","ford_back_window.mesh"); 
-  e->setMaterialName("Car/WindowBack");
-  node->attachObject(e);
-
-  node->translate(0.0, 10.0, 0.0);*/
-
+   
   extern Car car;
   car.init("car", sceneMgr_->getRootSceneNode());
 }
@@ -347,7 +274,20 @@ bool demo::keyPressed(const OIS::KeyEvent &keyEventRef){
     createBall(bo,-25.0, 10.0, 0.0);
     break;
 
+  case OIS::KC_R :
+    car.reset();
+    break;
+  
+  case OIS::KC_K :
+    car.lowRideBack();
+    break;
+
+  case OIS::KC_I :
+    car.lowRideFront();
+    break;
+  
   }
+
 
   return true;
 }

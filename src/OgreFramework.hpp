@@ -76,8 +76,9 @@ private:
 	float					m_MoveScale; 
 	Ogre::Degree				m_RotScale;
 
-  bool inCarView;
+  int inCarView;
   void myMoveCamera();
+  void myMoveCamera2();
 
 };
 
