@@ -43,6 +43,51 @@ material Ford/Front
 }
 
 
+material Ford/Back
+{
+  technique
+  {
+    pass
+    {
+      // Disables the culling of the back of the face:
+      cull_hardware none
+      cull_software none
+
+          ambient   0.8 0.5 0.0 1.0
+      	  emissive  0.5 0.5 0.0 1.0
+   
+        texture_unit
+        {
+        // Loading external image texture:
+        texture ford_back.png
+        }
+    }
+  }
+}
+
+
+material Ford/Bottom
+{
+  technique
+  {
+    pass
+    {
+      // Disables the culling of the back of the face:
+      cull_hardware none
+      cull_software none
+
+          ambient   0.8 0.5 0.0 1.0
+      	  emissive  0.5 0.5 0.0 1.0
+   
+        texture_unit
+        {
+        // Loading external image texture:
+        texture ford_bottom.png
+        }
+    }
+  }
+}
+
 material Ford/TopWindow
 {
   technique

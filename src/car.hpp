@@ -10,7 +10,7 @@
 
 //Car
 #define C_X 0
-#define C_Y 10
+#define C_Y 4
 #define C_Z 0
 
 //Wheel
@@ -18,11 +18,11 @@
 #define W_DENSITY 1
 
 #define W_FR_X 3.05
-#define W_FR_Y -0.2
+#define W_FR_Y +0.0
 #define W_FR_Z -5.85
 
 #define W_FL_X -3.05
-#define W_FL_Y -0.2
+#define W_FL_Y +0.0
 #define W_FL_Z -5.85
 
 #define W_BR_X 3.15
@@ -63,11 +63,9 @@ public:
 private:
 
   void getPositionFromCar(dReal *d){
-    //    dReal d[3];
     d[0] = C_X + pos.x;
     d[1] = C_Y + pos.y;
     d[2] = C_Z + pos.z;
-    //    return d;
   }
 
 

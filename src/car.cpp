@@ -48,7 +48,7 @@ void Wheel::init(dSpaceID s){
 
 void Wheel::update(){
   Ogre::SceneNode *n=sceneMgr_->getSceneNode(name.c_str());
-  MyTools::byOdeToOgre(b, n );
+  MyTools::byOdeToOgre(g, n );
 }
 
 dBodyID Wheel::getBody(){
@@ -88,7 +88,7 @@ void Wheel::create(dSpaceID s, Wheel::Position p, Ogre::SceneNode *node)
   dBodySetPosition(b, d[0], d[1], d[2]);
   dMatrix3 R;
   const dReal PI=3.14159265;
-  MyTools::byOdeToOgre(b, n);
+  MyTools::byOdeToOgre(g, n);
 
   //ugly
   if (nb > 2) {
@@ -101,7 +101,7 @@ void Wheel::create(dSpaceID s, Wheel::Position p, Ogre::SceneNode *node)
 
 void Car::update() {
   //graphical
-  MyTools::byOdeToOgre(b, sceneMgr_->getSceneNode(nodeName.c_str()));
+  MyTools::byOdeToOgre(g, sceneMgr_->getSceneNode(nodeName.c_str()));
   
   for (int i = 0; i < 4; i++)
     w[i].update();
@@ -149,6 +149,7 @@ void Car::init(const char *n, Ogre::SceneNode *no){
     fnode->attachObject(e); 
 
     e=sceneMgr_->createEntity("back", "back.mesh");
+    e->setMaterialName("Ford/Back");
     fnode->attachObject(e); 
 
     e=sceneMgr_->createEntity("front", "front.mesh");
@@ -156,6 +157,7 @@ void Car::init(const char *n, Ogre::SceneNode *no){
     fnode->attachObject(e); 
 
     e=sceneMgr_->createEntity("bottom", "bottom.mesh");
+    e->setMaterialName("Ford/Bottom");
     fnode->attachObject(e); 
 
     e=sceneMgr_->createEntity("top", "top.mesh");
@@ -224,8 +226,8 @@ void Car::init(const char *n, Ogre::SceneNode *no){
   dSpaceSetCleanup(space,0); //to avoid destroying geoms when  the space is destroyed
   //when is it destroyed?
 
-  const dReal x=7.48 , y=0.72 , z=17.56 ;
-  g= addBox ( x, 4.0*y, z);
+  const dReal x=7.48 , y=0.60 , z=17.56 ;
+  g= addBox ( x, y, z);
   Car::contact.surface.mode= dContactBounce | dContactSoftCFM
     | dContactSoftERP | dContactSlip1 | dContactSlip2;
   Car::contact.surface.mu = dInfinity;
@@ -243,13 +245,13 @@ void Car::init(const char *n, Ogre::SceneNode *no){
 
   c2 = (dContact*) dGeomGetData((dGeomID)space);
 
-  dMassSetBox(&m, 1.0, x, 2*y, z);
+  dMassSetBox(&m, 1.0, 1.3 * x, 2*y, z);
   b=World::getSingletonPtr()->add(g,&m);
   dGeomSetPosition (g, C_X, C_Y, C_Z);
   
-  dGeomSetOffsetPosition(g, 0.0, 1.4, 0.0);
+  dGeomSetOffsetPosition(g, 0.0, 0.3, 0.0);
  
-  MyTools::byOdeToOgre(b, node);
+  MyTools::byOdeToOgre(g, node);
   
   {
     Ogre::SceneNode* carNode=sceneMgr_->getRootSceneNode();
