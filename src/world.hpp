@@ -43,6 +43,7 @@ public:
   //dGeomID add(dGeomID g, dSpaceID s=0);
   void update();
   dJointID addHinge2(dBodyID b1, dBodyID b2, dJointGroupID jg=0);
+  dJointID addHinge(dBodyID b1, dBodyID b2, dJointGroupID jg=0);
 
   dWorldID getWorld() const;
   dJointGroupID getContactGroup() const;

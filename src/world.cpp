@@ -116,10 +116,17 @@ dSpaceID World::addHashSpace(){
   }*/
 
 dJointID World::addHinge2(dBodyID b1, dBodyID b2, dJointGroupID jg){
-  dJointID j=dJointCreateHinge2(world, jg);
-  dJointAttach(j,b1,b2);
+  dJointID j = dJointCreateHinge2(world, jg);
+  dJointAttach(j, b1, b2);
   return j;
 }
+
+dJointID World::addHinge(dBodyID b1, dBodyID b2, dJointGroupID jg){
+  dJointID j = dJointCreateHinge(world, jg);
+  dJointAttach(j, b1, b2);
+  return j;
+}
+
 
 dWorldID World::getWorld() const {
   return world;

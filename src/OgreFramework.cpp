@@ -165,7 +165,7 @@ bool OgreFramework::keyPressed(const OIS::KeyEvent &keyEventRef){
     break;
 
   case OIS::KC_C :
-    inCarView=(inCarView+1)%3;
+    inCarView=(inCarView+1)%4;
     break;
   }
 
@@ -202,8 +202,10 @@ void OgreFramework::updateOgre(double timeSinceLastFrame){
     myMoveCamera();   
   else if (inCarView == 1) 
     moveCamera();  
-  else 
+  else if (inCarView == 2) 
     myMoveCamera2();
+  else
+    myMoveCamera3();
 
   m_FrameEvent.timeSinceLastFrame = timeSinceLastFrame;
   m_pTrayMgr->frameRenderingQueued(m_FrameEvent);
@@ -220,14 +222,39 @@ void OgreFramework::moveCamera(){
 	  m_pCamera->moveRelative(m_TranslateVector / 10);
 }
 
-void OgreFramework::myMoveCamera(){
+void OgreFramework::myMoveCamera3(){
   extern Car car;
-  m_pCamera->setPosition(car.cam());
+    /*Ogre::Vector3 vec = car.getPosition();
+  vec.y += 6.0;
+  vec.z += 8.0;
+  m_pCamera->setPosition(vec);
+  //  m_pCamera->setOrientation(car.getOrientation());
+  m_pCamera->setDirection(car.getPosition());*/
+  m_pCamera->detachFromParent();
+  sceneMgr_->getSceneNode("cam_pos")->attachObject(m_pCamera);
+  //  m_pCamera->setOrientation(car.getOrientation());
 }
 
-void OgreFramework::myMoveCamera2() {
+void OgreFramework::myMoveCamera(){
+  //  m_pCamera->detachFromParent();
+  //sceneMgr_->getSceneNode("Camera")->attachObject(m_pCamera);
+
+
   extern Car car;
-  m_pCamera->setDirection(car.cam());
+  Ogre::Vector3 vec = car.getPosition();
+  vec.y += 3.2;
+  vec.z += 1.0;
+  m_pCamera->setPosition(vec);
+  m_pCamera->setOrientation(car.getOrientation());
+}
+
+
+void OgreFramework::myMoveCamera2() {
+  //m_pCamera->detachFromParent();
+  //sceneMgr_->getSceneNode("Camera")->attachObject(m_pCamera);
+
+  extern Car car;
+  m_pCamera->setDirection(car.getPosition());
 }
 
 void OgreFramework::getInput(){

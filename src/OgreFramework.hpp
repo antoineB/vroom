@@ -79,6 +79,7 @@ private:
   int inCarView;
   void myMoveCamera();
   void myMoveCamera2();
+  void myMoveCamera3();
 
 };
 

@@ -100,6 +100,10 @@ public:
   void lowRideBack();
 
   Ogre::Vector3 cam();
+  Ogre::Vector3 getPosition();
+  Ogre::Vector3 getDirection();
+  Ogre::Quaternion getOrientation();
+
 
   void parseXml(std::string fileName);
   void parseXml(TiXmlHandle handle);
@@ -125,6 +129,17 @@ private:
   static dContact contact;
 
   bool brake;
+
+  dGeomID leftDoorGeom;
+  dBodyID leftDoorBody;
+  dJointID leftDoorJoint;
+  dMass leftDoorMass;
+
+  dGeomID rightDoorGeom;
+  dBodyID rightDoorBody;
+  dJointID rightDoorJoint;
+  dMass rightDoorMass;
+
 
   dJointID j[4];
   
