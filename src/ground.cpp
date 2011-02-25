@@ -5,7 +5,7 @@ template<> Ground* Ogre::Singleton<Ground>::ms_Singleton = 0;
 
 const std::string Ground::name="ground";
 
-dContact FlatGround::contact;
+DContactType FlatGround::type(Type::GROUND);
 
 dGeomID Ground::getPlane(){ return plane; }
 
@@ -26,20 +26,16 @@ void FlatGround::init(const char* material){
   entGround->setMaterialName(material);
   entGround->setCastShadows(false);
   plane=World::getSingletonPtr()->addPlane(0.0,1.0,0.0,0.0);
-  contact.surface.mode= dContactBounce | dContactSoftCFM
+
+  type.contact.surface.mode= dContactBounce | dContactSoftCFM
     | dContactSoftERP | dContactSlip1 | dContactSlip2;
-  contact.surface.mu = dInfinity;
-  contact.surface.bounce = 0.01;
-  contact.surface.bounce_vel = 0.5;
-  contact.surface.soft_cfm = 0.01;  
-  contact.surface.soft_erp = 0.3;  
-  contact.surface.slip1 = 0.01;
-  contact.surface.slip2 = 0.01;
-  dGeomSetData(plane,(void*)&contact);
+  type.contact.surface.mu = dInfinity;
+  type.contact.surface.bounce = 0.01;
+  type.contact.surface.bounce_vel = 0.5;
+  type.contact.surface.soft_cfm = 0.01;  
+  type.contact.surface.soft_erp = 0.3;  
+  type.contact.surface.slip1 = 0.01;
+  type.contact.surface.slip2 = 0.01;
 
-  dContact * c2 = (dContact*) dGeomGetData(plane);
-  if(c2==NULL)
-    std::cout<<"plane is null"<<std::endl;
-
-  
+  dGeomSetData(plane,(void*)&type);
 }

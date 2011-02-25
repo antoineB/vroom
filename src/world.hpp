@@ -2,7 +2,7 @@
 #define WORLD_HPP
 
 #include <ode/ode.h>
-#include <OgreSingleton.h>
+#include <OGRE/OgreSingleton.h>
 
 #include "global.hpp"
 #include "mytools.hpp"

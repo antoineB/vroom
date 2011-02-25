@@ -1,12 +1,12 @@
 
-INCDIRS=-I/usr/local/include/OGRE/ -I/usr/include/OIS/
+INCDIRS=-I/usr/local/include/ -I/usr/include/
 LIBSDIRS=-L/usr/local/lib/ -L.
 LIBS=-lOgreMain -lOIS -lCEGUIOgreRenderer -lode -ltinyxml
 CXXFLAGS=-Wall -Wextra -pedent
 CXXFLAGS=
 CHK_SOURCES=%.cpp %.hpp
 
-main: main.cpp demo.o OgreFramework.o car.o mytools.o ground.o world.o space.o obstacle.o geom.o
+main: main.cpp demo.o OgreFramework.o car.o mytools.o ground.o world.o space.o obstacle.o geom.o movableobstacle.o type.o
 	g++ $(CXXFLAGS) -o $@ $^ $(INCDIRS) $(LIBSDIRS) $(LIBS)
 
 demo.o: demo.cpp
@@ -35,6 +35,13 @@ obstacle.o: obstacle.cpp
 
 geom.o: geom.cpp
 	g++ $(CXXFLAGS) -o $@ -c $^ $(INCDIRS)
+
+movableobstacle.o: movableobstacle.cpp
+	g++ $(CXXFLAGS) -o $@ -c $^ $(INCDIRS)
+
+type.o: type.cpp
+	g++ $(CXXFLAGS) -o $@ -c $^ $(INCDIRS)
+
 
 check-syntax:
 	g++ -Wall -Wextra -pedent -fsyntax-only $(CHK_SOURCES) $(INCDIRS)

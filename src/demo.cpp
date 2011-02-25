@@ -1,4 +1,4 @@
-#include <OgreWindowEventUtilities.h>
+#include <OGRE/OgreWindowEventUtilities.h>
 #include "mytools.hpp"
 #include "demo.hpp"
 #include <fstream>
@@ -6,6 +6,7 @@
 #include "ground.hpp"
 #include "car.hpp"
 #include "obstacle.hpp"
+#include "movableobstacle.hpp"
 
 static dContact ballContact(){
   dContact contact;
@@ -20,6 +21,8 @@ static dContact ballContact(){
   contact.surface.slip2 = 0.0;
   return contact;
 }
+
+
 
 void createBall(std::string name, dReal x, dReal y, dReal z){
   Ogre::Entity* e;
@@ -135,21 +138,23 @@ void demo::setupDemoScene(){
   Obstacle ramp_side("ramp_side","ramp_side.mesh",60.0,1.0,-20.0);
   ramp_side.setMaterial("Obstacle/Ramp_Side");
 
+  MovableObstacle *cross = new MovableObstacle("cross", "cross.mesh", -60.0, 0.7, 20.0);
+  _glb.cross = (void*)cross;
 
   {
-    static dContact contact;
-    contact.surface.mode= dContactBounce | dContactSoftCFM
+    static DContactType type(Type::OBSTACLE_SPACE);
+    type.contact.surface.mode= dContactBounce | dContactSoftCFM
       | dContactSoftERP | dContactSlip1 | dContactSlip2;
-    contact.surface.mu = dInfinity;
-    contact.surface.bounce = 1.0;
-    contact.surface.bounce_vel = 0.1;
-    contact.surface.soft_cfm = 0.01;  
-    contact.surface.soft_erp = 0.3;  
-    contact.surface.slip1 = 0.01;
-    contact.surface.slip2 = 0.01;
+    type.contact.surface.mu = dInfinity;
+    type.contact.surface.bounce = 1.0;
+    type.contact.surface.bounce_vel = 0.1;
+    type.contact.surface.soft_cfm = 0.01;  
+    type.contact.surface.soft_erp = 0.3;  
+    type.contact.surface.slip1 = 0.01;
+    type.contact.surface.slip2 = 0.01;
 
     dSpaceID stairSpace = World::getSingletonPtr()->addSimpleSpace();
-    dGeomSetData((dGeomID)stairSpace,(void*)&contact);
+    dGeomSetData((dGeomID)stairSpace,(void*)&type);
     dSpaceID space = World::getSingletonPtr()->getSpace();
     Obstacle stair("starirway","stairway.mesh",-20.0, 3.5/2, 0.0);
     stair.setMaterial("Obstacle/Stairway");
@@ -181,6 +186,8 @@ void demo::forFrameDo(unsigned int time){
     for(int i=0; i<geoms.size(); i++){
       MyTools::byOdeToOgre(geoms[i] ,sceneMgr_->getSceneNode(names[i].c_str()));
     }
+
+    ((MovableObstacle*)_glb.cross)->update();
 
     extern Car car;
     car.update();
@@ -286,6 +293,10 @@ bool demo::keyPressed(const OIS::KeyEvent &keyEventRef){
     car.lowRideFront();
     break;
   
+  case OIS::KC_U :
+    car.dropDoors();
+    break;
+
   }
 
 

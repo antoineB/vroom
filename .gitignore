@@ -1,0 +1,12 @@
+#ignore myself
+#.gitignore
+
+#ignore binary file
+src/*.o
+src/main
+
+#ignore emacs autosaves
+src/*~
+*~
+src/\#*
+\#*

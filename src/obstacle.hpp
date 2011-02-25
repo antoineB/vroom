@@ -4,6 +4,7 @@
 #include "OgreFramework.hpp"
 #include "global.hpp"
 #include "geom.hpp"
+#include "type.hpp"
 
 class Obstacle: public Geom{
   std::string name;
@@ -11,7 +12,8 @@ class Obstacle: public Geom{
   Obstacle();
   Obstacle(const Obstacle&);
   Obstacle & operator=(const Obstacle&);
-  static dContact contact;
+
+  static DContactType type;
 
 public:
   Obstacle(const char *n, const char* meshName, dReal x=.0, dReal y=.0, dReal z=.0);

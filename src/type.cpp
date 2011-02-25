@@ -40,32 +40,26 @@ bool Type::isPrecedence(dGeomID geom) const {
   return true;
 }
 
-const dContact* DContactProperty::getContact() const {
-  return &contact;
-}
+DContactType::DContactType(Type::TypeList typeList) 
+  : Type(typeList) {}
 
-DContactProperty::DContactProperty(Type::TypeList typeList) : Type(typeList) {}
-
-void DContactProperty::dealWith(dGeomID me, dGeomID other) {
-  assert(dGeomIsSpace(me) != true);
-  assert(dGeomIsSpace(other) != true);
-  
-  DContactProperty *cProperty = (DContactProperty*)dGeomGetData(other);
-
+static void standartDealing(dGeomID g1, dContact c1, dGeomID g2, dContact c2) {
   const int  MAX_CONTACT_POINTS = 16;
   dContact contact[MAX_CONTACT_POINTS];
-  mixdContact(contact, getContact(), cProperty->getContact());
+
+  DContactType::mixdContact(contact, &c1, &c2);
+  
   for(int i=1; i<MAX_CONTACT_POINTS; i++)
     memcpy(contact+i, contact, sizeof(*contact));
 
-  if (int numc = dCollide (me, other, MAX_CONTACT_POINTS,
+  if (int numc = dCollide (g1, g2, MAX_CONTACT_POINTS,
 			   &contact[0].geom,sizeof(dContact))) {
 
     drawContactPoints_(true);
   
     for(int i=0; i < numc; i++) {  
-      dJointID c = dJointCreateContact (World::getSingletonPtr()->world, 
-					World::getSingletonPtr()->contactGroup,
+      dJointID c = dJointCreateContact (World::getSingletonPtr()->getWorld(), 
+					World::getSingletonPtr()->getContactGroup(),
 					contact+i);
       dJointAttach (c, dGeomGetBody(contact[i].geom.g1),
 		    dGeomGetBody(contact[i].geom.g2));
@@ -73,8 +67,75 @@ void DContactProperty::dealWith(dGeomID me, dGeomID other) {
   }
 }
 
+static void standartNullDealing(dGeomID g1, dContact c1, dGeomID g2) {
+  const int  MAX_CONTACT_POINTS = 16;
+  dContact contact[MAX_CONTACT_POINTS];
 
-void DContactProperty::mixdContact(dContact* res, const dContact* c1, const dContact* c2) {
+  memcpy(&(contact->surface.mode), &(c1.surface.mode), sizeof(dSurfaceParameters));
+
+  for(int i=1; i<MAX_CONTACT_POINTS; i++)
+    memcpy(contact+i, contact, sizeof(*contact));
+
+  if (int numc = dCollide (g1, g2, MAX_CONTACT_POINTS,
+			   &contact[0].geom,sizeof(dContact))) {
+
+    drawContactPoints_(true);
+  
+    for(int i=0; i < numc; i++) {  
+      dJointID c = dJointCreateContact (World::getSingletonPtr()->getWorld(), 
+					World::getSingletonPtr()->getContactGroup(),
+					contact+i);
+      dJointAttach (c, dGeomGetBody(contact[i].geom.g1), NULL);
+    }
+  }
+}
+
+static void moveableObstacleDealing(dGeomID carGeom, dContact carC, dGeomID moveableGeom, dContact moveableC) {
+  extern Car car; //causse type.o is glue/*not the good word*/ to main.o
+  
+  if (car.getPunch() > 1200) {
+    ((DContactType*)dGeomGetData(moveableGeom))->type = Type::MOVABLE_ELEMENT; //fuck this a so fucky way of doing this
+    standartDealing(carGeom, carC, moveableGeom, moveableC);
+  }
+  else 
+    standartNullDealing(carGeom, carC, moveableGeom);
+  
+}
+
+void DContactType::dealWith(dGeomID me, dGeomID other) {
+  //  assert(dGeomIsSpace(me) != true); failled
+  //  assert(dGeomIsSpace(other) != true);
+  
+  DContactType *cProperty = (DContactType*)dGeomGetData(other);
+
+  if (cProperty->type == Type::MOVABLE_OBSTACLE || type == Type::MOVABLE_OBSTACLE) {
+    dGeomID car;
+    dContact carC;
+    dGeomID moveable;
+    dContact moveableC;
+
+    if (cProperty->type == Type::MOVABLE_OBSTACLE) {
+      car = me;
+      moveable = other;
+      carC = contact;
+      moveableC = cProperty->contact;
+    }
+    else {
+      car = other;
+      moveable = me;
+      carC = cProperty->contact;
+      moveableC = contact;
+    }
+
+    moveableObstacleDealing(car, carC, moveable, moveableC);
+  }
+  else
+    standartDealing(me, contact, other, cProperty->contact);
+  
+}
+
+
+void DContactType::mixdContact(dContact* res, const dContact* c1, const dContact* c2) {
   int m1 = c1->surface.mode, m2 = c2->surface.mode ;
 
   memset(&(res->surface.mode),0,sizeof(dSurfaceParameters));

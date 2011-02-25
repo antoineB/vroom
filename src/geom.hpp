@@ -3,7 +3,7 @@
 
 #include <ode/ode.h>
 
-class Geom{
+class Geom {
 protected:
   dGeomID geom;
   

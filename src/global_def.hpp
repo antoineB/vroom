@@ -7,6 +7,7 @@ struct Global{
   bool ogreUp;
   bool worldUp;
   unsigned int nbTurn;
+  void *cross;
 };
 
 #endif

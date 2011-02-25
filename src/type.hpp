@@ -17,52 +17,50 @@ public:
   enum TypeList{
     NONE = 0,
 
-    CAR_WHEEL,
-      CAR_WHEEL_FRONT,
-	CAR_WHEEL_RIGHT_FRONT,
-	CAR_WHEEL_LEFT_FRONT,
-      CAR_WHEEL_BACK,
-	CAR_WHEEL_RIGHT_BACK,
-	CAR_WHEEL_LEFT_BACK,
-    
-    CAR_SPACE,
-    CAR_SUBFRAME,
-    CAR_BONNET,
-    CAR_TOP,
-    CAR_LUGGAGE_COMPARTMENT,
-
-    CAR_WINDSCREEN,
-      CAR_FRONT_WINDSCREEN,
-      CAR_BACK_WINDSCREEN,
-
-    CAR_BUMPER,
-      CAR_BACK_BUMPER,
-      CAR_FRONT_BUMPER,
-
-    CAR_FENDER,
-      CAR_FRONT_FENDER,
-	CAR_FRONT_LEFT_FENDER,
-	CAR_FRONT_RIGHT_FENDER,
-      CAR_BACK_FENDER,
-	CAR_BACK_LEFT_FENDER,
-	CAR_BACK_RIGHT_FENDER,
-
-    CAR_DOOR,
-      CAR_LEFT_DOOR,
-      CAR_RIGHT_DOOR,
-    CAR_WINDOW_DOOR,
-      CAR_LEFT_WINDOW_DOOR,
-      CAR_RIGHT_WINDOW_DOOR,
+    CAR,
+      CAR_WHEEL,
+	CAR_WHEEL_FRONT,
+	  CAR_WHEEL_RIGHT_FRONT,
+	  CAR_WHEEL_LEFT_FRONT,
+	CAR_WHEEL_BACK,
+	  CAR_WHEEL_RIGHT_BACK,
+	  CAR_WHEEL_LEFT_BACK,
+      CAR_SPACE,
+      CAR_SUBFRAME,
+      CAR_BONNET,
+      CAR_TOP,
+      CAR_LUGGAGE_COMPARTMENT,
+      CAR_WINDSCREEN,
+	CAR_FRONT_WINDSCREEN,
+	CAR_BACK_WINDSCREEN,
+      CAR_BUMPER,
+	CAR_BACK_BUMPER,
+	CAR_FRONT_BUMPER,
+      CAR_FENDER,
+	CAR_FRONT_FENDER,
+	  CAR_FRONT_LEFT_FENDER,
+	  CAR_FRONT_RIGHT_FENDER,
+	CAR_BACK_FENDER,
+	  CAR_BACK_LEFT_FENDER,
+	  CAR_BACK_RIGHT_FENDER,
+      CAR_DOOR,
+	CAR_LEFT_DOOR,
+	CAR_RIGHT_DOOR,
+      CAR_WINDOW_DOOR,
+	CAR_LEFT_WINDOW_DOOR,
+	CAR_RIGHT_WINDOW_DOOR,
 
     GLOBAL_SPACE,
     GROUND_SPACE,
     GROUND,
     OBSTACLE_SPACE,
     OBSTACLE,
-
+    MOVABLE_OBSTACLE, //could resist to a certain amount of strike before being a MOVABLE_ELEMENT
+    MOVABLE_ELEMENT,
+    MOVABLE_ELEMNT_SPACE,
   };
  
-  const TypeList type;
+  TypeList type;
 
   /**
    * Determine witch of the two Geoms will used its dealWith method on
@@ -77,19 +75,18 @@ public:
 
 
 
-class DContactProperty : public Type {
+class DContactType : public Type {
 private:
+  DContactType();
+  DContactType(const DContactType&);
+  DContactType & operator=(const DContactType&);
+  
+public:
   dContact contact;
 
-  DContactProperty();
-  DContactProperty(const DContactProperty&);
-  DContactProperty & operator=(const DContactProperty&);
-  void mixdContact(dContact* res, const dContact* c1, const dContact* c2);
+  static void mixdContact(dContact* res, const dContact* c1, const dContact* c2);
 
-public:
-  const dContact* getContact() const;
-
-  DContactProperty(Type::TypeList type);
+  DContactType(Type::TypeList type);
   virtual  void dealWith(dGeomID me, dGeomID other);
 };
 

@@ -18,9 +18,9 @@
  extern Global _glb;
 
 #ifndef CAR_HPP
-#ifndef SPACE_HPP
-extern Car car;
-#endif
+  #ifndef SPACE_HPP
+    extern Car car;
+  #endif
 #endif
 
 //macros

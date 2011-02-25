@@ -7,6 +7,7 @@
 #include "OgreFramework.hpp"
 #include "parsexml.hpp"
 #include "space.hpp"
+#include "type.hpp"
 
 //Car
 #define C_X 0
@@ -54,7 +55,7 @@ public:
   
   inline dBodyID getBody();
 
-  static dContact contact;
+  static DContactType type;
 
   dGeomID getGeom(){
     return g;
@@ -87,6 +88,10 @@ public:
   ~Car();
   void init(const char *n, Ogre::SceneNode *no);
   void update();
+
+  void dropDoors();
+
+  dReal getPunch();
  
   void accelerate();
   void slowDown();
@@ -126,7 +131,7 @@ private:
   dBodyID b;
   dGeomID g;
   dMass m;
-  static dContact contact;
+  static DContactType type;
 
   bool brake;
 

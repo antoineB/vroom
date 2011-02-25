@@ -5,26 +5,24 @@
 
 Wheel::Wheel(){}
 
-dContact Wheel::contact;
-dContact Car::contact;
+DContactType Wheel::type(Type::CAR_WHEEL);
+DContactType Car::type(Type::CAR);
 
 void Wheel::init(dSpaceID s){
   //g = dCreateSphere(0, W_RADIUS);
   g = dCreateCylinder(0, W_RADIUS,0.5);
 
-  Wheel::contact.surface.mode= dContactBounce | dContactSoftCFM
+  Wheel::type.contact.surface.mode= dContactBounce | dContactSoftCFM
     | dContactSoftERP | dContactSlip1 | dContactSlip2;
-  Wheel::contact.surface.mu = dInfinity;
-  Wheel::contact.surface.bounce = 1.0;
-  Wheel::contact.surface.bounce_vel = 0.1;
-  Wheel::contact.surface.soft_cfm = 0.01;  
-  Wheel::contact.surface.soft_erp = 0.3;  
-  Wheel::contact.surface.slip1 = 1.0;
-  Wheel::contact.surface.slip2 = 1.0;
+  Wheel::type.contact.surface.mu = dInfinity;
+  Wheel::type.contact.surface.bounce = 1.0;
+  Wheel::type.contact.surface.bounce_vel = 0.1;
+  Wheel::type.contact.surface.soft_cfm = 0.01;  
+  Wheel::type.contact.surface.soft_erp = 0.3;  
+  Wheel::type.contact.surface.slip1 = 0.5;
+  Wheel::type.contact.surface.slip2 = 0.5;
 
-  dGeomSetData(g,(void*)&Wheel::contact);
-
-  dContact * c2 = (dContact*) dGeomGetData(g);
+  dGeomSetData(g,(void*)&Wheel::type);
 
   dSpaceAdd(s,g);
   //  dMassSetSphere (&m, W_DENSITY, W_RADIUS);
@@ -120,6 +118,17 @@ void Car::update() {
 
 Car::~Car(){}
 Car::Car(): speed(0.0), steer(0.0), g(NULL), b(NULL) ,brake(false){}
+
+void Car::dropDoors() {
+  if (dJointIsEnabled(leftDoorJoint)) {
+    dJointDisable(leftDoorJoint);
+    dJointDisable(rightDoorJoint);
+  }
+  else {
+    dJointEnable(leftDoorJoint);
+    dJointEnable(rightDoorJoint);
+  }
+}
 
 void Car::init(const char *n, Ogre::SceneNode *no){
   //if Ogre isn't set...
@@ -254,18 +263,19 @@ void Car::init(const char *n, Ogre::SceneNode *no){
 
   const dReal x=7.48 , y=0.60 , z=17.56 ;
   g= addBox ( x, y, z);
-  Car::contact.surface.mode= dContactBounce | dContactSoftCFM
+  Car::type.contact.surface.mode= dContactBounce | dContactSoftCFM
     | dContactSoftERP | dContactSlip1 | dContactSlip2;
-  Car::contact.surface.mu = dInfinity;
-  Car::contact.surface.bounce = 0.01;
-  Car::contact.surface.bounce_vel = 0.7;
-  Car::contact.surface.soft_cfm = 0.01;  
-  Car::contact.surface.soft_erp = 0.3;  
-  Car::contact.surface.slip1 = 0.07;
-  Car::contact.surface.slip2 = 0.07;
-  dGeomSetData(g,(void*)&Car::contact);
+  Car::type.contact.surface.mu = dInfinity;
+  Car::type.contact.surface.bounce = 0.01;
+  Car::type.contact.surface.bounce_vel = 0.7;
+  Car::type.contact.surface.soft_cfm = 0.01;  
+  Car::type.contact.surface.soft_erp = 0.3;  
+  Car::type.contact.surface.slip1 = 0.07;
+  Car::type.contact.surface.slip2 = 0.07;
 
-  dGeomSetData((dGeomID)space,(void*)&Car::contact);
+  dGeomSetData(g,(void*)&Car::type);
+
+  dGeomSetData((dGeomID)space,(void*)&Car::type);
 
   dMassSetBox(&m, 1.0, 1.3 * x, 2*y, z);
   b=World::getSingletonPtr()->add(g,&m);
@@ -289,7 +299,7 @@ void Car::init(const char *n, Ogre::SceneNode *no){
 
     dMassSetBox(&leftDoorMass, 1.0, 1.0, 1.5, 2.0);
     leftDoorBody = World::getSingletonPtr()->add(leftDoorGeom, &leftDoorMass);
-    dGeomSetData(leftDoorGeom, (void*)&Car::contact);
+    dGeomSetData(leftDoorGeom, (void*)&Car::type);
     
     //rotation 90
         dMatrix3 R;
@@ -334,7 +344,7 @@ void Car::init(const char *n, Ogre::SceneNode *no){
 
     dMassSetBox(&rightDoorMass, 1.0, 1.0, 1.5, 2.0);
     rightDoorBody = World::getSingletonPtr()->add(rightDoorGeom, &rightDoorMass);
-    dGeomSetData(rightDoorGeom, (void*)&Car::contact);
+    dGeomSetData(rightDoorGeom, (void*)&Car::type);
     
     //rotation 90
         dMatrix3 R;
@@ -487,6 +497,14 @@ void Car::lowRideBack() {
 
 void Car::setBrake(bool b){
   brake = b;
+  if (brake == true) {
+    Wheel::type.contact.surface.slip1 = 1.0;
+    Wheel::type.contact.surface.slip2 = 1.0;
+  }
+  else {
+    Wheel::type.contact.surface.slip1 = 0.5;
+    Wheel::type.contact.surface.slip2 = 0.5;
+  }
 }
 
 void Car::updateMotor(){
@@ -497,9 +515,9 @@ void Car::updateMotor(){
     for(int i = 2; i<4; i++){
       dJointSetHinge2Param(j[i], dParamVel2, 0);
       dJointSetHinge2Param(j[i], dParamFMax2, 5*10.5);        
-    }
+      }
     return ;
-  }
+    }
 
   static float sp=0.0;
   if (speed == 0) {
@@ -607,3 +625,22 @@ void Car::swayBars() {
 }
 
 
+#include <math.h>
+
+dReal Car::getPunch() {
+  const dReal *V = dBodyGetLinearVel(b);
+
+  /*  std::cout<<"Force: "<<V[0]<<" - "<<V[1]<<" - "<<V[2]<<std::endl;
+
+  {
+  const dReal *T = dBodyGetTorque(b);
+  std::cout<<"Torque: "<<T[0]<<" - "<<T[1]<<" - "<<T[2]<<std::endl;
+  }
+
+  {
+    const dReal *T = dBodyGetLinearVel(b);
+    std::cout<<"Vel: "<<T[0]<<" - "<<T[1]<<" - "<<T[2]<<std::endl;
+    }*/
+
+  return sqrt(pow(V[0], 2) + pow(V[1], 2) + pow(V[2], 2)) * m.mass;
+}

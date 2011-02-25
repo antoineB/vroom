@@ -94,26 +94,14 @@ dReal World::atodr(const char *str){
 
 dBodyID World::add(dGeomID g, dMass *m){
     dBodyID b = dBodyCreate( world );
-    dBodySetMass (b,m);
+
+    //needed if geom is trimesh
+    //      dMassTranslate(&mass, -mass.c[0], -mass.c[1], -mass.c[2]);
+
+    dBodySetMass (b, m);
     dGeomSetBody ( g , b );
     return b;
 }
-
-/*dGeomID World::add(dGeomID g, dSpaceID s){
-  if(s==0)
-    dSpaceAdd(space,g);
-  else
-    dSpaceAdd(s,g);
-  return g;
-}
-
-dSpaceID World::addSimpleSpace(){
-  return dSimpleSpaceCreate(space);
-}
-
-dSpaceID World::addHashSpace(){
-  return dHashSpaceCreate(space);
-  }*/
 
 dJointID World::addHinge2(dBodyID b1, dBodyID b2, dJointGroupID jg){
   dJointID j = dJointCreateHinge2(world, jg);
@@ -291,41 +279,52 @@ static void mixdContact(dContact* res, dContact* c1, dContact* c2){
   }									\
 
 
+static dReal avgDepth(dContact *contacts, int nbContacts) {
+  dReal sum = 0;
+  for (int i = 0; i < nbContacts; i++)
+    sum += contacts[i].geom.depth;
+  return sum/nbContacts;
+}
+
+static dReal maxDepth(dContact *contacts, int nbContacts) {
+  dReal max = 0;
+  for (int i = 0; i < nbContacts; i++)
+    if (contacts[i].geom.depth > max)
+      max = contacts[i].geom.depth;
+  return max;
+}
+
+static void avgNormal(dVector3 avgNorm, dContact *contacts, int nbContacts) {
+  avgNorm[0] = .0;
+  avgNorm[1] = .0;
+  avgNorm[2] = .0;
+
+  for (int i = 0; i < nbContacts; i++) {
+    avgNorm[0] += contacts[i].geom.normal[0];
+    avgNorm[1] += contacts[i].geom.normal[1];
+    avgNorm[2] += contacts[i].geom.normal[2];
+  } 
+
+  avgNorm[0] /= nbContacts;
+  avgNorm[1] /= nbContacts;
+  avgNorm[2] /= nbContacts;
+}
+
+#include "type.hpp"
+
 void nearCallback (void *data, dGeomID o1, dGeomID o2){
   assert(dGeomGetData(o1) != NULL);
   assert(dGeomGetData(o2) != NULL);
 
-  #define MAX_CONTACT_POINTS 16
-
   if (dGeomIsSpace(o1) || dGeomIsSpace(o2))  
     dSpaceCollide2( o1, o2, NULL, &nearCallback);
 
-  //assert(dGeomIsSpace(o1) == false); failed
-  //assert(dGeomIsSpace(o2) == false);
-
-  dContact * c1 = (dContact*) dGeomGetData(o1);
-  dContact * c2 = (dContact*) dGeomGetData(o2);
-
-  dBodyID b1 = dGeomGetBody(o1);
-  dBodyID b2 = dGeomGetBody(o2);
-  dContact contact[MAX_CONTACT_POINTS];  
-
-  mixdContact(contact,c1,c2);
-  for(int i=1; i<MAX_CONTACT_POINTS; i++)
-    memcpy(contact+i, contact, sizeof(*contact));
-
-  if (int numc = dCollide (o1,o2, MAX_CONTACT_POINTS,
-			   &contact[0].geom,sizeof(dContact))) {
-    drawContactPoints_(true);
-    
-    for(int i=0; i<numc; i++){
-      dJointID c = dJointCreateContact (World::getSingletonPtr()->world, 
-					World::getSingletonPtr()->contactGroup,
-					contact+i);
-      dJointAttach (c, dGeomGetBody(contact[i].geom.g1),
-		    dGeomGetBody(contact[i].geom.g2));
-    }
-  }
+  DContactType *c1 = (DContactType*) dGeomGetData(o1);
+  DContactType *c2 = (DContactType*) dGeomGetData(o2);
+  
+  cout<<"avant"<<endl;
+  c1->dealWith(o1, o2);
+  cout<<"apres"<<endl;
 }
 
 

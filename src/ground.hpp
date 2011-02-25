@@ -2,11 +2,12 @@
 #define GROUD_HPP
 
 #include <ode/ode.h>
-#include <OgreSingleton.h>
+#include <OGRE/OgreSingleton.h>
 
 #include "world.hpp"
 
 #include "global.hpp"
+#include "type.hpp"
 
 class Ground: public Ogre::Singleton<Ground>{
 protected:
@@ -30,7 +31,7 @@ class FlatGround: public Ground{
 
   virtual void init(const char* material);
 
-  static dContact contact;
+  static DContactType type;
 
 public:
   FlatGround(const char* material);
