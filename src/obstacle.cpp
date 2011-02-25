@@ -28,6 +28,9 @@ void Obstacle::initGeom(void* ptr){
   type.contact.surface.slip2 = 0.01;
 
   dGeomSetData(geom,(void*)&type);
+
+  dGeomSetCategoryBits(geom, BitField::getCategorieStaticEnvironement());
+  dGeomSetCollideBits(geom, BitField::getCollideStaticEnvironement());
 }
 
 Obstacle::Obstacle(const char *n, const char *meshName, dReal x, dReal y, dReal z)

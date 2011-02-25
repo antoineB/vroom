@@ -33,4 +33,10 @@
 #define HARD_DEBUG 0
 #define _dbg(x) if(HARD_DEBUG) std::cout<<x<<std::endl;
 
+namespace BitField {
+  unsigned long getCollideStaticEnvironement();
+  unsigned long getCategorieStaticEnvironement();
+
+};
+
 #endif

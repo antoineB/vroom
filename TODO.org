@@ -18,3 +18,5 @@
 * TODO there is a little bounce when the car is stoped
 ** happen only when wheels touching the ground (or other dGeom) 
 * TODO back wheels turn in high speed turn
+* TODO correct the collision point at cross mesh
+  this collision point shouldn't be there

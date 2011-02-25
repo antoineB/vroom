@@ -13,6 +13,16 @@ std::vector<std::string> names;
 
 Car car;
 
+unsigned long BitField::getCategorieStaticEnvironement() {
+  return 0x00000001;
+}
+
+unsigned long BitField::getCollideStaticEnvironement() {
+  return 0xFFFFFFFF ^ getCategorieStaticEnvironement();
+}
+
+
+
 int main(int argc, char **argv){
   //set globals variables
   memset(&_glb,0,sizeof(_glb));

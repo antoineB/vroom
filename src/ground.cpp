@@ -38,4 +38,7 @@ void FlatGround::init(const char* material){
   type.contact.surface.slip2 = 0.01;
 
   dGeomSetData(plane,(void*)&type);
+
+  dGeomSetCategoryBits(plane, BitField::getCategorieStaticEnvironement());
+  dGeomSetCollideBits(plane, BitField::getCollideStaticEnvironement());
 }
