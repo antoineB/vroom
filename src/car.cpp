@@ -23,7 +23,7 @@ void Wheel::init(dSpaceID s){
   Wheel::type.contact.surface.slip2 = 0.5;
 
   dGeomSetData(g,(void*)&Wheel::type);
-
+  
   dSpaceAdd(s,g);
   //  dMassSetSphere (&m, W_DENSITY, W_RADIUS);
   dMassSetCylinder(&m, 1,W_DENSITY, W_RADIUS, 0.5);

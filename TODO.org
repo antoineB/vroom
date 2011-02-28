@@ -10,6 +10,8 @@
 * TODO correct the fps managing system
   the time to wait between frames is hard coded
 * TODO correct the dNormalized4 bug
+  thris happen when adding two much force/torque/speed
+  and maybe because the car go out of 'simulation boundaries'
 ** DONE the correction seems to work
 ** the pb come from the car::updateMotor function
 ** the problem seems happen if dParmaVel is set too high, or maybe if the gap between to dParamVel is too hight
@@ -17,6 +19,13 @@
 ** search in documentation on paramVel and MaxForce for an anwser sa
 * TODO there is a little bounce when the car is stoped
 ** happen only when wheels touching the ground (or other dGeom) 
+** see Damping and auto-disable
 * TODO back wheels turn in high speed turn
-* TODO correct the collision point at cross mesh
-  this collision point shouldn't be there
+* TODO make a doc about the schema of the main algorithm
+  NEED TO BE MORE EXPLAINNED  
+* TODO add spring in wheel
+* TODO make the door can be closed
+* TODO make a mesh bound for the car than suit the graphical view better
+
+use a sphere for the wheels?
+use one body for the car dans 5 geoms (+ 2 geoms for the doors) ( 5 = 4 wheel + 1 car)

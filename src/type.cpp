@@ -3,36 +3,24 @@
 #include "type.hpp"
 #include "global.hpp"
 #include "world.hpp"
+#include "global_def.hpp"
 
-#define drawContactPoints_(BOOL)					\
-  if (BOOL) {								\
-  static int n = _glb.nbTurn;						\
-  static std::vector<Ogre::Entity*> ents;				\
-  if (n < _glb.nbTurn) {						\
-  n = _glb.nbTurn;							\
-  for (int i = ents.size()-1; i >= 0; i--) {				\
-      sceneMgr_->destroySceneNode(ents[i]->getParentSceneNode());	\
-      sceneMgr_->destroyEntity(ents[i]);				\
-      ents.pop_back();							\
-  }									\
-  }									\
-  Ogre::SceneNode* node;						\
-  try{ node = sceneMgr_->getSceneNode("contact_node"); }		\
-  catch (Ogre::Exception e) {						\
-    node=sceneMgr_->getRootSceneNode()					\
-      ->createChildSceneNode("contact_node");				\
-  }									\
-  for(int i=0; i < numc; i++) {						\
-  Ogre::Entity* e = sceneMgr_->createEntity("collision_point.mesh");	\
-  Ogre::SceneNode* n=node->createChildSceneNode(			\
-    Ogre::Vector3( (Ogre::Real)contact[i].geom.pos[0],			\
-		   (Ogre::Real)contact[i].geom.pos[1],			\
-		   (Ogre::Real)contact[i].geom.pos[2]) );		\
-  ents.push_back(e);							\
-  n->attachObject(e);							\
-  n->scale(0.35, 0.35, 0.35);						\
-  }    									\
-  }									\
+static void drawContactPoints(int nbPoints, dContact *contact) {
+  Ogre::SceneNode* node = sceneMgr_->getSceneNode("contact_points_node"); 
+
+for(int i=0; i < nbPoints; i++) {
+  Ogre::Entity* e = sceneMgr_->createEntity("collision_point.mesh"); 
+  Ogre::SceneNode* n=node->createChildSceneNode(	     		 
+			    Ogre::Vector3(
+					  (Ogre::Real)contact[i].geom.pos[0], 
+					  (Ogre::Real)contact[i].geom.pos[1], 
+					  (Ogre::Real)contact[i].geom.pos[2])
+					        );
+  _glb.collidingPoints.push_back(n);				 
+  n->attachObject(e);						 
+  n->scale(0.35, 0.35, 0.35);					 
+ }
+}									 
 
 Type::Type(TypeList typeList) : type(typeList) {}
 
@@ -55,7 +43,7 @@ static void standartDealing(dGeomID g1, dContact c1, dGeomID g2, dContact c2) {
   if (int numc = dCollide (g1, g2, MAX_CONTACT_POINTS,
 			   &contact[0].geom,sizeof(dContact))) {
 
-    drawContactPoints_(true);
+    drawContactPoints(numc, contact);
   
     for(int i=0; i < numc; i++) {  
       dJointID c = dJointCreateContact (World::getSingletonPtr()->getWorld(), 
@@ -79,7 +67,7 @@ static void standartNullDealing(dGeomID g1, dContact c1, dGeomID g2) {
   if (int numc = dCollide (g1, g2, MAX_CONTACT_POINTS,
 			   &contact[0].geom,sizeof(dContact))) {
 
-    drawContactPoints_(true);
+    drawContactPoints(numc, contact);
   
     for(int i=0; i < numc; i++) {  
       dJointID c = dJointCreateContact (World::getSingletonPtr()->getWorld(), 

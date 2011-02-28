@@ -113,7 +113,7 @@ void demo::startDemo(){
 
   m_bShutdown = false;
 
-  _glb.nbTurn=0;
+  _glb.nbFrame = 0;
 
   log_("Demo initialized");
 	
@@ -177,7 +177,7 @@ void demo::setupDemoScene(){
 
 
 void demo::forFrameDo(unsigned int time){
-  _glb.nbTurn++;
+  _glb.nbFrame++;
   
   //simulation loop
   World::getSingletonPtr()->update();

@@ -131,9 +131,20 @@ World::~World(){
   _glb.worldUp=false;
 }
 
-inline void World::beforeCollidingSpaces() {}
+inline void World::beforeCollidingSpaces() {
+  //removing the dCollision points
+  for (int i = _glb.collidingPoints.size()-1; i >= 0; i--) {		
+    sceneMgr_->destroySceneNode(_glb.collidingPoints[i]);
+    _glb.collidingPoints.pop_back();
+  }									
+
+  //adding the contact_points_node if unexistant
+  if (!sceneMgr_->hasSceneNode("contact_points_node"))
+    sceneMgr_->getRootSceneNode()->createChildSceneNode("contact_points_node");
+}
 
 inline void World::afterCollidingSpaces() {
+  //adding the swayBars forces
   extern Car car;  
   car.swayBars();
 }
@@ -247,37 +258,6 @@ static void mixdContact(dContact* res, dContact* c1, dContact* c2){
   if(res->surface.slip2<0) res->surface.slip2=0;
   
 }
-
-#define drawContactPoints_(BOOL)					\
-  if (BOOL) {								\
-  static int n = _glb.nbTurn;						\
-  static std::vector<Ogre::Entity*> ents;				\
-  if (n < _glb.nbTurn) {						\
-  n = _glb.nbTurn;							\
-  for (int i = ents.size()-1; i >= 0; i--) {				\
-      sceneMgr_->destroySceneNode(ents[i]->getParentSceneNode());	\
-      sceneMgr_->destroyEntity(ents[i]);				\
-      ents.pop_back();							\
-  }									\
-  }									\
-  Ogre::SceneNode* node;						\
-  try{ node = sceneMgr_->getSceneNode("contact_node"); }		\
-  catch (Ogre::Exception e) {						\
-    node=sceneMgr_->getRootSceneNode()					\
-      ->createChildSceneNode("contact_node");				\
-  }									\
-  for(int i=0; i < numc; i++) {						\
-  Ogre::Entity* e = sceneMgr_->createEntity("collision_point.mesh");	\
-  Ogre::SceneNode* n=node->createChildSceneNode(			\
-    Ogre::Vector3( (Ogre::Real)contact[i].geom.pos[0],			\
-		   (Ogre::Real)contact[i].geom.pos[1],			\
-		   (Ogre::Real)contact[i].geom.pos[2]) );		\
-  ents.push_back(e);							\
-  n->attachObject(e);							\
-  n->scale(0.35, 0.35, 0.35);						\
-  }    									\
-  }									\
-
 
 static dReal avgDepth(dContact *contacts, int nbContacts) {
   dReal sum = 0;
