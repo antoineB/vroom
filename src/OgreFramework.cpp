@@ -23,7 +23,6 @@ OgreFramework::OgreFramework(){
   m_pKeyboard			= 0;
   m_pMouse			= 0;
 
-  m_pTrayMgr                      = 0;
   m_FrameEvent                    = Ogre::FrameEvent();
 
   inCarView = 1;
@@ -107,14 +106,54 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
   m_pTimer = new Ogre::Timer();
   m_pTimer->reset();
 	
-  m_pTrayMgr = new OgreBites::SdkTrayManager("TrayMgr", m_pRenderWnd, m_pMouse, this);
-  m_pTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
-  m_pTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
-  //m_pTrayMgr->hideCursor();
-
   m_pRenderWnd->setActive(true);
 
+  mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
+  CEGUI::Imageset::setDefaultResourceGroup("Imagesets");
+  CEGUI::Font::setDefaultResourceGroup("Fonts");
+  CEGUI::Scheme::setDefaultResourceGroup("Schemes");
+  CEGUI::WidgetLookManager::setDefaultResourceGroup("LookNFeel");
+  CEGUI::WindowManager::setDefaultResourceGroup("Layouts");
+  CEGUI::SchemeManager::getSingleton().create("TaharezLook.scheme");
+
+  CEGUI::System::getSingleton().setDefaultMouseCursor("TaharezLook", "MouseArrow");
+  CEGUI::MouseCursor::getSingleton().setImage( CEGUI::System::getSingleton().getDefaultMouseCursor());
+
+
+  CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
+  CEGUI::Window *sheet = wmgr.createWindow("DefaultWindow", "CEGUIDemo/Sheet");
+  
+  CEGUI::Window *quit = wmgr.createWindow("TaharezLook/Button", "CEGUIDemo/QuitButton");
+  quit->setText("Quit");
+  quit->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+
+  sheet->addChildWindow(quit);
+  CEGUI::System::getSingleton().setGUISheet(sheet);
+
+  quit->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&OgreFramework::quit, this));
+
   return true;
+}
+
+bool OgreFramework::quit(const CEGUI::EventArgs &evt) {
+  m_bShutDownOgre = true;
+  return true;
+}
+
+static CEGUI::MouseButton convertButton(OIS::MouseButtonID buttonID) {
+  switch (buttonID) {
+  case OIS::MB_Left:
+    return CEGUI::LeftButton;
+    
+  case OIS::MB_Right:
+    return CEGUI::RightButton;
+    
+  case OIS::MB_Middle:
+    return CEGUI::MiddleButton;
+    
+  default:
+    return CEGUI::LeftButton;
+  }
 }
 
 OgreFramework::~OgreFramework(){
@@ -153,17 +192,6 @@ bool OgreFramework::keyPressed(const OIS::KeyEvent &keyEventRef){
     }
     break;
 
-  case OIS::KC_O :
-    if(m_pTrayMgr->isLogoVisible()){
-      m_pTrayMgr->hideLogo();
-      m_pTrayMgr->hideFrameStats();
-    }
-    else{
-      m_pTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
-      m_pTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
-    }
-    break;
-
   case OIS::KC_C :
     inCarView=(inCarView+1)%4;
     break;
@@ -179,15 +207,24 @@ bool OgreFramework::keyReleased(const OIS::KeyEvent &keyEventRef){
 bool OgreFramework::mouseMoved(const OIS::MouseEvent &evt){
   m_pCamera->yaw(Degree(evt.state.X.rel * -0.1f));
   m_pCamera->pitch(Degree(evt.state.Y.rel * -0.1f));
+
+  CEGUI::System &sys = CEGUI::System::getSingleton();
+  sys.injectMouseMove(evt.state.X.rel, evt.state.Y.rel);
+  // Scroll wheel.
+  if (evt.state.Z.rel)
+    sys.injectMouseWheelChange(evt.state.Z.rel / 120.0f);
+
 	
   return true;
 }
 
 bool OgreFramework::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id){
+  CEGUI::System::getSingleton().injectMouseButtonDown(convertButton(id));
   return true;
 }
 
 bool OgreFramework::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id){
+  CEGUI::System::getSingleton().injectMouseButtonUp(convertButton(id));
   return true;
 }
 
@@ -208,7 +245,7 @@ void OgreFramework::updateOgre(double timeSinceLastFrame){
     myMoveCamera3();
 
   m_FrameEvent.timeSinceLastFrame = timeSinceLastFrame;
-  m_pTrayMgr->frameRenderingQueued(m_FrameEvent);
+  //  m_pTrayMgr->frameRenderingQueued(m_FrameEvent);
 }
 
 #define QUICK 3
@@ -223,23 +260,11 @@ void OgreFramework::moveCamera(){
 }
 
 void OgreFramework::myMoveCamera3(){
-  extern Car car;
-    /*Ogre::Vector3 vec = car.getPosition();
-  vec.y += 6.0;
-  vec.z += 8.0;
-  m_pCamera->setPosition(vec);
-  //  m_pCamera->setOrientation(car.getOrientation());
-  m_pCamera->setDirection(car.getPosition());*/
   m_pCamera->detachFromParent();
   sceneMgr_->getSceneNode("cam_pos")->attachObject(m_pCamera);
-  //  m_pCamera->setOrientation(car.getOrientation());
 }
 
 void OgreFramework::myMoveCamera(){
-  //  m_pCamera->detachFromParent();
-  //sceneMgr_->getSceneNode("Camera")->attachObject(m_pCamera);
-
-
   extern Car car;
   Ogre::Vector3 vec = car.getPosition();
   vec.y += 3.2;
@@ -250,9 +275,6 @@ void OgreFramework::myMoveCamera(){
 
 
 void OgreFramework::myMoveCamera2() {
-  //m_pCamera->detachFromParent();
-  //sceneMgr_->getSceneNode("Camera")->attachObject(m_pCamera);
-
   extern Car car;
   m_pCamera->setDirection(car.getPosition());
 }

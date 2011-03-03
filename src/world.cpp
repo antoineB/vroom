@@ -27,12 +27,12 @@ void World::preInit(){
   
   dInitODE();
 
-  world=dWorldCreate();
+  world = dWorldCreate();
 
-  contactGroup=dJointGroupCreate(0);
-  space=dHashSpaceCreate(0);
+  contactGroup = dJointGroupCreate(0);
+  space = dHashSpaceCreate(0);
   
-  _glb.worldUp=true;
+  _glb.worldUp = true;
 }
 
 void World::postInit(){
@@ -132,15 +132,19 @@ World::~World(){
 }
 
 inline void World::beforeCollidingSpaces() {
-  //removing the dCollision points
-  for (int i = _glb.collidingPoints.size()-1; i >= 0; i--) {		
-    sceneMgr_->destroySceneNode(_glb.collidingPoints[i]);
-    _glb.collidingPoints.pop_back();
-  }									
-
   //adding the contact_points_node if unexistant
-  if (!sceneMgr_->hasSceneNode("contact_points_node"))
+  if (!sceneMgr_->hasSceneNode("contact_points_node")) {
     sceneMgr_->getRootSceneNode()->createChildSceneNode("contact_points_node");
+  }
+  //removing the dCollision points
+  else {
+    for (int i = 0; i < _glb.collidingPoints.size(); i++) {
+      while(_glb.collidingPoints[i]->numAttachedObjects())
+	sceneMgr_->destroyEntity((Ogre::Entity*)_glb.collidingPoints[i]->detachObject((short unsigned int)0));
+      sceneMgr_->destroySceneNode(_glb.collidingPoints[i]);
+    }
+    _glb.collidingPoints.clear();
+  }
 }
 
 inline void World::afterCollidingSpaces() {

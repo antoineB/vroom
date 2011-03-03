@@ -1,9 +1,5 @@
-//|||||||||||||||||||||||||||||||||||||||||||||||
-
 #ifndef OGRE_FRAMEWORK_HPP
 #define OGRE_FRAMEWORK_HPP
-
-//|||||||||||||||||||||||||||||||||||||||||||||||
 
 #include <OGRE/OgreCamera.h>
 #include <OGRE/OgreEntity.h>
@@ -16,19 +12,21 @@
 #include <OGRE/OgreSceneManager.h>
 #include <OGRE/OgreRenderWindow.h>
 #include <OGRE/OgreConfigFile.h>
+#include <OGRE/OgreSubMesh.h>
+#include <OGRE/OgreSubEntity.h>
+#include <OGRE/OgreMeshManager.h>
 
 #include <OIS/OISEvents.h>
 #include <OIS/OISInputManager.h>
 #include <OIS/OISKeyboard.h>
 #include <OIS/OISMouse.h>
 
-#include <OGRE/SdkTrays.h>
-
-//|||||||||||||||||||||||||||||||||||||||||||||||
+#include <CEGUI/CEGUI.h>
+#include <CEGUI/RendererModules/Ogre/CEGUIOgreRenderer.h>
 
 #include "global.hpp"
 
-class OgreFramework : public Ogre::Singleton<OgreFramework>, OIS::KeyListener, OIS::MouseListener, OgreBites::SdkTrayListener
+class OgreFramework : public Ogre::Singleton<OgreFramework>, OIS::KeyListener, OIS::MouseListener
 {
 public:
 	OgreFramework();
@@ -39,7 +37,7 @@ public:
 	void moveCamera();
 	void getInput();
 
-	bool isOgreToBeShutDown()const{return m_bShutDownOgre;}
+	bool isOgreToBeShutDown() const { return m_bShutDownOgre; }
 
 	bool keyPressed(const OIS::KeyEvent &keyEventRef);
 	bool keyReleased(const OIS::KeyEvent &keyEventRef);
@@ -60,11 +58,14 @@ public:
 	OIS::Keyboard*				m_pKeyboard;
 	OIS::Mouse*				m_pMouse;
 
+  CEGUI::OgreRenderer* mRenderer;
+  
+  bool quit(const CEGUI::EventArgs &evt);
+
 private:
 	OgreFramework(const OgreFramework&);
 	OgreFramework& operator= (const OgreFramework&);
 
-	OgreBites::SdkTrayManager*	        m_pTrayMgr;
         Ogre::FrameEvent                        m_FrameEvent;
 	int					m_iNumScreenShots;
 
@@ -83,8 +84,5 @@ private:
 
 };
 
-//|||||||||||||||||||||||||||||||||||||||||||||||
-
 #endif 
 
-//|||||||||||||||||||||||||||||||||||||||||||||||

@@ -6,7 +6,7 @@
 #include "OgreFramework.hpp"
 #include <ode/ode.h>
 
-class demo : public OIS::KeyListener{
+class demo : public OIS::KeyListener {
 
 public:
   demo();

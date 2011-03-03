@@ -11,5 +11,6 @@
    change the LIBDIRS variable to suit your libraries directories
 ** src/resources.cfg
    change the $OGRE_MEDIA_PATH to the path of ogre sdk media file
+   change the $CEGUI_NEEDED_PATH to the path where your CEGUI stuff is
 ** src/plugins.cfg
    change the pluginFolder to your Ogre's plugins folder

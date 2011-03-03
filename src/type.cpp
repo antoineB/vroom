@@ -8,18 +8,19 @@
 static void drawContactPoints(int nbPoints, dContact *contact) {
   Ogre::SceneNode* node = sceneMgr_->getSceneNode("contact_points_node"); 
 
-for(int i=0; i < nbPoints; i++) {
-  Ogre::Entity* e = sceneMgr_->createEntity("collision_point.mesh"); 
-  Ogre::SceneNode* n=node->createChildSceneNode(	     		 
-			    Ogre::Vector3(
-					  (Ogre::Real)contact[i].geom.pos[0], 
-					  (Ogre::Real)contact[i].geom.pos[1], 
-					  (Ogre::Real)contact[i].geom.pos[2])
-					        );
-  _glb.collidingPoints.push_back(n);				 
-  n->attachObject(e);						 
-  n->scale(0.35, 0.35, 0.35);					 
- }
+  for(int i=0; i < nbPoints; i++) {
+    Ogre::Entity* e = sceneMgr_->createEntity("collision_point.mesh"); 
+    Ogre::SceneNode* n=node->
+      createChildSceneNode(	     		 
+			   Ogre::Vector3(
+					 (Ogre::Real)contact[i].geom.pos[0], 
+					 (Ogre::Real)contact[i].geom.pos[1], 
+					 (Ogre::Real)contact[i].geom.pos[2]
+					 ));
+    _glb.collidingPoints.push_back(n);				 
+    n->attachObject(e);						 
+    n->scale(0.35, 0.35, 0.35);					 
+  }
 }									 
 
 Type::Type(TypeList typeList) : type(typeList) {}

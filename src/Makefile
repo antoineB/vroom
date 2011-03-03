@@ -1,5 +1,5 @@
 
-INCDIRS=-I/usr/local/include/ -I/usr/include/
+INCDIRS=-I/usr/local/include/ -I/usr/include/ -I/usr/local/include/OGRE/
 LIBSDIRS=-L/usr/local/lib/ -L.
 LIBS=-lOgreMain -lOIS -lCEGUIOgreRenderer -lode -ltinyxml
 CXXFLAGS=-Wall -Wextra -pedent
