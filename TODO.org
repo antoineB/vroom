@@ -30,5 +30,6 @@
 use a sphere for the wheels?
 use one body for the car dans 5 geoms (+ 2 geoms for the doors) ( 5 = 4 wheel + 1 car)
 * TODO make it runnable on Windows
-* DONE correct the memory leak
-** come from the drawContactPoint function (type.cpp)
+* TODO correct the ogre materiel bug
+* TODO make tooltip working on cegui
+* TODO make a real reset car function

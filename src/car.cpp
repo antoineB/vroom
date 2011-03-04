@@ -84,8 +84,6 @@ void Wheel::create(dSpaceID s, Wheel::Position p, Ogre::SceneNode *node)
   dReal d[3];
   getPositionFromCar(d);
   dBodySetPosition(b, d[0], d[1], d[2]);
-  dMatrix3 R;
-  const dReal PI=3.14159265;
   MyTools::byOdeToOgre(g, n);
 
   //ugly
@@ -99,7 +97,7 @@ void Wheel::create(dSpaceID s, Wheel::Position p, Ogre::SceneNode *node)
 
 void Car::update() {
   //graphical
-  MyTools::byOdeToOgre(g, sceneMgr_->getSceneNode(nodeName.c_str()));
+  MyTools::byOdeToOgre(g, this->cst.carNode);
   
   Ogre::SceneNode *lnode=sceneMgr_->getSceneNode("left_door");
   MyTools::byOdeToOgre(leftDoorBody, lnode);
@@ -130,7 +128,7 @@ void Car::dropDoors() {
   }
 }
 
-void Car::init(const char *n, Ogre::SceneNode *no){
+void Car::init(const char *nodeName, Ogre::SceneNode *root){
   //if Ogre isn't set...
   if(sceneMgr_==NULL){
     log_("Ogre isn't lunched before the car is set up");
@@ -143,118 +141,9 @@ void Car::init(const char *n, Ogre::SceneNode *no){
     exit(0);
   }
   
-  nodeName=n;
-  
-  Ogre::SceneNode *node;
-  Ogre::Entity *e;  
-  //  Ogre::Entity *b_car;    
+  createNodesAndMeshes(nodeName, root);
+  createCamNodes();
 
-  //  e = sceneMgr_->createEntity("subframe","subframe.mesh");
-  //  e->setMaterialName("Car/Subframe");
-  node = no->createChildSceneNode(n);
-  //  node->attachObject(e);
-  //  node->scale(0.9, 0.9, 0.9);
-
-  Ogre::SceneNode *fnode = node->createChildSceneNode("ford");
-  fnode->scale(0.35, 0.35, 0.35);
-  fnode->yaw(Ogre::Degree(180));
-  fnode->translate(0.0, 1.9, 0.0);
-
-  Ogre::SceneNode *cam = fnode->createChildSceneNode("cam_pos");
-  cam->translate(0.0, 9.0, -15.0);
-
-  Ogre::SceneNode *camT = fnode->createChildSceneNode("cam_target");
-  camT->translate(0.0, 4.0, 5.0);
-
-  cam->setAutoTracking (true, camT);
-  cam->setFixedYawAxis (true); 
-
-  e=sceneMgr_->createEntity("bonet", "bonet.mesh");
-    e->setMaterialName("Ford/Top");
-    fnode->attachObject(e); 
-
-    e=sceneMgr_->createEntity("back", "back.mesh");
-    e->setMaterialName("Ford/Back");
-    fnode->attachObject(e); 
-
-    e=sceneMgr_->createEntity("front", "front.mesh");
-    e->setMaterialName("Ford/Front");
-    fnode->attachObject(e); 
-
-    e=sceneMgr_->createEntity("bottom", "bottom.mesh");
-    e->setMaterialName("Ford/Bottom");
-    fnode->attachObject(e); 
-
-    e=sceneMgr_->createEntity("top", "top.mesh");
-    e->setMaterialName("Ford/Top");
-    fnode->attachObject(e); 
-
-    e=sceneMgr_->createEntity("wind_window", "wind_window.mesh");
-    e->setMaterialName("Ford/TopWindow");
-    fnode->attachObject(e); 
-
-    e=sceneMgr_->createEntity("back_top", "back_top.mesh");
-    e->setMaterialName("Ford/Top");
-    fnode->attachObject(e); 
-
-    e=sceneMgr_->createEntity("back_window", "back_window.mesh");
-    e->setMaterialName("Ford/TopWindow");
-    fnode->attachObject(e); 
-
-    e=sceneMgr_->createEntity("wind_window_frame", "wind_window_frame.mesh");
-    e->setMaterialName("Ford/Top");
-    fnode->attachObject(e); 
-
-    e=sceneMgr_->createEntity("left_back", "left_back.mesh");
-    e->setMaterialName("Ford/LeftDoor");
-    fnode->attachObject(e); 
-
-    e=sceneMgr_->createEntity("left_front", "left_front.mesh");
-    e->setMaterialName("Ford/LeftDoor");
-    fnode->attachObject(e); 
-
-    Ogre::SceneNode *lnode = sceneMgr_->getRootSceneNode()->createChildSceneNode("left_door");
-    {
-      lnode->scale(0.35, 0.35, 0.35);
-
-      e=sceneMgr_->createEntity("left_door", "left_door.mesh");
-      e->setMaterialName("Ford/LeftDoor");
-      lnode->attachObject(e); 
-      
-      e=sceneMgr_->createEntity("left_window", "left_window.mesh");
-      e->setMaterialName("Ford/LeftWindow");
-      lnode->attachObject(e); 
-    
-      e=sceneMgr_->createEntity("left_little_window", "left_little_window.mesh");
-      e->setMaterialName("Ford/LeftWindow");
-      lnode->attachObject(e); 
-    }
-
-    e=sceneMgr_->createEntity("right_back", "right_back.mesh");
-    e->setMaterialName("Ford/RightDoor");
-    fnode->attachObject(e); 
-
-    e=sceneMgr_->createEntity("right_front", "right_front.mesh");
-    e->setMaterialName("Ford/RightDoor");
-    fnode->attachObject(e); 
-
-    Ogre::SceneNode *rnode = sceneMgr_->getRootSceneNode()->createChildSceneNode("right_door");
-    {
-      rnode->scale(0.35, 0.35, 0.35);
-
-      e=sceneMgr_->createEntity("right_door", "right_door.mesh");
-      e->setMaterialName("Ford/RightDoor");
-      rnode->attachObject(e); 
-      
-      e=sceneMgr_->createEntity("right_window", "right_window.mesh");
-      e->setMaterialName("Ford/RightWindow");
-      rnode->attachObject(e); 
-      
-      e=sceneMgr_->createEntity("right_little_window", "right_little_window.mesh");
-      e->setMaterialName("Ford/RightWindow");
-      rnode->attachObject(e); 
-    }
-  
   //partie physique
   
   space=World::getSingletonPtr()->addSimpleSpace();
@@ -324,7 +213,7 @@ void Car::init(const char *n, Ogre::SceneNode *no){
     dJointSetHingeAxis(leftDoorJoint, 0, 1, 0);
     dJointSetHingeAnchor(leftDoorJoint, -x, C_Y -y, -z);
 
-    MyTools::byOdeToOgre(leftDoorBody, lnode);    
+    MyTools::byOdeToOgre(leftDoorBody, this->cst.leftDoorNode);    
   }
 
 
@@ -369,12 +258,12 @@ void Car::init(const char *n, Ogre::SceneNode *no){
     dJointSetHingeAxis(rightDoorJoint, 0, 1, 0);
     dJointSetHingeAnchor(rightDoorJoint, x, C_Y -y, -z);
 
-    MyTools::byOdeToOgre(rightDoorBody, rnode);    
+    MyTools::byOdeToOgre(rightDoorBody, this->cst.rightDoorNode);    
   }
 
  
-  MyTools::byOdeToOgre(g, node);
-  
+  MyTools::byOdeToOgre(g, this->cst.carNode);
+    
   {
     Ogre::SceneNode* carNode=sceneMgr_->getRootSceneNode();
     struct Wheel::Position tmp[4]={
@@ -433,8 +322,36 @@ void Car::init(const char *n, Ogre::SceneNode *no){
 
 }
 
+void Car::printRotationMatrix() {
+  const dReal *R = dGeomGetRotation(g);
+  
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      std::cout<<i<<" "<<j<<" = "<<R[i + j]<<std::endl;
+    }
+  }
+}
+
+void Car::rotateWheels(dMatrix3 *R) {
+  for (int i = 0; i < 3; i++)
+    dGeomSetRotation(w[i].getGeom(), *R);
+}
+
 void Car::reset() {
   dGeomSetPosition (g, C_X, C_Y, C_Z);
+  dMatrix3 R = {
+    1.0, 2.0, 12.0, 
+    3.0, 1.0, 6.0,
+    4.0, 5.0, 1.0
+  };
+  
+  dBodySetLinearVel(b, 0., 0., 0.);
+  dBodySetAngularVel(b, 0., 0., 0.);
+
+  dGeomSetRotation(g, R);
+  rotateWheels(&R);
+  dGeomSetRotation(leftDoorGeom, R);
+  dGeomSetRotation(rightDoorGeom, R);
 }
 
 void Car::accelerate(){ speed+=10.5; }
@@ -508,9 +425,6 @@ void Car::setBrake(bool b){
 }
 
 void Car::updateMotor(){
-  const float max=50.0;
-  const float palier1=30.0;
-
   if(brake){
     for(int i = 2; i<4; i++){
       dJointSetHinge2Param(j[i], dParamVel2, 0);
@@ -571,7 +485,7 @@ Ogre::Vector3 Car::cam() {
 }
 
 Ogre::Vector3 Car::getPosition() {
-  return sceneMgr_->getSceneNode(nodeName.c_str())->getPosition();
+  return this->cst.carNode->getPosition();
 }
 
 Ogre::Vector3 Car::getDirection() {
@@ -584,7 +498,7 @@ Ogre::Vector3 Car::getDirection() {
 
 
 Ogre::Quaternion Car::getOrientation() {
-  return sceneMgr_->getSceneNode(nodeName.c_str())->getOrientation();
+  return this->cst.carNode->getOrientation();
 }
 
 
@@ -644,3 +558,130 @@ dReal Car::getPunch() {
 
   return sqrt(pow(V[0], 2) + pow(V[1], 2) + pow(V[2], 2)) * m.mass;
 }
+
+dReal Car::getFrontWheelsErp() {
+  return dJointGetHinge2Param(j[0], dParamSuspensionERP);
+}
+
+dReal Car::getBackWheelsErp() {
+  return dJointGetHinge2Param(j[2], dParamSuspensionERP);
+}
+
+void Car::setBackWheelsErp(dReal erp) {
+    dJointSetHinge2Param(j[2], dParamSuspensionERP, erp);
+    dJointSetHinge2Param(j[3], dParamSuspensionERP, erp);
+}
+
+void Car::setFrontWheelsErp(dReal erp) {
+  dJointSetHinge2Param(j[0], dParamSuspensionERP, erp);
+  dJointSetHinge2Param(j[1], dParamSuspensionERP, erp);
+}
+
+
+dReal Car::getFrontWheelsCfm() {
+  return dJointGetHinge2Param(j[0], dParamSuspensionCFM);
+}
+
+dReal Car::getBackWheelsCfm() {
+    return dJointGetHinge2Param(j[2], dParamSuspensionCFM);
+}
+
+void Car::setBackWheelsCfm(dReal cfm) {
+  dJointSetHinge2Param(j[2], dParamSuspensionCFM, cfm);
+  dJointSetHinge2Param(j[3], dParamSuspensionCFM, cfm);
+}
+
+void Car::setFrontWheelsCfm(dReal cfm) {
+  dJointSetHinge2Param(j[0], dParamSuspensionCFM, cfm);
+  dJointSetHinge2Param(j[1], dParamSuspensionCFM, cfm);
+}
+
+
+
+void Car::createLeftDoor() {
+  Ogre::SceneNode *lnode = sceneMgr_->getRootSceneNode()->createChildSceneNode("left_door");
+    
+  this->cst.leftDoorNode = lnode;
+
+  lnode->scale(0.35, 0.35, 0.35);
+
+  createAndAttachEntity("left_door", "left_door.mesh", "Ford/LeftDoor", lnode);
+  createAndAttachEntity("left_window", "left_window.mesh", "Ford/LeftWindow", lnode);
+  createAndAttachEntity("left_little_window", "left_little_window.mesh", "Ford/LeftWindow", lnode);
+}
+
+void Car::createRightDoor() {
+  Ogre::SceneNode *rnode = sceneMgr_->getRootSceneNode()->createChildSceneNode("right_door");
+
+  this->cst.rightDoorNode = rnode;
+    
+  rnode->scale(0.35, 0.35, 0.35);
+
+  createAndAttachEntity("right_door", "right_door.mesh", "Ford/RightDoor", rnode); 
+  createAndAttachEntity("right_window", "right_window.mesh", "Ford/RightWindow", rnode); 
+  createAndAttachEntity("right_little_window", "right_little_window.mesh", "Ford/RightWindow", rnode); 
+}
+
+
+void Car::createAndAttachEntity(const std::string &name, const std::string &meshName, const std::string &materialName, Ogre::SceneNode *node) const {
+  Ogre::Entity *e = sceneMgr_->createEntity(name, meshName);
+  e->setMaterialName(materialName);
+  node->attachObject(e);
+}
+
+void Car::createNodesAndMeshes(std::string nodeName, Ogre::SceneNode *parentNode) {
+  Ogre::SceneNode *node = parentNode->createChildSceneNode(nodeName);
+  Ogre::SceneNode *fnode = node->createChildSceneNode("ford");
+
+  this->cst.nodeName = nodeName;
+  this->cst.carNode = node;
+  this->cst.subCarNode = fnode;
+
+  fnode->scale(0.35, 0.35, 0.35);
+  fnode->yaw(Ogre::Degree(180));
+  fnode->translate(0.0, 1.9, 0.0);
+
+  {
+    std::string names[] = {
+      "bonet", "back", "front", "bottom", "top", "wind_window", "back_top",
+      "back_window", "wind_window_frame", "left_back", "left_front",
+      "right_back", "right_front"
+    };
+      
+    std::string meshNames[] = {
+      "bonet.mesh", "back.mesh", "front.mesh", "bottom.mesh", "top.mesh",
+      "wind_window.mesh", "back_top.mesh", "back_window.mesh", 
+      "wind_window_frame.mesh", "left_back.mesh", "left_front.mesh",
+      "right_back.mesh", "right_front.mesh"
+    };
+    
+    std::string materialNames[] = {
+      "Ford/Top", "Ford/Back", "Ford/Front", "Ford/Bottom", "Ford/Top",
+      "Ford/TopWindow", "Ford/Top", "Ford/TopWindow", "Ford/Top",
+      "Ford/LeftDoor", "Ford/LeftDoor", "Ford/RightDoor", "Ford/RightDoor"
+    };
+
+    for (int i = 0; i < 13; i++)
+      createAndAttachEntity(names[i], meshNames[i], materialNames[i], fnode);
+  }
+
+  createLeftDoor();
+  createRightDoor();
+
+}
+
+
+void Car::createCamNodes() {
+  Ogre::SceneNode *cam = this->cst.subCarNode->createChildSceneNode("cam_pos");
+  //MUST BE CHANGE
+  cam->translate(0.0, 9.0, -15.0);
+  
+  Ogre::SceneNode *camT = this->cst.subCarNode->createChildSceneNode("cam_target");
+  //MUST BE CHANGE
+  camT->translate(0.0, 4.0, 5.0);
+
+  //don't what it used for
+  cam->setAutoTracking (true, camT);
+  cam->setFixedYawAxis (true); 
+}
+

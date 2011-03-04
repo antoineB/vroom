@@ -106,6 +106,32 @@ demo::~demo(){
   delete OgreFramework::getSingletonPtr();
 }
 
+static void setupCegui() {
+  CEGUI::Window *bErp = windowMgr_->getWindow("root/wheels/back/erp");
+  CEGUI::Window *bCfm = windowMgr_->getWindow("root/wheels/back/cfm");
+  
+  CEGUI::Window *fErp = windowMgr_->getWindow("root/wheels/front/erp");
+  CEGUI::Window *fCfm = windowMgr_->getWindow("root/wheels/front/cfm");
+  
+  extern Car car;
+  ((CEGUI::Scrollbar*)bErp)->setScrollPosition((float)(car.getBackWheelsErp()));
+  ((CEGUI::Scrollbar*)bCfm)->setScrollPosition((float)(car.getBackWheelsCfm()));
+  ((CEGUI::Scrollbar*)fErp)->setScrollPosition((float)(car.getFrontWheelsErp()));
+  ((CEGUI::Scrollbar*)fCfm)->setScrollPosition((float)(car.getFrontWheelsCfm()));
+
+  bErp->subscribeEvent(CEGUI::Scrollbar::EventScrollPositionChanged, 
+		       CEGUI::Event::Subscriber(
+						&OgreFramework::setBackWheelsErp,
+						OgreFramework::getSingletonPtr()
+						));
+
+  bCfm->subscribeEvent(CEGUI::Scrollbar::EventScrollPositionChanged, CEGUI::Event::Subscriber(&OgreFramework::setBackWheelsCfm, OgreFramework::getSingletonPtr()));
+  fErp->subscribeEvent(CEGUI::Scrollbar::EventScrollPositionChanged, CEGUI::Event::Subscriber(&OgreFramework::setFrontWheelsErp, OgreFramework::getSingletonPtr()));
+  fCfm->subscribeEvent(CEGUI::Scrollbar::EventScrollPositionChanged, CEGUI::Event::Subscriber(&OgreFramework::setFrontWheelsCfm, OgreFramework::getSingletonPtr()));
+
+}
+
+
 void demo::startDemo(){
   new OgreFramework();
   if(!OgreFramework::getSingletonPtr()->initOgre("demo v1.0", this, 0))
@@ -118,16 +144,20 @@ void demo::startDemo(){
   log_("Demo initialized");
 	
   setupDemoScene();
+
+  setupCegui();
   
   runDemo();
 }
 
+
+
 void demo::setupDemoScene(){
   sceneMgr_->createLight("Light")->setPosition(75,75,75);
   sceneMgr_->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_MODULATIVE);
-  sceneMgr_->setSkyDome(true, "Examples/CloudySky", 5, 8, 100);
+  sceneMgr_->setSkyDome(true, "Sky/CloudySky", 5, 8, 100);
 
-  new FlatGround("Examples/Rockwall");
+  new FlatGround("Ground/Dirt");
   
   Obstacle o("obstacle","obstacle.mesh",1.0,1.0,-20.0);
   o.setMaterial("Obstacle/Essai");
@@ -220,7 +250,9 @@ void demo::runDemo(){
 
 	const int timeForEachFrame = 10;
 	forFrameDo(timeForEachFrame);
-		
+
+	//	CEGUI::System::getSingleton().injectTimePulse( ( timer_->getMillisecondsCPU() - timeSinceLastFrame ) * 0.05f );
+	
 	timeSinceLastFrame = timer_->getMillisecondsCPU() - startTime;
 	int lazyTime=timeForEachFrame-timeSinceLastFrame;
 	if(lazyTime>0){
@@ -244,6 +276,10 @@ bool demo::keyPressed(const OIS::KeyEvent &keyEventRef){
   
   switch(keyEventRef.key){
     
+  case OIS::KC_A :
+    std::cout<<"A - demo"<<std::endl;
+    break;
+
   case OIS::KC_UP :
     car.accelerate();
     break;
@@ -302,6 +338,7 @@ bool demo::keyPressed(const OIS::KeyEvent &keyEventRef){
 
   return true;
 }
+
 bool demo::keyReleased(const OIS::KeyEvent &keyEventRef){
   OgreFramework::getSingletonPtr()->keyReleased(keyEventRef);
 

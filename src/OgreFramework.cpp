@@ -23,7 +23,7 @@ OgreFramework::OgreFramework(){
   m_pKeyboard			= 0;
   m_pMouse			= 0;
 
-  m_FrameEvent                    = Ogre::FrameEvent();
+  moveCursor = false;
 
   inCarView = 1;
 }
@@ -114,31 +114,40 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
   CEGUI::Scheme::setDefaultResourceGroup("Schemes");
   CEGUI::WidgetLookManager::setDefaultResourceGroup("LookNFeel");
   CEGUI::WindowManager::setDefaultResourceGroup("Layouts");
-  CEGUI::SchemeManager::getSingleton().create("TaharezLook.scheme");
+  CEGUI::SchemeManager::getSingleton().create("VanillaSkin.scheme");
 
-  CEGUI::System::getSingleton().setDefaultMouseCursor("TaharezLook", "MouseArrow");
+  CEGUI::System::getSingleton().setDefaultMouseCursor("Vanilla-Images", "MouseArrow");
   CEGUI::MouseCursor::getSingleton().setImage( CEGUI::System::getSingleton().getDefaultMouseCursor());
 
-
-  CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
-  CEGUI::Window *sheet = wmgr.createWindow("DefaultWindow", "CEGUIDemo/Sheet");
+  CEGUI::Window *guiRoot = CEGUI::WindowManager::getSingleton().loadWindowLayout("car_settings.layout"); 
+  CEGUI::System::getSingleton().setGUISheet(guiRoot);
   
-  CEGUI::Window *quit = wmgr.createWindow("TaharezLook/Button", "CEGUIDemo/QuitButton");
-  quit->setText("Quit");
-  quit->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-
-  sheet->addChildWindow(quit);
-  CEGUI::System::getSingleton().setGUISheet(sheet);
-
-  quit->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&OgreFramework::quit, this));
-
   return true;
 }
 
-bool OgreFramework::quit(const CEGUI::EventArgs &evt) {
-  m_bShutDownOgre = true;
-  return true;
-}
+bool OgreFramework::setBackWheelsErp(const CEGUI::EventArgs &evt) {
+    extern Car car;
+    CEGUI::Window *w = windowMgr_->getWindow("root/wheels/back/erp");
+    car.setBackWheelsErp(((CEGUI::Scrollbar*)w)->getScrollPosition());
+  }
+   
+  bool OgreFramework::setBackWheelsCfm(const CEGUI::EventArgs &evt) {
+    extern Car car;
+    CEGUI::Window *w = windowMgr_->getWindow("root/wheels/back/cfm");
+    car.setBackWheelsCfm(((CEGUI::Scrollbar*)w)->getScrollPosition());
+  }
+  
+  bool OgreFramework::setFrontWheelsErp(const CEGUI::EventArgs &evt) {
+    extern Car car;
+    CEGUI::Window *w = windowMgr_->getWindow("root/wheels/front/erp");
+    car.setFrontWheelsErp(((CEGUI::Scrollbar*)w)->getScrollPosition());
+  }
+
+  bool OgreFramework::setFrontWheelsCfm(const CEGUI::EventArgs &evt) {
+    extern Car car;
+    CEGUI::Window *w = windowMgr_->getWindow("root/wheels/front/cfm");
+    car.setFrontWheelsCfm(((CEGUI::Scrollbar*)w)->getScrollPosition());
+  }
 
 static CEGUI::MouseButton convertButton(OIS::MouseButtonID buttonID) {
   switch (buttonID) {
@@ -165,12 +174,26 @@ OgreFramework::~OgreFramework(){
 
 bool OgreFramework::keyPressed(const OIS::KeyEvent &keyEventRef){
 
-  switch(keyEventRef.key){
+  switch (keyEventRef.key) {
 
+  case OIS::KC_E :
+    moveCursor = true;
+    windowMgr_->getWindow("root")->setVisible(true);
+    CEGUI::MouseCursor::getSingletonPtr()->setVisible(true);
+    {
+      CEGUI::Size s(
+		    (float)(m_pViewport->getWidth() * m_pRenderWnd->getWidth()), 
+		    (float)(m_pViewport->getHeight() * m_pRenderWnd->getHeight())
+		    );
+      CEGUI::System::getSingletonPtr()->notifyDisplaySizeChanged(s);
+    }
+    return true;
+
+  case OIS::KC_A :
   case OIS::KC_ESCAPE :
     m_bShutDownOgre = true;
     return true;
-
+    
   case OIS::KC_SYSRQ :
     m_pRenderWnd->writeContentsToTimestampedFile("BOF_Screenshot_", ".png");
     return true;
@@ -201,19 +224,31 @@ bool OgreFramework::keyPressed(const OIS::KeyEvent &keyEventRef){
 }
 
 bool OgreFramework::keyReleased(const OIS::KeyEvent &keyEventRef){
+  switch (keyEventRef.key) {
+    
+  case OIS::KC_E :
+    moveCursor = false;
+    windowMgr_->getWindow("root")->setVisible(false);
+    CEGUI::MouseCursor::getSingletonPtr()->setVisible(false);    
+    return true;
+
+  }
+  
   return true;
 }
 
 bool OgreFramework::mouseMoved(const OIS::MouseEvent &evt){
-  m_pCamera->yaw(Degree(evt.state.X.rel * -0.1f));
-  m_pCamera->pitch(Degree(evt.state.Y.rel * -0.1f));
-
-  CEGUI::System &sys = CEGUI::System::getSingleton();
-  sys.injectMouseMove(evt.state.X.rel, evt.state.Y.rel);
-  // Scroll wheel.
-  if (evt.state.Z.rel)
-    sys.injectMouseWheelChange(evt.state.Z.rel / 120.0f);
-
+  if (!moveCursor) {
+    m_pCamera->yaw(Degree(evt.state.X.rel * -0.1f));
+    m_pCamera->pitch(Degree(evt.state.Y.rel * -0.1f));
+  }
+  else {
+    CEGUI::System &sys = CEGUI::System::getSingleton();
+    sys.injectMouseMove(evt.state.X.rel, evt.state.Y.rel);
+    // Scroll wheel.
+    if (evt.state.Z.rel)
+      sys.injectMouseWheelChange(evt.state.Z.rel / 120.0f);
+  }
 	
   return true;
 }
@@ -243,9 +278,6 @@ void OgreFramework::updateOgre(double timeSinceLastFrame){
     myMoveCamera2();
   else
     myMoveCamera3();
-
-  m_FrameEvent.timeSinceLastFrame = timeSinceLastFrame;
-  //  m_pTrayMgr->frameRenderingQueued(m_FrameEvent);
 }
 
 #define QUICK 3

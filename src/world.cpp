@@ -306,9 +306,7 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2){
   DContactType *c1 = (DContactType*) dGeomGetData(o1);
   DContactType *c2 = (DContactType*) dGeomGetData(o2);
   
-  cout<<"avant"<<endl;
   c1->dealWith(o1, o2);
-  cout<<"apres"<<endl;
 }
 
 

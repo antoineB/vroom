@@ -28,6 +28,7 @@
 #define sceneMgr_ OgreFramework::getSingletonPtr()->m_pSceneMgr
 #define timer_ OgreFramework::getSingletonPtr()->m_pTimer
 #define renderWnd_ OgreFramework::getSingletonPtr()->m_pRenderWnd
+#define windowMgr_ CEGUI::WindowManager::getSingletonPtr()
 
 //dirty
 #define HARD_DEBUG 0

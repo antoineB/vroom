@@ -7,7 +7,6 @@ material Obstacle/Essai
 			texture_unit
 			{		
 				texture Obstacle-Essai.jpg
-//				env_map cubic
 			}
 		}
 	}

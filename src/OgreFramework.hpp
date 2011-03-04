@@ -15,6 +15,7 @@
 #include <OGRE/OgreSubMesh.h>
 #include <OGRE/OgreSubEntity.h>
 #include <OGRE/OgreMeshManager.h>
+//#include <OGRE/OgreWindowListener.h>
 
 #include <OIS/OISEvents.h>
 #include <OIS/OISInputManager.h>
@@ -22,6 +23,8 @@
 #include <OIS/OISMouse.h>
 
 #include <CEGUI/CEGUI.h>
+#include <CEGUI/CEGUISize.h>
+#include <CEGUI/elements/CEGUIScrollbar.h>
 #include <CEGUI/RendererModules/Ogre/CEGUIOgreRenderer.h>
 
 #include "global.hpp"
@@ -29,7 +32,7 @@
 class OgreFramework : public Ogre::Singleton<OgreFramework>, OIS::KeyListener, OIS::MouseListener
 {
 public:
-	OgreFramework();
+  OgreFramework();
 	~OgreFramework();
 
 	bool initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener = 0, OIS::MouseListener *pMouseListener = 0);
@@ -60,13 +63,15 @@ public:
 
   CEGUI::OgreRenderer* mRenderer;
   
-  bool quit(const CEGUI::EventArgs &evt);
+  bool setBackWheelsErp(const CEGUI::EventArgs &evt);
+  bool setBackWheelsCfm(const CEGUI::EventArgs &evt);
+  bool setFrontWheelsErp(const CEGUI::EventArgs &evt);
+  bool setFrontWheelsCfm(const CEGUI::EventArgs &evt);
 
 private:
 	OgreFramework(const OgreFramework&);
 	OgreFramework& operator= (const OgreFramework&);
 
-        Ogre::FrameEvent                        m_FrameEvent;
 	int					m_iNumScreenShots;
 
 	bool					m_bShutDownOgre;
@@ -76,6 +81,8 @@ private:
 	Ogre::Degree				m_RotateSpeed; 
 	float					m_MoveScale; 
 	Ogre::Degree				m_RotScale;
+
+  bool moveCursor;
 
   int inCarView;
   void myMoveCamera();
