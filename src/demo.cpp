@@ -221,6 +221,8 @@ void demo::forFrameDo(unsigned int time){
 
     extern Car car;
     car.update();
+
+    OgreFramework::getSingletonPtr()->updateGui();
   }
     
 }

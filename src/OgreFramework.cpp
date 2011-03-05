@@ -1,4 +1,7 @@
 #include "OgreFramework.hpp"
+#include <ostream>
+#include <stdio.h>
+#include <math.h>
 
 using namespace Ogre; 
 
@@ -115,6 +118,7 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
   CEGUI::WidgetLookManager::setDefaultResourceGroup("LookNFeel");
   CEGUI::WindowManager::setDefaultResourceGroup("Layouts");
   CEGUI::SchemeManager::getSingleton().create("VanillaSkin.scheme");
+  CEGUI::FontManager::getSingleton().create("DejaVuSans-10.font");
 
   CEGUI::System::getSingleton().setDefaultMouseCursor("Vanilla-Images", "MouseArrow");
   CEGUI::MouseCursor::getSingleton().setImage( CEGUI::System::getSingleton().getDefaultMouseCursor());
@@ -170,6 +174,29 @@ OgreFramework::~OgreFramework(){
     OIS::InputManager::destroyInputSystem(m_pInputMgr);
 
   delete m_pRoot;
+}
+
+static dReal norm(const dReal *V) {
+  return sqrt(pow(V[0], 2) + pow(V[1], 2) + pow(V[2], 2));
+}
+
+void OgreFramework::updateGui() {
+  static double timeRefresh = 0;
+
+  if (moveCursor ==  true) {
+    if (timer_->getMillisecondsCPU() - timeRefresh > 250) {
+      extern Car car;
+      const dReal *V = car.getSpeed();
+      char buf[30];
+      sprintf(buf, "%.2f %.2f %.2f / %.2f", V[0], V[1], V[2], norm(V));
+      windowMgr_->getWindow("root/car/speed")->setText("speed " + std::string(buf));
+
+      sprintf(buf, "FPS  %.2f   avg: %.2f", m_pRenderWnd->getLastFPS(), m_pRenderWnd->getAverageFPS());
+      windowMgr_->getWindow("root/fps")->setText(std::string(buf));
+        
+      timeRefresh = timer_->getMillisecondsCPU();
+    }
+  }
 }
 
 bool OgreFramework::keyPressed(const OIS::KeyEvent &keyEventRef){

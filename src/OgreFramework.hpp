@@ -28,6 +28,7 @@
 #include <CEGUI/RendererModules/Ogre/CEGUIOgreRenderer.h>
 
 #include "global.hpp"
+#include "car.hpp"
 
 class OgreFramework : public Ogre::Singleton<OgreFramework>, OIS::KeyListener, OIS::MouseListener
 {
@@ -67,6 +68,8 @@ public:
   bool setBackWheelsCfm(const CEGUI::EventArgs &evt);
   bool setFrontWheelsErp(const CEGUI::EventArgs &evt);
   bool setFrontWheelsCfm(const CEGUI::EventArgs &evt);
+
+  void updateGui();
 
 private:
 	OgreFramework(const OgreFramework&);

@@ -2,129 +2,47 @@
 #include "mytools.hpp"
 #include <sstream>
 #include "world.hpp"
+#include <math.h>
 
-Wheel::Wheel(){}
-
-DContactType Wheel::type(Type::CAR_WHEEL);
 DContactType Car::type(Type::CAR);
-
-void Wheel::init(dSpaceID s){
-  //g = dCreateSphere(0, W_RADIUS);
-  g = dCreateCylinder(0, W_RADIUS,0.5);
-
-  Wheel::type.contact.surface.mode= dContactBounce | dContactSoftCFM
-    | dContactSoftERP | dContactSlip1 | dContactSlip2;
-  Wheel::type.contact.surface.mu = dInfinity;
-  Wheel::type.contact.surface.bounce = 1.0;
-  Wheel::type.contact.surface.bounce_vel = 0.1;
-  Wheel::type.contact.surface.soft_cfm = 0.01;  
-  Wheel::type.contact.surface.soft_erp = 0.3;  
-  Wheel::type.contact.surface.slip1 = 0.5;
-  Wheel::type.contact.surface.slip2 = 0.5;
-
-  dGeomSetData(g,(void*)&Wheel::type);
-  
-  dSpaceAdd(s,g);
-  //  dMassSetSphere (&m, W_DENSITY, W_RADIUS);
-  dMassSetCylinder(&m, 1,W_DENSITY, W_RADIUS, 0.5);
-  b=World::getSingletonPtr()->add(g,&m);
-
-  dMatrix3 R;
-  const dReal PI=3.14159265;
-  static short int nbWheel = 1;
-
-  if (nbWheel%2)
-    dRFromAxisAndAngle(R, 0.0, 1.0, 0.0, PI/2);
-  else
-    dRFromAxisAndAngle(R, 0.0, 1.0, 0.0, -PI/2);//beware of the sgn of PI/2
-  dBodySetRotation(b,R);
-  nbWheel+=1;
-
-  //  dRFromAxisAndAngle(R, 1.0, 0.0, 0.0, PI/20);
-  //  dBodySetRotation(b,R);
-}
-
-void Wheel::update(){
-  Ogre::SceneNode *n=sceneMgr_->getSceneNode(name.c_str());
-  MyTools::byOdeToOgre(g, n );
-}
-
-dBodyID Wheel::getBody(){
-  return b;
-}
-
-Wheel::~Wheel(){}
-
-void Wheel::create(dSpaceID s, Wheel::Position p, Ogre::SceneNode *node)
-{
-  init(s);
-  Ogre::Entity *e;
-  Ogre::SceneNode *n;
-
-  static unsigned int nb=0;
-  {
-    std::string nam="wheel";
-    std::ostringstream out;
-    out << nb++;
-    nam+=out.str();
-    name=nam;
-  }
-  pos=p;
-  n  = node->createChildSceneNode(name.c_str());
-  e = sceneMgr_->createEntity((name+"_tire").c_str(), "wheel_tire.mesh");
-  e->setMaterialName("Wheels/Tire");
-  e->setCastShadows(true);
-  n->attachObject(e);
-  e = sceneMgr_->createEntity((name+"_hubcap").c_str(), "wheel_hubcap.mesh");
-  e->setMaterialName("Wheels/Hubcap");
-  n->attachObject(e);
-  //n->scale();
-  //  n->yaw(Ogre::Degree(90));
-
-  dReal d[3];
-  getPositionFromCar(d);
-  dBodySetPosition(b, d[0], d[1], d[2]);
-  MyTools::byOdeToOgre(g, n);
-
-  //ugly
-  if (nb > 2) {
-    n->scale(2.45, 2.45, 2.45);
-  }
-  else {
-    n->scale(2.45, 2.45, 2.45);
-  }
-}
 
 void Car::update() {
   //graphical
-  MyTools::byOdeToOgre(g, this->cst.carNode);
-  
-  Ogre::SceneNode *lnode=sceneMgr_->getSceneNode("left_door");
-  MyTools::byOdeToOgre(leftDoorBody, lnode);
-
-  Ogre::SceneNode *rnode=sceneMgr_->getSceneNode("right_door");
-  MyTools::byOdeToOgre(rightDoorBody, rnode);
-
+  MyTools::byOdeToOgre(ph.geom, cst.carNode);
+  //  MyTools::byOdeToOgre(ph.leftDoor.body, cst.leftDoorNode);
+  //  MyTools::byOdeToOgre(ph.rightDoor.body, cst.rightDoorNode);
 
   for (int i = 0; i < 4; i++)
-    w[i].update();
+    ph.wheels[i].update();
 
   //physical
   updateMotor();
   updateSteering();
 }
 
+void Car::fillContact() {
+  Car::type.contact.surface.mode= dContactBounce | dContactSoftCFM
+    | dContactSoftERP | dContactSlip1 | dContactSlip2;
+  Car::type.contact.surface.mu = dInfinity;
+  Car::type.contact.surface.bounce = 0.01;
+  Car::type.contact.surface.bounce_vel = 0.7;
+  Car::type.contact.surface.soft_cfm = 0.01;  
+  Car::type.contact.surface.soft_erp = 0.3;  
+  Car::type.contact.surface.slip1 = 0.07;
+  Car::type.contact.surface.slip2 = 0.07;
+}
+
 Car::~Car(){}
-Car::Car(): speed(0.0), steer(0.0), g(NULL), b(NULL) ,brake(false){}
+Car::Car(): speed(0.0), steer(0.0), brake(false){}
 
 void Car::dropDoors() {
-  if (dJointIsEnabled(leftDoorJoint)) {
-    dJointDisable(leftDoorJoint);
-    dJointDisable(rightDoorJoint);
+  if (dJointIsEnabled(ph.leftDoor.joint)) {
+    dJointDisable(ph.leftDoor.joint);
+    dJointDisable(ph.rightDoor.joint);
   }
   else {
-    dJointEnable(leftDoorJoint);
-    dJointEnable(rightDoorJoint);
+    dJointEnable(ph.leftDoor.joint);
+    dJointEnable(ph.rightDoor.joint);
   }
 }
 
@@ -151,149 +69,136 @@ void Car::init(const char *nodeName, Ogre::SceneNode *root){
   //when is it destroyed?
 
   const dReal x=7.48 , y=0.60 , z=17.56 ;
-  g= addBox ( x, y, z);
-  Car::type.contact.surface.mode= dContactBounce | dContactSoftCFM
-    | dContactSoftERP | dContactSlip1 | dContactSlip2;
-  Car::type.contact.surface.mu = dInfinity;
-  Car::type.contact.surface.bounce = 0.01;
-  Car::type.contact.surface.bounce_vel = 0.7;
-  Car::type.contact.surface.soft_cfm = 0.01;  
-  Car::type.contact.surface.soft_erp = 0.3;  
-  Car::type.contact.surface.slip1 = 0.07;
-  Car::type.contact.surface.slip2 = 0.07;
+  ph.geom = addBox ( x, y, z);
 
-  dGeomSetData(g,(void*)&Car::type);
+  dGeomSetData(ph.geom,(void*)&Car::type);
 
   dGeomSetData((dGeomID)space,(void*)&Car::type);
 
-  dMassSetBox(&m, 1.0, 1.3 * x, 2*y, z);
-  b=World::getSingletonPtr()->add(g,&m);
-  dGeomSetPosition (g, C_X, C_Y, C_Z);
+  dMassSetBox(&ph.mass, 1.0, 1.3 * x, 2*y, z);
+  ph.body = World::getSingletonPtr()->add(ph.geom, &ph.mass);
+  dGeomSetPosition (ph.geom, Conf::Car::POS[0], Conf::Car::POS[1], Conf::Car::POS[2]);
   
-  dGeomSetOffsetPosition(g, 0.0, 0.3, 0.0);
+  dGeomSetOffsetPosition(ph.geom, Conf::Car::POSOFFSET[0], Conf::Car::POSOFFSET[1], Conf::Car::POSOFFSET[2]);
 
-  {//left door
-    const dReal x = 9.513 * 0.35;
-    const dReal z = 7.612 * 0.35;
-    const dReal y = 0.404 * 0.35;
+  /*{//left door
+    using namespace Conf::Car::Door;
 
-
-    {
-      const dReal xbis = 1.183 * 0.35 * 2.0;
-      const dReal zbis = 7.61 * 0.35 * 2.0;
-      const dReal ybis = 5.128 * 0.35 * 2.0;
-      
-      leftDoorGeom = addBox ( xbis, ybis, zbis);
-    }
-
-    dMassSetBox(&leftDoorMass, 1.0, 1.0, 1.5, 2.0);
-    leftDoorBody = World::getSingletonPtr()->add(leftDoorGeom, &leftDoorMass);
-    dGeomSetData(leftDoorGeom, (void*)&Car::type);
+    ph.leftDoor.geom = addBox ( BOX_BOUND[0], BOX_BOUND[1], BOX_BOUND[2]);
+    
+    dMassSetBox(&ph.leftDoor.mass, DENSITY, BOX_MASS[0], BOX_MASS[1], BOX_MASS[2]);
+    ph.leftDoor.body = World::getSingletonPtr()->add(ph.leftDoor.geom, &ph.leftDoor.mass);
+    dGeomSetData(ph.leftDoor.geom, (void*)&Car::type);
     
     //rotation 90
         dMatrix3 R;
-        dRFromAxisAndAngle(R, 0.0, 1.0, 0.0, 3.14159);
-        dBodySetRotation(leftDoorBody, R);
+        dRFromAxisAndAngle(R, 0.0, 1.0, 0.0, Conf::Math::PI);
+        dBodySetRotation(ph.leftDoor.body, R);
     //translation
 	{
 	  const dReal xb = 1.183 * 0.35;
 	  const dReal zb = 7.61 * 0.35;
 	  const dReal yb = 0.38 * 0.35;
 
-	  dGeomSetOffsetPosition(leftDoorGeom, xb, -yb, -zb);
+	  dGeomSetOffsetPosition(ph.leftDoor.geom, xb, -yb, -zb);
 	}
-	dBodySetPosition(leftDoorBody, -x, C_Y - y +2.2, -z);
+
+	dBodySetPosition(ph.leftDoor.body, 
+			 Conf::Car::POS[0] + Left::POS[0], 
+			 Conf::Car::POS[1] + Left::POS[1] +2.5,
+			 Conf::Car::POS[2] + Left::POS[2]
+			 );
+
 	//creation du joint
-	leftDoorJoint = World::getSingletonPtr()->addHinge(leftDoorBody, b, 0);
-	dJointSetHingeParam (leftDoorJoint, dParamLoStop, -3.14159/3);
-	dJointSetHingeParam (leftDoorJoint, dParamHiStop, .0);
-	//    dJointSetHingeParam (leftDoorJoint, dParamStopERP, 1.0);
-	//    dJointSetHingeParam (leftDoorJoint, dParamStopCFM, 1.0);
+	ph.leftDoor.joint = World::getSingletonPtr()->addHinge(ph.leftDoor.body, ph.body, 0);
+	dJointSetHingeParam (ph.leftDoor.joint, dParamLoStop, -Conf::Math::PI/3);
+	dJointSetHingeParam (ph.leftDoor.joint, dParamHiStop, .0);
+	//    dJointSetHingeParam (ph.leftDoor.joint, dParamStopERP, 1.0);
+	//    dJointSetHingeParam (ph.leftDoor.joint, dParamStopCFM, 1.0);
 
-    dJointSetHingeAxis(leftDoorJoint, 0, 1, 0);
-    dJointSetHingeAnchor(leftDoorJoint, -x, C_Y -y, -z);
+	dJointSetHingeAxis(ph.leftDoor.joint,  Left::JOINT_AXIS[0], Left::JOINT_AXIS[1], Left::JOINT_AXIS[2]);
+	dJointSetHingeAnchor(ph.leftDoor.joint,
+			     Conf::Car::POS[0] + Left::JOINT_POS[0], 
+			     Conf::Car::POS[1] + Left::JOINT_POS[1],
+			     Conf::Car::POS[2] + Left::JOINT_POS[2]
+			     );
 
-    MyTools::byOdeToOgre(leftDoorBody, this->cst.leftDoorNode);    
+	MyTools::byOdeToOgre(ph.leftDoor.body, cst.leftDoorNode);    
   }
-
 
   {//right door
-    const dReal x = 9.513 * 0.35;
-    const dReal z = 7.612 * 0.35;
-    const dReal y = 0.404 * 0.35;
-
-
-    {
-      const dReal xbis = 1.183 * 0.35 * 2.0;
-      const dReal zbis = 7.61 * 0.35 * 2.0;
-      const dReal ybis = 5.128 * 0.35 * 2.0;
-      
-      rightDoorGeom = addBox ( xbis, ybis, zbis);
-    }
-
-    dMassSetBox(&rightDoorMass, 1.0, 1.0, 1.5, 2.0);
-    rightDoorBody = World::getSingletonPtr()->add(rightDoorGeom, &rightDoorMass);
-    dGeomSetData(rightDoorGeom, (void*)&Car::type);
+    using namespace Conf::Car::Door;
+    
+    ph.rightDoor.geom = addBox ( BOX_BOUND[0], BOX_BOUND[1], BOX_BOUND[2]);
+    dMassSetBox(&ph.rightDoor.mass, DENSITY, BOX_MASS[0], BOX_MASS[1], BOX_MASS[2]);
+    ph.rightDoor.body = World::getSingletonPtr()->add(ph.rightDoor.geom, &ph.rightDoor.mass);
+    dGeomSetData(ph.rightDoor.geom, (void*)&Car::type);
     
     //rotation 90
         dMatrix3 R;
-        dRFromAxisAndAngle(R, 0.0, 1.0, 0.0, -3.14159);
-        dBodySetRotation(rightDoorBody, R);
+        dRFromAxisAndAngle(R, 0.0, 1.0, 0.0, -Conf::Math::PI);
+        dBodySetRotation(ph.rightDoor.body, R);
     //translation
 	{
 	  const dReal xb = 1.183 * 0.35;
 	  const dReal zb = 7.61 * 0.35;
 	  const dReal yb = 0.38 * 0.35;
 
-	  dGeomSetOffsetPosition(rightDoorGeom, -xb, -yb, -zb);
+	  dGeomSetOffsetPosition(ph.rightDoor.geom, -xb, -yb, -zb);
 	}
-	dBodySetPosition(rightDoorBody, +x, C_Y - y +2.2, -z);
+	dBodySetPosition(ph.rightDoor.body, 
+			 Conf::Car::POS[0] + Right::POS[0], 
+			 Conf::Car::POS[1] + Right::POS[1] +2.5,
+			 Conf::Car::POS[2] + Right::POS[2]
+			 );
+
 	//creation du joint
-	rightDoorJoint = World::getSingletonPtr()->addHinge(rightDoorBody, b, 0);
-	dJointSetHingeParam (rightDoorJoint, dParamLoStop, .0);
-	dJointSetHingeParam (rightDoorJoint, dParamHiStop, 3.13159/3);
-	//    dJointSetHingeParam (rightDoorJoint, dParamStopERP, 1.0);
-	//    dJointSetHingeParam (rightDoorJoint, dParamStopCFM, 1.0);
+	ph.rightDoor.joint = World::getSingletonPtr()->addHinge(ph.rightDoor.body, ph.body, 0);
+	dJointSetHingeParam (ph.rightDoor.joint, dParamLoStop, .0);
+	dJointSetHingeParam (ph.rightDoor.joint, dParamHiStop, Conf::Math::PI/3);
+	//    dJointSetHingeParam (ph.rightDoor.joint, dParamStopERP, 1.0);
+	//    dJointSetHingeParam (ph.rightDoor.joint, dParamStopCFM, 1.0);
 
-    dJointSetHingeAxis(rightDoorJoint, 0, 1, 0);
-    dJointSetHingeAnchor(rightDoorJoint, x, C_Y -y, -z);
+	dJointSetHingeAxis(ph.rightDoor.joint, Right::JOINT_AXIS[0], Right::JOINT_AXIS[1], Right::JOINT_AXIS[2]);
+	dJointSetHingeAnchor(ph.rightDoor.joint, 			 
+			     Conf::Car::POS[0] + Right::JOINT_POS[0], 
+			     Conf::Car::POS[1] + Right::JOINT_POS[1],
+			     Conf::Car::POS[2] + Right::JOINT_POS[2]
+			     );
 
-    MyTools::byOdeToOgre(rightDoorBody, this->cst.rightDoorNode);    
-  }
+    MyTools::byOdeToOgre(ph.rightDoor.body, cst.rightDoorNode);    
+    }*/
 
  
-  MyTools::byOdeToOgre(g, this->cst.carNode);
-    
+  MyTools::byOdeToOgre(ph.geom, cst.carNode);
+  
   {
     Ogre::SceneNode* carNode=sceneMgr_->getRootSceneNode();
-    struct Wheel::Position tmp[4]={
-      {W_FR_X, W_FR_Y, W_FR_Z},
-      {W_FL_X, W_FL_Y, W_FL_Z},
-      {W_BR_X, W_BR_Y, W_BR_Z},
-      {W_BL_X, W_BL_Y, W_BL_Z} };
-    
     for(int i=0; i<4; i++)
-      w[i].create(space, tmp[i], carNode);
+      ph.wheels[i].create(space, carNode);
   }
  
   //joints part
-  for(int i=0;i<4; i++){
-    j[i]=World::getSingletonPtr()->addHinge2(b,w[i].getBody(),0);
-    const dReal *a=dBodyGetPosition(w[i].getBody());
-    dJointSetHinge2Anchor(j[i],a[0],a[1],a[2]);
-    dJointSetHinge2Axis1(j[i],0,1,0);
-    dJointSetHinge2Axis2(j[i],1,0,0);
+  for(int i = 0; i < 4; i++){
+    ph.joints[i] = World::getSingletonPtr()->addHinge2(ph.body , ph.wheels[i].ph.body, 0);
+    dJointSetHinge2Anchor(ph.joints[i],
+			  Conf::Car::POS[0] + Conf::Wheel::POS[i][0], 
+			  Conf::Car::POS[1] + Conf::Wheel::POS[i][1],
+			  Conf::Car::POS[2] + Conf::Wheel::POS[i][2]
+			  );
+    dJointSetHinge2Axis1(ph.joints[i],0,1,0);
+    dJointSetHinge2Axis2(ph.joints[i],1,0,0);
 
     /*
       ERP = h kp / (h kp + kd)
       CFM = 1 / (h kp + kd)
     */
 
-#define KP 40.0
-#define KD 5.0
+    const dReal KP = 40.0;
+    const dReal KD = 5.0;
 
-    dJointSetHinge2Param(j[i], dParamSuspensionERP, 0.2 * KP / (0.2 * KP + KD));
-    dJointSetHinge2Param(j[i], dParamSuspensionCFM, 1 / (0.2 * KP + KD));
+    dJointSetHinge2Param(ph.joints[i], dParamSuspensionERP, 0.2 * KP / (0.2 * KP + KD));
+    dJointSetHinge2Param(ph.joints[i], dParamSuspensionCFM, 1 / (0.2 * KP + KD));
   }
 
   //prismatic & rotoid
@@ -302,28 +207,22 @@ void Car::init(const char *nodeName, Ogre::SceneNode *root){
 
   //forbid all Y rotation for j[3] j[4]
   for (int i = 0; i < 4; i++) {
-    dJointSetHinge2Param (j[i],dParamLoStop,0);
-    dJointSetHinge2Param (j[i],dParamHiStop,0);
+    //joints can't turn around Y
+    dJointSetHinge2Param (ph.joints[i],dParamLoStop,0);
+    dJointSetHinge2Param (ph.joints[i],dParamHiStop,0);
 
     if (i > 1) {
-      dJointSetHinge2Param (j[i],dParamLoStop2,0);//TEST
-      dJointSetHinge2Param (j[i],dParamHiStop2,0);//
-      dJointSetHinge2Param (j[i],dParamStopERP, 1.0); //normaly to get the the back wheel not rotate
-      dJointSetHinge2Param (j[i],dParamStopCFM, 0.0);
+      dJointSetHinge2Param (ph.joints[i],dParamStopERP, 1.0); //normaly to get the the back wheel not rotate
+      dJointSetHinge2Param (ph.joints[i],dParamStopCFM, 0.0);
     }
-
+    else {
+      //choose ERP, CFm for front wheels
+    }
   }
-
-  /*  for(int i=0; i<2; i++){
-    const int PI = 3.14159265;
-    dJointSetHinge2Param (j[i],dParamLoStop, -PI/3);
-    dJointSetHinge2Param (j[i],dParamHiStop,PI/3);
-    }*/
-
 }
 
 void Car::printRotationMatrix() {
-  const dReal *R = dGeomGetRotation(g);
+  const dReal *R = dGeomGetRotation(ph.geom);
   
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
@@ -334,29 +233,29 @@ void Car::printRotationMatrix() {
 
 void Car::rotateWheels(dMatrix3 *R) {
   for (int i = 0; i < 3; i++)
-    dGeomSetRotation(w[i].getGeom(), *R);
+    dGeomSetRotation(ph.wheels[i].ph.geom, *R);
 }
 
 void Car::reset() {
-  dGeomSetPosition (g, C_X, C_Y, C_Z);
+  dGeomSetPosition (ph.geom, Conf::Car::POS[0], Conf::Car::POS[1], Conf::Car::POS[2]);
   dMatrix3 R = {
     1.0, 2.0, 12.0, 
     3.0, 1.0, 6.0,
     4.0, 5.0, 1.0
   };
   
-  dBodySetLinearVel(b, 0., 0., 0.);
-  dBodySetAngularVel(b, 0., 0., 0.);
+  dBodySetLinearVel(ph.body, 0., 0., 0.);
+  dBodySetAngularVel(ph.body, 0., 0., 0.);
 
-  dGeomSetRotation(g, R);
+  dGeomSetRotation(ph.geom, R);
   rotateWheels(&R);
-  dGeomSetRotation(leftDoorGeom, R);
-  dGeomSetRotation(rightDoorGeom, R);
+  dGeomSetRotation(ph.leftDoor.geom, R);
+  dGeomSetRotation(ph.rightDoor.geom, R);
 }
 
-void Car::accelerate(){ speed+=10.5; }
+void Car::accelerate(){ speed += 10.5; }
 
-void Car::slowDown(){ speed-=20.5; }
+void Car::slowDown(){ speed -= 20.5; }
 
 void Car::setSpeed(float s){ speed=s; }
 
@@ -366,13 +265,17 @@ void Car::turnLeft(){ steer-=0.08; }
 
 void Car::setSteer(float s){ steer=s; }
 
+const dReal* Car::getSpeed() {
+  return dBodyGetLinearVel(ph.body);
+}
+
 void Car::updateSteering() {
   static float st=0.0;
   if (steer == 0) {
     st=0;
     for (int i = 0; i < 2; i++) {
-      dJointSetHinge2Param (j[i], dParamLoStop, 0);
-      dJointSetHinge2Param (j[i], dParamHiStop, 0);
+      dJointSetHinge2Param (ph.joints[i], dParamLoStop, 0);
+      dJointSetHinge2Param (ph.joints[i], dParamHiStop, 0);
     }
   }
   else {
@@ -380,15 +283,15 @@ void Car::updateSteering() {
  
     for(int i=0; i<2; i++)
     {
-      dReal v = st - dJointGetHinge2Angle1 (j[i]);
+      dReal v = st - dJointGetHinge2Angle1 (ph.joints[i]);
       if (v > 0.1) v = 0.1;
       if (v < -0.1) v = -0.1;
       v *= 10.0;
-      dJointSetHinge2Param (j[i],dParamVel,v);
-      dJointSetHinge2Param (j[i],dParamFMax,1.2); //
-      dJointSetHinge2Param (j[i],dParamLoStop, -0.65);
-      dJointSetHinge2Param (j[i],dParamHiStop, 0.65);
-      dJointSetHinge2Param (j[i],dParamFudgeFactor,1.0);
+      dJointSetHinge2Param (ph.joints[i],dParamVel,v);
+      dJointSetHinge2Param (ph.joints[i],dParamFMax,1.2); //
+      dJointSetHinge2Param (ph.joints[i],dParamLoStop, -0.65);
+      dJointSetHinge2Param (ph.joints[i],dParamHiStop, 0.65);
+      dJointSetHinge2Param (ph.joints[i],dParamFudgeFactor,1.0);
     }
   // {
   //   dReal v = st - dJointGetHinge2Angle1 (j[1]);
@@ -405,11 +308,11 @@ void Car::updateSteering() {
 }
 
 void Car::lowRideFront() {
-  dBodyAddRelForceAtRelPos(b, 0.0, 500.0, 0.0, 0.0, 0.0, W_FR_Z);
+  dBodyAddRelForceAtRelPos(ph.body, 0.0, 500.0, 0.0, 0.0, 0.0, Conf::Wheel::POS[0][2]);
 }
 
 void Car::lowRideBack() {
-  dBodyAddForceAtRelPos(b, 0.0, 500.0, 0.0, 0.0, 0.0, W_BR_Z);
+  dBodyAddForceAtRelPos(ph.body, 0.0, 500.0, 0.0, 0.0, 0.0, Conf::Wheel::POS[2][2]);
 }
 
 void Car::setBrake(bool b){
@@ -427,8 +330,8 @@ void Car::setBrake(bool b){
 void Car::updateMotor(){
   if(brake){
     for(int i = 2; i<4; i++){
-      dJointSetHinge2Param(j[i], dParamVel2, 0);
-      dJointSetHinge2Param(j[i], dParamFMax2, 5*10.5);        
+      dJointSetHinge2Param(ph.joints[i], dParamVel2, 0);
+      dJointSetHinge2Param(ph.joints[i], dParamFMax2, 5*10.5);        
       }
     return ;
     }
@@ -437,7 +340,7 @@ void Car::updateMotor(){
   if (speed == 0) {
     sp = 0;
     for (int i = 2; i < 4; i++)
-      dJointSetHinge2Param(j[i], dParamFMax2, 0.01);
+      dJointSetHinge2Param(ph.joints[i], dParamFMax2, 0.01);
     return ;
   }
   /*  else{
@@ -455,8 +358,8 @@ void Car::updateMotor(){
   else if (sp > 10) sp = 10;
 
   for (int i = 2; i < 4; i++) {
-    dJointSetHinge2Param(j[i], dParamVel2, sp);
-    dJointSetHinge2Param(j[i], dParamFMax2, 4.0 * 10.0);    
+    dJointSetHinge2Param(ph.joints[i], dParamVel2, sp);
+    dJointSetHinge2Param(ph.joints[i], dParamFMax2, 4.0 * 10.0);    
   }
 
   /*if (sp < palier1) sp+=speed;
@@ -464,32 +367,32 @@ void Car::updateMotor(){
 
 
  for (int i = 2; i < 4; i++) {
-    dJointSetHinge2Param(j[i], dParamVel2, sp);
+    dJointSetHinge2Param(ph.joints[i], dParamVel2, sp);
 
     if(sp<0)
-      dJointSetHinge2Param(j[i], dParamFMax2, 1.5*10.5);    
+      dJointSetHinge2Param(ph.joints[i], dParamFMax2, 1.5*10.5);    
     else if(sp>100*speed)
-      dJointSetHinge2Param(j[i], dParamFMax2, 1.0*10.5);
+      dJointSetHinge2Param(ph.joints[i], dParamFMax2, 1.0*10.5);
     else if(sp>50*speed)
-      dJointSetHinge2Param(j[i], dParamFMax2, 1.5*10.5);
+      dJointSetHinge2Param(ph.joints[i], dParamFMax2, 1.5*10.5);
     else
-      dJointSetHinge2Param(j[i], dParamFMax2, 5.5*10.5);
+      dJointSetHinge2Param(ph.joints[i], dParamFMax2, 5.5*10.5);
       }*/
 }
 
 Ogre::Vector3 Car::cam() {
-    const dReal *pos = dBodyGetPosition (b);
+    const dReal *pos = dBodyGetPosition (ph.body);
     return Ogre::Vector3((Ogre::Real)pos[0],
 			 (Ogre::Real)pos[1]+3.2, 
 			 (Ogre::Real)pos[2]);
 }
 
 Ogre::Vector3 Car::getPosition() {
-  return this->cst.carNode->getPosition();
+  return cst.carNode->getPosition();
 }
 
 Ogre::Vector3 Car::getDirection() {
-    const dReal *pos = dBodyGetPosition (b);
+    const dReal *pos = dBodyGetPosition (ph.body);
     return Ogre::Vector3((Ogre::Real)pos[0],
 			 (Ogre::Real)pos[1], 
 			 (Ogre::Real)pos[2]);
@@ -498,7 +401,7 @@ Ogre::Vector3 Car::getDirection() {
 
 
 Ogre::Quaternion Car::getOrientation() {
-  return this->cst.carNode->getOrientation();
+  return cst.carNode->getOrientation();
 }
 
 
@@ -509,9 +412,9 @@ void Car::swayBars() {
   for(int i = 0; i < 4; ++i) {
     
     dVector3 tmpAnchor2, tmpAnchor1, tmpAxis;
-    dJointGetHinge2Anchor2( j[i], tmpAnchor2 );//not sure that the axis are the good one
-    dJointGetHinge2Anchor( j[i], tmpAnchor1 );
-    dJointGetHinge2Axis1( j[i], tmpAxis );
+    dJointGetHinge2Anchor2( ph.joints[i], tmpAnchor2 );//not sure that the axis are the good one
+    dJointGetHinge2Anchor( ph.joints[i], tmpAnchor1 );
+    dJointGetHinge2Axis1( ph.joints[i], tmpAxis );
 
     Ogre::Vector3 anchor2((Ogre::Real*)tmpAnchor2);
     Ogre::Vector3 anchor1((Ogre::Real*)tmpAnchor1);
@@ -529,71 +432,56 @@ void Car::swayBars() {
       }
       //the axis are inversed
       //dBodyAddForce( w[i].getBody(), -axis.x * amt, -axis.y * amt, -axis.z * amt );
-      dReal const * wp = dBodyGetPosition( w[i].getBody() );
-      dBodyAddForceAtPos( b, -axis.x*amt, -axis.y*amt, -axis.z*amt, wp[0], wp[1], wp[2] );
+      dReal const * wp = dBodyGetPosition(ph.wheels[i].ph.body);
+      dBodyAddForceAtPos(ph.body, -axis.x*amt, -axis.y*amt, -axis.z*amt, wp[0], wp[1], wp[2] );
       //dBodyAddForce( w[i^1].getBody(), axis.x * amt, axis.y * amt, axis.z * amt );
-      wp = dBodyGetPosition( w[i^1].getBody() );
-      dBodyAddForceAtPos( b, axis.x*amt, axis.y*amt, axis.z*amt, wp[0], wp[1], wp[2] );
+      wp = dBodyGetPosition(ph.wheels[i^1].ph.body );
+      dBodyAddForceAtPos(ph.body, axis.x*amt, axis.y*amt, axis.z*amt, wp[0], wp[1], wp[2] );
       }
    }
 }
 
 
-#include <math.h>
-
 dReal Car::getPunch() {
-  const dReal *V = dBodyGetLinearVel(b);
-
-  /*  std::cout<<"Force: "<<V[0]<<" - "<<V[1]<<" - "<<V[2]<<std::endl;
-
-  {
-  const dReal *T = dBodyGetTorque(b);
-  std::cout<<"Torque: "<<T[0]<<" - "<<T[1]<<" - "<<T[2]<<std::endl;
-  }
-
-  {
-    const dReal *T = dBodyGetLinearVel(b);
-    std::cout<<"Vel: "<<T[0]<<" - "<<T[1]<<" - "<<T[2]<<std::endl;
-    }*/
-
-  return sqrt(pow(V[0], 2) + pow(V[1], 2) + pow(V[2], 2)) * m.mass;
+  const dReal *V = dBodyGetLinearVel(ph.body);
+  return sqrt(pow(V[0], 2) + pow(V[1], 2) + pow(V[2], 2)) * ph.mass.mass;
 }
 
 dReal Car::getFrontWheelsErp() {
-  return dJointGetHinge2Param(j[0], dParamSuspensionERP);
+  return dJointGetHinge2Param(ph.joints[0], dParamSuspensionERP);
 }
 
 dReal Car::getBackWheelsErp() {
-  return dJointGetHinge2Param(j[2], dParamSuspensionERP);
+  return dJointGetHinge2Param(ph.joints[2], dParamSuspensionERP);
 }
 
 void Car::setBackWheelsErp(dReal erp) {
-    dJointSetHinge2Param(j[2], dParamSuspensionERP, erp);
-    dJointSetHinge2Param(j[3], dParamSuspensionERP, erp);
+    dJointSetHinge2Param(ph.joints[2], dParamSuspensionERP, erp);
+    dJointSetHinge2Param(ph.joints[3], dParamSuspensionERP, erp);
 }
 
 void Car::setFrontWheelsErp(dReal erp) {
-  dJointSetHinge2Param(j[0], dParamSuspensionERP, erp);
-  dJointSetHinge2Param(j[1], dParamSuspensionERP, erp);
+  dJointSetHinge2Param(ph.joints[0], dParamSuspensionERP, erp);
+  dJointSetHinge2Param(ph.joints[1], dParamSuspensionERP, erp);
 }
 
 
 dReal Car::getFrontWheelsCfm() {
-  return dJointGetHinge2Param(j[0], dParamSuspensionCFM);
+  return dJointGetHinge2Param(ph.joints[0], dParamSuspensionCFM);
 }
 
 dReal Car::getBackWheelsCfm() {
-    return dJointGetHinge2Param(j[2], dParamSuspensionCFM);
+    return dJointGetHinge2Param(ph.joints[2], dParamSuspensionCFM);
 }
 
 void Car::setBackWheelsCfm(dReal cfm) {
-  dJointSetHinge2Param(j[2], dParamSuspensionCFM, cfm);
-  dJointSetHinge2Param(j[3], dParamSuspensionCFM, cfm);
+  dJointSetHinge2Param(ph.joints[2], dParamSuspensionCFM, cfm);
+  dJointSetHinge2Param(ph.joints[3], dParamSuspensionCFM, cfm);
 }
 
 void Car::setFrontWheelsCfm(dReal cfm) {
-  dJointSetHinge2Param(j[0], dParamSuspensionCFM, cfm);
-  dJointSetHinge2Param(j[1], dParamSuspensionCFM, cfm);
+  dJointSetHinge2Param(ph.joints[0], dParamSuspensionCFM, cfm);
+  dJointSetHinge2Param(ph.joints[1], dParamSuspensionCFM, cfm);
 }
 
 
@@ -601,7 +489,7 @@ void Car::setFrontWheelsCfm(dReal cfm) {
 void Car::createLeftDoor() {
   Ogre::SceneNode *lnode = sceneMgr_->getRootSceneNode()->createChildSceneNode("left_door");
     
-  this->cst.leftDoorNode = lnode;
+  cst.leftDoorNode = lnode;
 
   lnode->scale(0.35, 0.35, 0.35);
 
@@ -613,7 +501,7 @@ void Car::createLeftDoor() {
 void Car::createRightDoor() {
   Ogre::SceneNode *rnode = sceneMgr_->getRootSceneNode()->createChildSceneNode("right_door");
 
-  this->cst.rightDoorNode = rnode;
+  cst.rightDoorNode = rnode;
     
   rnode->scale(0.35, 0.35, 0.35);
 
@@ -633,9 +521,9 @@ void Car::createNodesAndMeshes(std::string nodeName, Ogre::SceneNode *parentNode
   Ogre::SceneNode *node = parentNode->createChildSceneNode(nodeName);
   Ogre::SceneNode *fnode = node->createChildSceneNode("ford");
 
-  this->cst.nodeName = nodeName;
-  this->cst.carNode = node;
-  this->cst.subCarNode = fnode;
+  cst.nodeName = nodeName;
+  cst.carNode = node;
+  cst.subCarNode = fnode;
 
   fnode->scale(0.35, 0.35, 0.35);
   fnode->yaw(Ogre::Degree(180));
@@ -672,11 +560,11 @@ void Car::createNodesAndMeshes(std::string nodeName, Ogre::SceneNode *parentNode
 
 
 void Car::createCamNodes() {
-  Ogre::SceneNode *cam = this->cst.subCarNode->createChildSceneNode("cam_pos");
+  Ogre::SceneNode *cam = cst.subCarNode->createChildSceneNode("cam_pos");
   //MUST BE CHANGE
   cam->translate(0.0, 9.0, -15.0);
   
-  Ogre::SceneNode *camT = this->cst.subCarNode->createChildSceneNode("cam_target");
+  Ogre::SceneNode *camT = cst.subCarNode->createChildSceneNode("cam_target");
   //MUST BE CHANGE
   camT->translate(0.0, 4.0, 5.0);
 

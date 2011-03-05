@@ -7,79 +7,9 @@
 #include "OgreFramework.hpp"
 #include "parsexml.hpp"
 #include "space.hpp"
+#include "wheel.hpp"
 #include "type.hpp"
-
-//Car
-#define C_X 0
-#define C_Y 4
-#define C_Z 0
-
-//Wheel
-#define W_RADIUS 1.20
-#define W_DENSITY 1
-
-#define W_FR_X 3.05
-#define W_FR_Y +0.0
-#define W_FR_Z -5.85
-
-#define W_FL_X -3.05
-#define W_FL_Y +0.0
-#define W_FL_Z -5.85
-
-#define W_BR_X 3.15
-#define W_BR_Y -0.2
-#define W_BR_Z 5.0
-
-#define W_BL_X -3.15
-#define W_BL_Y -0.2
-#define W_BL_Z 5.0
-
-
-class Wheel{
-  
-public:
-  struct Position{
-    dReal x;
-    dReal y;
-    dReal z;
-  };
-  
-  ~Wheel();
-
-  void create(dSpaceID s, Wheel::Position p, Ogre::SceneNode *node);
-  void update();
-
-  Wheel();  
-
-  void parseXml(TiXmlHandle handle, unsigned int number);
-  
-  inline dBodyID getBody();
-
-  static DContactType type;
-
-  dGeomID getGeom(){
-    return g;
-  }
-
-
-private:
-
-  void getPositionFromCar(dReal *d){
-    d[0] = C_X + pos.x;
-    d[1] = C_Y + pos.y;
-    d[2] = C_Z + pos.z;
-  }
-
-
-  struct Position pos;
-  dBodyID b;
-  dGeomID g;
-  dMass m;
-  std::string name;
-
-  void init(dSpaceID s);
-};
-
+#include "conf.hpp"
 
 class Car: public Space{
 
@@ -101,6 +31,8 @@ public:
   void turnLeft();
   void setSteer(float s);
 
+  const dReal* getSpeed();
+
   void reset();
   void lowRideFront();
   void lowRideBack();
@@ -113,14 +45,6 @@ public:
 
   void parseXml(std::string fileName);
   void parseXml(TiXmlHandle handle);
-
-  bool isWheel(dGeomID gg){
-    if(gg==w[0].getGeom())      return true;
-    else if(gg==w[1].getGeom()) return true;
-    else if(gg==w[2].getGeom()) return true;
-    else if(gg==w[3].getGeom()) return true;
-    return false;
-  };
 
   void setBrake(bool b);
 
@@ -135,30 +59,32 @@ public:
   void setBackWheelsCfm(dReal cfm);
   void setFrontWheelsCfm(dReal cfm);
 
+  struct PhDoor {
+    dGeomID geom;
+    dBodyID body;
+    dJointID joint;
+    dMass mass;
+  };
 
-private:
-  Wheel w[4];
+  struct Ph {
+    Wheel wheels[4];
+    dJointID joints[4];
+    dBodyID body;
+    dGeomID geom;
+    dMass mass;
+    struct PhDoor leftDoor;
+    struct PhDoor rightDoor;
+  };
 
-  dBodyID b;
-  dGeomID g;
-  dMass m;
+  struct Ph ph;
+
   static DContactType type;
+  
+private:
 
   bool brake;
 
-  dGeomID leftDoorGeom;
-  dBodyID leftDoorBody;
-  dJointID leftDoorJoint;
-  dMass leftDoorMass;
 
-  dGeomID rightDoorGeom;
-  dBodyID rightDoorBody;
-  dJointID rightDoorJoint;
-  dMass rightDoorMass;
-
-
-  dJointID j[4];
-  
   float speed,steer;
   void updateMotor();
   void updateSteering();
@@ -176,11 +102,10 @@ private:
   void createNodesAndMeshes(std::string nodeName, Ogre::SceneNode *parentNode);
   void createCamNodes();
 
-
+  void fillContact();
 
   //should remain constant over the car object life
-  struct Cst 
-  {
+  struct Cst {
     std::string nodeName;
     Ogre::SceneNode *carNode;
     Ogre::SceneNode *subCarNode;

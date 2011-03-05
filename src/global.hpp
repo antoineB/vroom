@@ -2,26 +2,15 @@
 #define GLOBAL_HPP
 
 #include <ode/ode.h>
-#include "OgreFramework.hpp"
+
+//#include "OgreFramework.hpp"
 #include <vector>
 #include "global_def.hpp"
-
-#ifndef CAR_HPP
-#ifndef SPACE_HPP
-#include "car.hpp"
-#endif
-#endif
 
 //declaration
  extern  std::vector<dGeomID> geoms;
  extern  std::vector<std::string> names;
  extern Global _glb;
-
-#ifndef CAR_HPP
-  #ifndef SPACE_HPP
-    extern Car car;
-  #endif
-#endif
 
 //macros
 #define log_(X) OgreFramework::getSingletonPtr()->m_pLog->logMessage(X);

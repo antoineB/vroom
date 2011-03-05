@@ -9,14 +9,6 @@
 * TODO make sure that the sway bar can be implemented in wheel joint instead of wheel body
 * TODO correct the fps managing system
   the time to wait between frames is hard coded
-* TODO correct the dNormalized4 bug
-  thris happen when adding two much force/torque/speed
-  and maybe because the car go out of 'simulation boundaries'
-** DONE the correction seems to work
-** the pb come from the car::updateMotor function
-** the problem seems happen if dParmaVel is set too high, or maybe if the gap between to dParamVel is too hight
-*** look at ODE's code, maybe help
-** search in documentation on paramVel and MaxForce for an anwser sa
 * TODO there is a little bounce when the car is stoped
 ** happen only when wheels touching the ground (or other dGeom) 
 ** see Damping and auto-disable
@@ -33,3 +25,5 @@ use one body for the car dans 5 geoms (+ 2 geoms for the doors) ( 5 = 4 wheel + 
 * TODO correct the ogre materiel bug
 * TODO make tooltip working on cegui
 * TODO make a real reset car function
+* DONE add a gui to see the fps
+  there is a function in renderWindow which do that
