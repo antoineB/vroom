@@ -15,6 +15,21 @@ namespace Conf {
   namespace Car {
     const dReal POS[3] = { 0, 4., 0 };
     const dReal POSOFFSET[3] = { 0.0, 0.3, 0.0 };
+    const dReal BOX[3] = { 7.48, 0.6, 17.56 };
+
+    const dReal AXIS1[4][3] = {
+      {0, 1, 0},
+      {0, 1, 0},
+      {0, 1, 0},
+      {0, 1, 0}
+    };
+    
+    const dReal AXIS2[4][3] = {
+      {1, 0, 0},
+      {1, 0, 0},
+      {1, 0, 0},
+      {1, 0, 0}
+    };
 
     namespace Door {
 

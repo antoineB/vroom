@@ -24,8 +24,8 @@ void Obstacle::initGeom(void* ptr){
   type.contact.surface.bounce_vel = 0.7;
   type.contact.surface.soft_cfm = 0.01;  
   type.contact.surface.soft_erp = 0.3;  
-  type.contact.surface.slip1 = 0.01;
-  type.contact.surface.slip2 = 0.01;
+  type.contact.surface.slip1 = 0.05;
+  type.contact.surface.slip2 = 0.05;
 
   dGeomSetData(geom,(void*)&type);
 

@@ -19,9 +19,35 @@
 #define renderWnd_ OgreFramework::getSingletonPtr()->m_pRenderWnd
 #define windowMgr_ CEGUI::WindowManager::getSingletonPtr()
 
-//dirty
+#define envUp_() {						\
+   if (sceneMgr_ == NULL) {					\
+     log_("Ogre isn't lunched before the car is set up");	\
+     exit(0);							\
+   }								\
+								\
+   if (_glb.worldUp == false) {					\
+     log_("Ode isn't lunched before the car is set up");	\
+     exit(0);							\
+   }								\
+ }; 								
+
+
+//convert a string into a dReal
+#define conv_(STRING, DREAL) {			\
+  std::stringstream ss;				\
+  ss << STRING;					\
+  ss >> DREAL;					\
+  };
+
+#define convDS_(DREAL, STRING) {		\
+  std::stringstream ss;				\
+  ss << DREAL;					\
+  STRING = ss.str();				\
+  };
+
+
 #define HARD_DEBUG 0
-#define _dbg(x) if(HARD_DEBUG) std::cout<<x<<std::endl;
+#define dbg_(x) if(HARD_DEBUG) std::cout<<x<<std::endl;
 
 namespace BitField {
   unsigned long getCollideStaticEnvironement();

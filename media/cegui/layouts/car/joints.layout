@@ -1,0 +1,261 @@
+<Window Type="DefaultWindow" Name="root/car_param/joint">
+  <Property Name="UnifiedAreaRect" Value="{{0,0},{0.2,0},{1,0},{0.5,0}}" ></Property>
+  <Window Type="DefaultWindow" Name="root/car_param/joint/front">
+    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{0.5,0}}" ></Property>
+    <Window Type="DefaultWindow" Name="root/car_param/joint/front/left">
+      <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{0.5,0},{1,0}}" ></Property>
+      <Window Type="Vanilla/StaticText" Name="root/car_param/joint/front/left/name">
+	<Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{0.3,0}}" ></Property>
+	<Property Name="Text" Value="front left joint" ></Property>
+	<Property Name="Alpha" Value="0.5" ></Property>
+	<Property Name="TextColours" Value="AADDFF11" ></Property>
+      </Window>
+      <Window Type="DefaultWindow" Name="root/car_param/joint/front/left/axis1">
+	<Property Name="UnifiedAreaRect" Value="{{0,0},{0.3,0},{1,0},{0.65,0}}" ></Property>
+	<Window Type="Vanilla/StaticText" Name="root/car_param/joint/front/left/axis1/name">
+	  <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{0.25,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="axis1" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/front/left/axis1/x">
+	  <Property Name="UnifiedAreaRect" Value="{{0.25,0},{0,0},{0.5,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/front/left/axis1/y">
+	  <Property Name="UnifiedAreaRect" Value="{{0.5,0},{0,0},{0.75,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/front/left/axis1/z">
+	  <Property Name="UnifiedAreaRect" Value="{{0.75,0},{0,0},{1,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+      </Window>
+      <Window Type="DefaultWindow" Name="root/car_param/joint/front/left/axis2">
+	<Property Name="UnifiedAreaRect" Value="{{0,0},{0.65,0},{1,0},{1,0}}" ></Property>
+	<Window Type="Vanilla/StaticText" Name="root/car_param/joint/front/left/axis2/name">
+	  <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{0.25,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="axis2" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/front/left/axis2/x">
+	  <Property Name="UnifiedAreaRect" Value="{{0.25,0},{0,0},{0.5,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/front/left/axis2/y">
+	  <Property Name="UnifiedAreaRect" Value="{{0.5,0},{0,0},{0.75,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/front/left/axis2/z">
+	  <Property Name="UnifiedAreaRect" Value="{{0.75,0},{0,0},{1,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+      </Window>
+    </Window>
+    <Window Type="DefaultWindow" Name="root/car_param/joint/front/right">
+      <Property Name="UnifiedAreaRect" Value="{{0.5,0},{0,0},{1,0},{1,0}}" ></Property>
+      <Window Type="Vanilla/StaticText" Name="root/car_param/joint/front/right/name">
+	<Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{0.3,0}}" ></Property>
+	<Property Name="Text" Value="front right joint" ></Property>
+	<Property Name="Alpha" Value="0.5" ></Property>
+	<Property Name="TextColours" Value="AADDFF11" ></Property>
+      </Window>
+      <Window Type="DefaultWindow" Name="root/car_param/joint/front/right/axis1">
+	<Property Name="UnifiedAreaRect" Value="{{0,0},{0.3,0},{1,0},{0.65,0}}" ></Property>
+	<Window Type="Vanilla/StaticText" Name="root/car_param/joint/front/right/axis1/name">
+	  <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{0.25,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="axis1" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/front/right/axis1/x">
+	  <Property Name="UnifiedAreaRect" Value="{{0.25,0},{0,0},{0.5,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/front/right/axis1/y">
+	  <Property Name="UnifiedAreaRect" Value="{{0.5,0},{0,0},{0.75,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/front/right/axis1/z">
+	  <Property Name="UnifiedAreaRect" Value="{{0.75,0},{0,0},{1,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+      </Window>
+      <Window Type="DefaultWindow" Name="root/car_param/joint/front/right/axis2">
+	<Property Name="UnifiedAreaRect" Value="{{0,0},{0.65,0},{1,0},{1,0}}" ></Property>
+	<Window Type="Vanilla/StaticText" Name="root/car_param/joint/front/right/axis2/name">
+	  <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{0.25,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="axis2" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/front/right/axis2/x">
+	  <Property Name="UnifiedAreaRect" Value="{{0.25,0},{0,0},{0.5,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/front/right/axis2/y">
+	  <Property Name="UnifiedAreaRect" Value="{{0.5,0},{0,0},{0.75,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/front/right/axis2/z">
+	  <Property Name="UnifiedAreaRect" Value="{{0.75,0},{0,0},{1,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+      </Window>
+    </Window>
+  </Window>
+  <Window Type="DefaultWindow" Name="root/car_param/joint/back">
+    <Property Name="UnifiedAreaRect" Value="{{0,0},{0.5,0},{1,0},{1,0}}" ></Property>
+    <Window Type="DefaultWindow" Name="root/car_param/joint/back/left">
+      <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{0.5,0},{1,0}}" ></Property>
+      <Window Type="Vanilla/StaticText" Name="root/car_param/joint/back/left/name">
+	<Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{0.3,0}}" ></Property>
+	<Property Name="Text" Value="back left joint" ></Property>
+	<Property Name="Alpha" Value="0.5" ></Property>
+	<Property Name="TextColours" Value="AADDFF11" ></Property>
+      </Window>
+      <Window Type="DefaultWindow" Name="root/car_param/joint/back/left/axis1">
+	<Property Name="UnifiedAreaRect" Value="{{0,0},{0.3,0},{1,0},{0.65,0}}" ></Property>
+	<Window Type="Vanilla/StaticText" Name="root/car_param/joint/back/left/axis1/name">
+	  <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{0.25,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="axis1" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/back/left/axis1/x">
+	  <Property Name="UnifiedAreaRect" Value="{{0.25,0},{0,0},{0.5,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/back/left/axis1/y">
+	  <Property Name="UnifiedAreaRect" Value="{{0.5,0},{0,0},{0.75,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/back/left/axis1/z">
+	  <Property Name="UnifiedAreaRect" Value="{{0.75,0},{0,0},{1,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+      </Window>
+      <Window Type="DefaultWindow" Name="root/car_param/joint/back/left/axis2">
+	<Property Name="UnifiedAreaRect" Value="{{0,0},{0.65,0},{1,0},{1,0}}" ></Property>
+	<Window Type="Vanilla/StaticText" Name="root/car_param/joint/back/left/axis2/name">
+	  <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{0.25,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="axis2" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/back/left/axis2/x">
+	  <Property Name="UnifiedAreaRect" Value="{{0.25,0},{0,0},{0.5,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/back/left/axis2/y">
+	  <Property Name="UnifiedAreaRect" Value="{{0.5,0},{0,0},{0.75,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/back/left/axis2/z">
+	  <Property Name="UnifiedAreaRect" Value="{{0.75,0},{0,0},{1,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+      </Window>
+    </Window>
+    <Window Type="DefaultWindow" Name="root/car_param/joint/back/right">
+      <Property Name="UnifiedAreaRect" Value="{{0.5,0},{0,0},{1,0},{1,0}}" ></Property>
+      <Window Type="Vanilla/StaticText" Name="root/car_param/joint/back/right/name">
+	<Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{0.3,0}}" ></Property>
+	<Property Name="Text" Value="back right joint" ></Property>
+	<Property Name="Alpha" Value="0.5" ></Property>
+	<Property Name="TextColours" Value="AADDFF11" ></Property>
+      </Window>
+      <Window Type="DefaultWindow" Name="root/car_param/joint/back/right/axis1">
+	<Property Name="UnifiedAreaRect" Value="{{0,0},{0.3,0},{1,0},{0.65,0}}" ></Property>
+	<Window Type="Vanilla/StaticText" Name="root/car_param/joint/back/right/axis1/name">
+	  <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{0.25,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="axis1" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/back/right/axis1/x">
+	  <Property Name="UnifiedAreaRect" Value="{{0.25,0},{0,0},{0.5,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/back/right/axis1/y">
+	  <Property Name="UnifiedAreaRect" Value="{{0.5,0},{0,0},{0.75,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/back/right/axis1/z">
+	  <Property Name="UnifiedAreaRect" Value="{{0.75,0},{0,0},{1,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+      </Window>
+      <Window Type="DefaultWindow" Name="root/car_param/joint/back/right/axis2">
+	<Property Name="UnifiedAreaRect" Value="{{0,0},{0.65,0},{1,0},{1,0}}" ></Property>
+	<Window Type="Vanilla/StaticText" Name="root/car_param/joint/back/right/axis2/name">
+	  <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{0.25,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="axis2" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/back/right/axis2/x">
+	  <Property Name="UnifiedAreaRect" Value="{{0.25,0},{0,0},{0.5,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/back/right/axis2/y">
+	  <Property Name="UnifiedAreaRect" Value="{{0.5,0},{0,0},{0.75,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+	<Window Type="Vanilla/Editbox" Name="root/car_param/joint/back/right/axis2/z">
+	  <Property Name="UnifiedAreaRect" Value="{{0.75,0},{0,0},{1,0},{1,0}}" ></Property>
+	  <Property Name="Text" Value="nop" ></Property>
+	  <Property Name="Alpha" Value="0.5" ></Property>
+	  <Property Name="TextColours" Value="AADDFF11" ></Property>
+	</Window>
+      </Window>
+    </Window>
+  </Window>
+</Window>

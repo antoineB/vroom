@@ -1,0 +1,41 @@
+<Window Type="DefaultWindow" Name="root/wheels" >
+  <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{0.7,0},{0.1,0}}" ></Property>
+  <Window Type="DefaultWindow" Name="root/wheels/front" >
+    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{0.5,0},{1,0}}" ></Property>
+    <Window Type="Vanilla/HorizontalScrollbar" Name="root/wheels/front/cfm" >
+      <Property Name="PageSize" Value="0" ></Property>
+      <Property Name="StepSize" Value="1" ></Property>
+      <Property Name="OverlapSize" Value="0" ></Property>
+      <Property Name="DocumentSize" Value="1" ></Property>
+      <Property Name="ScrollPosition" Value="0" ></Property>
+      <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{0.5,0}}" ></Property>
+    </Window>
+    <Window Type="Vanilla/HorizontalScrollbar" Name="root/wheels/front/erp" >
+      <Property Name="PageSize" Value="0" ></Property>
+      <Property Name="StepSize" Value="1" ></Property>
+      <Property Name="OverlapSize" Value="0" ></Property>
+      <Property Name="DocumentSize" Value="1" ></Property>
+      <Property Name="ScrollPosition" Value="0" ></Property>
+      <Property Name="UnifiedAreaRect" Value="{{0,0},{0.5,0},{1,0},{1,0}}" ></Property>
+    </Window>
+  </Window>
+  <Window Type="DefaultWindow" Name="root/wheels/back" >
+    <Property Name="UnifiedAreaRect" Value="{{0.5,0},{0,0},{1,0},{1,0}}" ></Property>
+    <Window Type="Vanilla/HorizontalScrollbar" Name="root/wheels/back/cfm" >
+      <Property Name="PageSize" Value="0" ></Property>
+      <Property Name="StepSize" Value="1" ></Property>
+      <Property Name="OverlapSize" Value="0" ></Property>
+      <Property Name="DocumentSize" Value="1" ></Property>
+      <Property Name="ScrollPosition" Value="0" ></Property>
+      <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{0.5,0}}" ></Property>
+    </Window>
+    <Window Type="Vanilla/HorizontalScrollbar" Name="root/wheels/back/erp" >
+      <Property Name="PageSize" Value="0" ></Property>
+      <Property Name="StepSize" Value="1" ></Property>
+      <Property Name="OverlapSize" Value="0" ></Property>
+      <Property Name="DocumentSize" Value="1" ></Property>
+      <Property Name="ScrollPosition" Value="0" ></Property>
+      <Property Name="UnifiedAreaRect" Value="{{0,0},{0.5,0},{1,0},{1,0}}" ></Property>
+    </Window>
+  </Window>
+</Window>

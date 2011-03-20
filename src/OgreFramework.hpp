@@ -69,6 +69,10 @@ public:
   bool setFrontWheelsErp(const CEGUI::EventArgs &evt);
   bool setFrontWheelsCfm(const CEGUI::EventArgs &evt);
 
+  bool changeCarValue(const CEGUI::EventArgs &evt);
+
+  void quit() { m_bShutDownOgre = true; }
+
   void updateGui();
 
 private:
@@ -85,6 +89,7 @@ private:
 	float					m_MoveScale; 
 	Ogre::Degree				m_RotScale;
 
+  bool editing;
   bool moveCursor;
 
   int inCarView;

@@ -107,28 +107,185 @@ demo::~demo(){
 }
 
 static void setupCegui() {
-  CEGUI::Window *bErp = windowMgr_->getWindow("root/wheels/back/erp");
-  CEGUI::Window *bCfm = windowMgr_->getWindow("root/wheels/back/cfm");
+  using namespace CEGUI;
+  {
+    Window *bErp = windowMgr_->getWindow("root/wheels/back/erp");
+    Window *bCfm = windowMgr_->getWindow("root/wheels/back/cfm");
+    
+    Window *fErp = windowMgr_->getWindow("root/wheels/front/erp");
+    Window *fCfm = windowMgr_->getWindow("root/wheels/front/cfm");
+    
+    extern Car car;
+    ((Scrollbar*)bErp)->setScrollPosition((float)(car.getBackWheelsErp()));
+    ((Scrollbar*)bCfm)->setScrollPosition((float)(car.getBackWheelsCfm()));
+    ((Scrollbar*)fErp)->setScrollPosition((float)(car.getFrontWheelsErp()));
+    ((Scrollbar*)fCfm)->setScrollPosition((float)(car.getFrontWheelsCfm()));
+    
+    bErp->subscribeEvent(Scrollbar::EventScrollPositionChanged, 
+			 Event::Subscriber(&OgreFramework::setBackWheelsErp,
+					   OgreFramework::getSingletonPtr()
+					   ));
+    
+    bCfm->subscribeEvent(Scrollbar::EventScrollPositionChanged, 
+			 Event::Subscriber(&OgreFramework::setBackWheelsCfm, 
+					   OgreFramework::getSingletonPtr()
+					   ));
+    
+    fErp->subscribeEvent(Scrollbar::EventScrollPositionChanged, 
+			 Event::Subscriber(&OgreFramework::setFrontWheelsErp, 
+					   OgreFramework::getSingletonPtr()));
+    
+    fCfm->subscribeEvent(Scrollbar::EventScrollPositionChanged, 
+			 Event::Subscriber(&OgreFramework::setFrontWheelsCfm, 
+					   OgreFramework::getSingletonPtr()));
+  }
+
+  {
+    extern Car car;
+
+    Window *mass = windowMgr_->getWindow("root/car_param/mass/total/value");
+    Window *x = windowMgr_->getWindow("root/car_param/mass/pos/x");
+    Window *y = windowMgr_->getWindow("root/car_param/mass/pos/y");
+    Window *z = windowMgr_->getWindow("root/car_param/mass/pos/z");
+    
+    std::string s;
+    convDS_(car.ph.mass.mass, s);
+    mass->setText(s);
+    
+    convDS_(Conf::Car::BOX[0], s);
+    x->setText(s);
+    
+    convDS_(Conf::Car::BOX[1], s);
+    y->setText(s);
+    
+    convDS_(Conf::Car::BOX[2], s);
+    z->setText(s);
+  }
+
+  {
+    Window *x = windowMgr_->getWindow("root/car_param/geom/box/x");
+    Window *y = windowMgr_->getWindow("root/car_param/geom/box/y");
+    Window *z = windowMgr_->getWindow("root/car_param/geom/box/z");
+
+    std::string s;
+    convDS_(Conf::Car::BOX[0], s);
+    x->setText(s);
+    
+    convDS_(Conf::Car::BOX[1], s);
+    y->setText(s);
+    
+    convDS_(Conf::Car::BOX[2], s);
+    z->setText(s);
+  }
+
+  {
+    Window *x = windowMgr_->getWindow("root/car_param/geom/offset/x");
+    Window *y = windowMgr_->getWindow("root/car_param/geom/offset/y");
+    Window *z = windowMgr_->getWindow("root/car_param/geom/offset/z");
+
+    std::string s;
+    convDS_(Conf::Car::POSOFFSET[0], s);
+    x->setText(s);
+    
+    convDS_(Conf::Car::POSOFFSET[1], s);
+    y->setText(s);
+    
+    convDS_(Conf::Car::POSOFFSET[2], s);
+    z->setText(s);
+  }
+
+  {
+    std::string s;
+
+    Window *x = windowMgr_->getWindow("root/car_param/joint/front/left/axis1/x");
+    Window *y = windowMgr_->getWindow("root/car_param/joint/front/left/axis1/y");
+    Window *z = windowMgr_->getWindow("root/car_param/joint/front/left/axis1/z");
+    convDS_(Conf::Car::AXIS1[0][0], s);
+    x->setText(s);
+    convDS_(Conf::Car::AXIS1[0][1], s);
+    y->setText(s);
+    convDS_(Conf::Car::AXIS1[0][2], s);
+    z->setText(s);
+
+    x = windowMgr_->getWindow("root/car_param/joint/front/left/axis2/x");
+    y = windowMgr_->getWindow("root/car_param/joint/front/left/axis2/y");
+    z = windowMgr_->getWindow("root/car_param/joint/front/left/axis2/z");
+    convDS_(Conf::Car::AXIS2[0][0], s);
+    x->setText(s);
+    convDS_(Conf::Car::AXIS2[0][1], s);
+    y->setText(s);
+    convDS_(Conf::Car::AXIS2[0][2], s);
+    z->setText(s);
+
+    x = windowMgr_->getWindow("root/car_param/joint/front/right/axis1/x");
+    y = windowMgr_->getWindow("root/car_param/joint/front/right/axis1/y");
+    z = windowMgr_->getWindow("root/car_param/joint/front/right/axis1/z");
+    convDS_(Conf::Car::AXIS1[1][0], s);
+    x->setText(s);
+    convDS_(Conf::Car::AXIS1[1][1], s);
+    y->setText(s);
+    convDS_(Conf::Car::AXIS1[1][2], s);
+    z->setText(s);
+
+    x = windowMgr_->getWindow("root/car_param/joint/front/right/axis2/x");
+    y = windowMgr_->getWindow("root/car_param/joint/front/right/axis2/y");
+    z = windowMgr_->getWindow("root/car_param/joint/front/right/axis2/z");
+    convDS_(Conf::Car::AXIS2[1][0], s);
+    x->setText(s);
+    convDS_(Conf::Car::AXIS2[1][1], s);
+    y->setText(s);
+    convDS_(Conf::Car::AXIS2[1][2], s);
+    z->setText(s);
+
+
+    x = windowMgr_->getWindow("root/car_param/joint/back/left/axis1/x");
+    y = windowMgr_->getWindow("root/car_param/joint/back/left/axis1/y");
+    z = windowMgr_->getWindow("root/car_param/joint/back/left/axis1/z");
+    convDS_(Conf::Car::AXIS1[2][0], s);
+    x->setText(s);
+    convDS_(Conf::Car::AXIS1[2][1], s);
+    y->setText(s);
+    convDS_(Conf::Car::AXIS1[2][2], s);
+    z->setText(s);
+
+    x = windowMgr_->getWindow("root/car_param/joint/back/left/axis2/x");
+    y = windowMgr_->getWindow("root/car_param/joint/back/left/axis2/y");
+    z = windowMgr_->getWindow("root/car_param/joint/back/left/axis2/z");
+    convDS_(Conf::Car::AXIS2[2][0], s);
+    x->setText(s);
+    convDS_(Conf::Car::AXIS2[2][1], s);
+    y->setText(s);
+    convDS_(Conf::Car::AXIS2[2][2], s);
+    z->setText(s);
+
+    x = windowMgr_->getWindow("root/car_param/joint/back/right/axis1/x");
+    y = windowMgr_->getWindow("root/car_param/joint/back/right/axis1/y");
+    z = windowMgr_->getWindow("root/car_param/joint/back/right/axis1/z");
+    convDS_(Conf::Car::AXIS1[3][0], s);
+    x->setText(s);
+    convDS_(Conf::Car::AXIS1[3][1], s);
+    y->setText(s);
+    convDS_(Conf::Car::AXIS1[3][2], s);
+    z->setText(s);
+
+    x = windowMgr_->getWindow("root/car_param/joint/back/right/axis2/x");
+    y = windowMgr_->getWindow("root/car_param/joint/back/right/axis2/y");
+    z = windowMgr_->getWindow("root/car_param/joint/back/right/axis2/z");
+    convDS_(Conf::Car::AXIS2[3][0], s);
+    x->setText(s);
+    convDS_(Conf::Car::AXIS2[3][1], s);
+    y->setText(s);
+    convDS_(Conf::Car::AXIS2[3][2], s);
+    z->setText(s);
+  }
+
   
-  CEGUI::Window *fErp = windowMgr_->getWindow("root/wheels/front/erp");
-  CEGUI::Window *fCfm = windowMgr_->getWindow("root/wheels/front/cfm");
+  Window *button = windowMgr_->getWindow("root/car_param/go");
   
-  extern Car car;
-  ((CEGUI::Scrollbar*)bErp)->setScrollPosition((float)(car.getBackWheelsErp()));
-  ((CEGUI::Scrollbar*)bCfm)->setScrollPosition((float)(car.getBackWheelsCfm()));
-  ((CEGUI::Scrollbar*)fErp)->setScrollPosition((float)(car.getFrontWheelsErp()));
-  ((CEGUI::Scrollbar*)fCfm)->setScrollPosition((float)(car.getFrontWheelsCfm()));
-
-  bErp->subscribeEvent(CEGUI::Scrollbar::EventScrollPositionChanged, 
-		       CEGUI::Event::Subscriber(
-						&OgreFramework::setBackWheelsErp,
-						OgreFramework::getSingletonPtr()
-						));
-
-  bCfm->subscribeEvent(CEGUI::Scrollbar::EventScrollPositionChanged, CEGUI::Event::Subscriber(&OgreFramework::setBackWheelsCfm, OgreFramework::getSingletonPtr()));
-  fErp->subscribeEvent(CEGUI::Scrollbar::EventScrollPositionChanged, CEGUI::Event::Subscriber(&OgreFramework::setFrontWheelsErp, OgreFramework::getSingletonPtr()));
-  fCfm->subscribeEvent(CEGUI::Scrollbar::EventScrollPositionChanged, CEGUI::Event::Subscriber(&OgreFramework::setFrontWheelsCfm, OgreFramework::getSingletonPtr()));
-
+  button->subscribeEvent(PushButton::EventClicked,
+			 Event::Subscriber(&OgreFramework::changeCarValue,
+					   OgreFramework::getSingletonPtr()));
+  					 					 
 }
 
 
@@ -253,8 +410,6 @@ void demo::runDemo(){
 	const int timeForEachFrame = 10;
 	forFrameDo(timeForEachFrame);
 
-	//	CEGUI::System::getSingleton().injectTimePulse( ( timer_->getMillisecondsCPU() - timeSinceLastFrame ) * 0.05f );
-	
 	timeSinceLastFrame = timer_->getMillisecondsCPU() - startTime;
 	int lazyTime=timeForEachFrame-timeSinceLastFrame;
 	if(lazyTime>0){
@@ -278,9 +433,9 @@ bool demo::keyPressed(const OIS::KeyEvent &keyEventRef){
   
   switch(keyEventRef.key){
     
-  case OIS::KC_A :
-    std::cout<<"A - demo"<<std::endl;
-    break;
+  case OIS::KC_ESCAPE :
+    OgreFramework::getSingletonPtr()->quit();
+    return true;
 
   case OIS::KC_UP :
     car.accelerate();
@@ -319,10 +474,6 @@ bool demo::keyPressed(const OIS::KeyEvent &keyEventRef){
     createBall(bo,-25.0, 10.0, 0.0);
     break;
 
-  case OIS::KC_R :
-    car.reset();
-    break;
-  
   case OIS::KC_K :
     car.lowRideBack();
     break;
@@ -331,9 +482,9 @@ bool demo::keyPressed(const OIS::KeyEvent &keyEventRef){
     car.lowRideFront();
     break;
   
-  case OIS::KC_U :
+    /*  case OIS::KC_U :
     car.dropDoors();
-    break;
+    break;*/
 
   }
 

@@ -27,6 +27,7 @@ OgreFramework::OgreFramework(){
   m_pMouse			= 0;
 
   moveCursor = false;
+  editing = false;
 
   inCarView = 1;
 }
@@ -123,9 +124,117 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
   CEGUI::System::getSingleton().setDefaultMouseCursor("Vanilla-Images", "MouseArrow");
   CEGUI::MouseCursor::getSingleton().setImage( CEGUI::System::getSingleton().getDefaultMouseCursor());
 
-  CEGUI::Window *guiRoot = CEGUI::WindowManager::getSingleton().loadWindowLayout("car_settings.layout"); 
-  CEGUI::System::getSingleton().setGUISheet(guiRoot);
+  CEGUI::Window *guiRoot = CEGUI::WindowManager::getSingleton().loadWindowLayout("car.layout"); 
   
+  CEGUI::Window *guiHud = CEGUI::WindowManager::getSingleton().loadWindowLayout("hud.layout");
+  CEGUI::System::getSingleton().setGUISheet(guiHud);
+
+  return true;
+}
+
+static void setCarMass(Car::CarParam &mod) {
+  CEGUI::Window *mass = windowMgr_->getWindow("root/car_param/mass/total/value");
+  CEGUI::Window *x = windowMgr_->getWindow("root/car_param/mass/pos/x");
+  CEGUI::Window *y = windowMgr_->getWindow("root/car_param/mass/pos/y");
+  CEGUI::Window *z = windowMgr_->getWindow("root/car_param/mass/pos/z");
+  
+  dReal v[4];
+  conv_(mass->getText(), v[0]);
+  conv_(x->getText(), v[1]);
+  conv_(y->getText(), v[2]);
+  conv_(z->getText(), v[3]);
+
+  dMassSetBoxTotal(&mod.mass, v[0], v[1], v[2], v[3]);
+}
+
+static void setCarBox(Car::CarParam &mod) {
+  CEGUI::Window *x = windowMgr_->getWindow("root/car_param/geom/box/x");
+  CEGUI::Window *y = windowMgr_->getWindow("root/car_param/geom/box/y");
+  CEGUI::Window *z = windowMgr_->getWindow("root/car_param/geom/box/z");
+  
+  conv_(x->getText(), mod.box[0]);
+  conv_(y->getText(), mod.box[1]);
+  conv_(z->getText(), mod.box[2]);
+}
+
+static void setCarOffset(Car::CarParam &mod) {
+  CEGUI::Window *x = windowMgr_->getWindow("root/car_param/geom/offset/x");
+  CEGUI::Window *y = windowMgr_->getWindow("root/car_param/geom/offset/y");
+  CEGUI::Window *z = windowMgr_->getWindow("root/car_param/geom/offset/z");
+  
+  conv_(x->getText(), mod.offset[0]);
+  conv_(y->getText(), mod.offset[1]);
+  conv_(z->getText(), mod.offset[2]);
+}
+
+static void setCarJoints(Car::CarParam &mod) {
+  CEGUI::Window *x = windowMgr_->getWindow("root/car_param/joint/front/left/axis1/x");
+  CEGUI::Window *y = windowMgr_->getWindow("root/car_param/joint/front/left/axis1/y");
+  CEGUI::Window *z = windowMgr_->getWindow("root/car_param/joint/front/left/axis1/z");
+  conv_(x->getText(), mod.axis1[0][0]);
+  conv_(y->getText(), mod.axis1[0][1]);
+  conv_(z->getText(), mod.axis1[0][2]);
+
+  x = windowMgr_->getWindow("root/car_param/joint/front/left/axis2/x");
+  y = windowMgr_->getWindow("root/car_param/joint/front/left/axis2/y");
+  z = windowMgr_->getWindow("root/car_param/joint/front/left/axis2/z");
+  conv_(x->getText(), mod.axis2[0][0]);
+  conv_(y->getText(), mod.axis2[0][1]);
+  conv_(z->getText(), mod.axis2[0][2]);
+
+  x = windowMgr_->getWindow("root/car_param/joint/front/right/axis1/x");
+  y = windowMgr_->getWindow("root/car_param/joint/front/right/axis1/y");
+  z = windowMgr_->getWindow("root/car_param/joint/front/right/axis1/z");
+  conv_(x->getText(), mod.axis1[1][0]);
+  conv_(y->getText(), mod.axis1[1][1]);
+  conv_(z->getText(), mod.axis1[1][2]);
+
+  x = windowMgr_->getWindow("root/car_param/joint/front/right/axis2/x");
+  y = windowMgr_->getWindow("root/car_param/joint/front/right/axis2/y");
+  z = windowMgr_->getWindow("root/car_param/joint/front/right/axis2/z");
+  conv_(x->getText(), mod.axis2[1][0]);
+  conv_(y->getText(), mod.axis2[1][1]);
+  conv_(z->getText(), mod.axis2[1][2]);
+
+  x = windowMgr_->getWindow("root/car_param/joint/back/left/axis1/x");
+  y = windowMgr_->getWindow("root/car_param/joint/back/left/axis1/y");
+  z = windowMgr_->getWindow("root/car_param/joint/back/left/axis1/z");
+  conv_(x->getText(), mod.axis1[2][0]);
+  conv_(y->getText(), mod.axis1[2][1]);
+  conv_(z->getText(), mod.axis1[2][2]);
+
+  x = windowMgr_->getWindow("root/car_param/joint/back/left/axis2/x");
+  y = windowMgr_->getWindow("root/car_param/joint/back/left/axis2/y");
+  z = windowMgr_->getWindow("root/car_param/joint/back/left/axis2/z");
+  conv_(x->getText(), mod.axis2[2][0]);
+  conv_(y->getText(), mod.axis2[2][1]);
+  conv_(z->getText(), mod.axis2[2][2]);
+
+  x = windowMgr_->getWindow("root/car_param/joint/back/right/axis1/x");
+  y = windowMgr_->getWindow("root/car_param/joint/back/right/axis1/y");
+  z = windowMgr_->getWindow("root/car_param/joint/back/right/axis1/z");
+  conv_(x->getText(), mod.axis1[3][0]);
+  conv_(y->getText(), mod.axis1[3][1]);
+  conv_(z->getText(), mod.axis1[3][2]);
+
+  x = windowMgr_->getWindow("root/car_param/joint/back/right/axis2/x");
+  y = windowMgr_->getWindow("root/car_param/joint/back/right/axis2/y");
+  z = windowMgr_->getWindow("root/car_param/joint/back/right/axis2/z");
+  conv_(x->getText(), mod.axis2[3][0]);
+  conv_(y->getText(), mod.axis2[3][1]);
+  conv_(z->getText(), mod.axis2[3][2]);
+}
+
+bool OgreFramework::changeCarValue(const CEGUI::EventArgs &evt) {
+  extern Car car;
+  Car::CarParam mod;
+
+  setCarMass(mod);
+  setCarBox(mod);
+  setCarOffset(mod);
+  setCarJoints(mod);
+
+  car.reset(mod);
   return true;
 }
 
@@ -133,25 +242,29 @@ bool OgreFramework::setBackWheelsErp(const CEGUI::EventArgs &evt) {
     extern Car car;
     CEGUI::Window *w = windowMgr_->getWindow("root/wheels/back/erp");
     car.setBackWheelsErp(((CEGUI::Scrollbar*)w)->getScrollPosition());
-  }
+    return true;
+}
    
-  bool OgreFramework::setBackWheelsCfm(const CEGUI::EventArgs &evt) {
-    extern Car car;
-    CEGUI::Window *w = windowMgr_->getWindow("root/wheels/back/cfm");
-    car.setBackWheelsCfm(((CEGUI::Scrollbar*)w)->getScrollPosition());
-  }
-  
-  bool OgreFramework::setFrontWheelsErp(const CEGUI::EventArgs &evt) {
+bool OgreFramework::setBackWheelsCfm(const CEGUI::EventArgs &evt) {
+  extern Car car;
+  CEGUI::Window *w = windowMgr_->getWindow("root/wheels/back/cfm");
+  car.setBackWheelsCfm(((CEGUI::Scrollbar*)w)->getScrollPosition());
+  return true;
+}
+
+bool OgreFramework::setFrontWheelsErp(const CEGUI::EventArgs &evt) {
     extern Car car;
     CEGUI::Window *w = windowMgr_->getWindow("root/wheels/front/erp");
     car.setFrontWheelsErp(((CEGUI::Scrollbar*)w)->getScrollPosition());
-  }
+    return true;
+}
 
-  bool OgreFramework::setFrontWheelsCfm(const CEGUI::EventArgs &evt) {
-    extern Car car;
-    CEGUI::Window *w = windowMgr_->getWindow("root/wheels/front/cfm");
-    car.setFrontWheelsCfm(((CEGUI::Scrollbar*)w)->getScrollPosition());
-  }
+bool OgreFramework::setFrontWheelsCfm(const CEGUI::EventArgs &evt) {
+  extern Car car;
+  CEGUI::Window *w = windowMgr_->getWindow("root/wheels/front/cfm");
+  car.setFrontWheelsCfm(((CEGUI::Scrollbar*)w)->getScrollPosition());
+  return true;
+}
 
 static CEGUI::MouseButton convertButton(OIS::MouseButtonID buttonID) {
   switch (buttonID) {
@@ -183,16 +296,16 @@ static dReal norm(const dReal *V) {
 void OgreFramework::updateGui() {
   static double timeRefresh = 0;
 
-  if (moveCursor ==  true) {
+  if (!editing) {
     if (timer_->getMillisecondsCPU() - timeRefresh > 250) {
       extern Car car;
       const dReal *V = car.getSpeed();
       char buf[30];
       sprintf(buf, "%.2f %.2f %.2f / %.2f", V[0], V[1], V[2], norm(V));
-      windowMgr_->getWindow("root/car/speed")->setText("speed " + std::string(buf));
+      windowMgr_->getWindow("hud/speed")->setText("speed " + std::string(buf));
 
       sprintf(buf, "FPS  %.2f   avg: %.2f", m_pRenderWnd->getLastFPS(), m_pRenderWnd->getAverageFPS());
-      windowMgr_->getWindow("root/fps")->setText(std::string(buf));
+      windowMgr_->getWindow("hud/fps")->setText(std::string(buf));
         
       timeRefresh = timer_->getMillisecondsCPU();
     }
@@ -200,23 +313,40 @@ void OgreFramework::updateGui() {
 }
 
 bool OgreFramework::keyPressed(const OIS::KeyEvent &keyEventRef){
+  if (editing) {
+    CEGUI::System &sys = CEGUI::System::getSingleton();
+    sys.injectKeyDown(keyEventRef.key);
+    sys.injectChar(keyEventRef.text);
+    //return true; make the rest of the function unUsable
+  }
 
   switch (keyEventRef.key) {
 
   case OIS::KC_E :
-    moveCursor = true;
-    windowMgr_->getWindow("root")->setVisible(true);
-    CEGUI::MouseCursor::getSingletonPtr()->setVisible(true);
-    {
+    editing = !editing;
+
+    if (!editing) {
+      moveCursor = false;
+      windowMgr_->getWindow("root")->setVisible(false);
+      CEGUI::MouseCursor::getSingletonPtr()->setVisible(false);    
+      
+      CEGUI::System::getSingleton().setGUISheet(windowMgr_->getWindow("hud"));
+      windowMgr_->getWindow("hud")->setVisible(true);
+    }
+    else {
+      CEGUI::System::getSingleton().setGUISheet(windowMgr_->getWindow("root"));
+      moveCursor = true;
+      windowMgr_->getWindow("root")->setVisible(true);
+      CEGUI::MouseCursor::getSingletonPtr()->setVisible(true);
       CEGUI::Size s(
 		    (float)(m_pViewport->getWidth() * m_pRenderWnd->getWidth()), 
 		    (float)(m_pViewport->getHeight() * m_pRenderWnd->getHeight())
 		    );
       CEGUI::System::getSingletonPtr()->notifyDisplaySizeChanged(s);
     }
+
     return true;
 
-  case OIS::KC_A :
   case OIS::KC_ESCAPE :
     m_bShutDownOgre = true;
     return true;
@@ -251,16 +381,9 @@ bool OgreFramework::keyPressed(const OIS::KeyEvent &keyEventRef){
 }
 
 bool OgreFramework::keyReleased(const OIS::KeyEvent &keyEventRef){
-  switch (keyEventRef.key) {
-    
-  case OIS::KC_E :
-    moveCursor = false;
-    windowMgr_->getWindow("root")->setVisible(false);
-    CEGUI::MouseCursor::getSingletonPtr()->setVisible(false);    
-    return true;
-
+  if (editing) {
+    CEGUI::System::getSingleton().injectKeyUp(keyEventRef.key);
   }
-  
   return true;
 }
 

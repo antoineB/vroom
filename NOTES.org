@@ -1,10 +1,24 @@
 * create 2 seperate function for setting physical dGeom, dBody etc...
   and settings their positions
 * write destructor of Object containning node and entitys and delete them
-* make a collision object following the two previous recommandations
 * write in conf.hpp rotation matrix of differents objects
 * for the doors remove the gravity for body
-* the pb may come from the swaybar
 * look at the hinge2 joints settings
 ** change the possible turning along Y axis for front wheel
 ** set the turning along Y null for back wheel with a CFM to 1
+* the demo key_listener is executed before the ogre framework
+* creation object process
+** create other need object
+** create dBody, dGeom, dMass, dJoint
+** set dGeom in plan
+** create mesh and nodes
+** set position of node with ogretoode function
+* create the car process
+** create the space car
+** create the graphical part
+** create the wheel
+*** create the graphical part
+*** create the physics
+** create the physical part
+*** create boby, geom, mass, joints, and set options
+*** dispose the element each other

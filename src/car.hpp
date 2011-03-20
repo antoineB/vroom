@@ -14,6 +14,16 @@
 class Car: public Space{
 
 public:
+  struct CarParam {
+    dMass mass;
+    dReal box[3];
+    dReal offset[3];
+    dReal axis1[4][3];    
+    dReal axis2[4][3];
+    Wheel::WheelParam wheels[4];
+  };
+
+
   Car();
   Car(std::string fileName);
   ~Car();
@@ -33,7 +43,9 @@ public:
 
   const dReal* getSpeed();
 
-  void reset();
+  void setMass(dReal total, dReal x, dReal y, dReal z);
+
+  void reset(CarParam &mod);
   void lowRideFront();
   void lowRideBack();
 
@@ -79,7 +91,7 @@ public:
   struct Ph ph;
 
   static DContactType type;
-  
+
 private:
 
   bool brake;
@@ -97,10 +109,26 @@ private:
   void printRotationMatrix();
 
   void createAndAttachEntity(const std::string &name, const std::string &meshName, const std::string &MaterialName, Ogre::SceneNode *node) const ;
-  void createLeftDoor();
-  void createRightDoor();
+  void createLeftDoorGraphic();
+  void createRightDoorGraphic();
   void createNodesAndMeshes(std::string nodeName, Ogre::SceneNode *parentNode);
   void createCamNodes();
+
+  void createSpace();
+  void createPhysics();
+  void createJoints();
+  void disposePhysics();
+  void disposeGeoms();
+  void disposeJoints();
+
+  void createPhysics(CarParam &mod);
+  void disposePhysics(CarParam &mod);
+  void disposeGeoms(CarParam &mod);
+  void disposeJoints(CarParam &mod);
+  void createJoints(CarParam &mod);
+
+  void createLeftDoorPhysic();
+  void createRightDoorPhysic();
 
   void fillContact();
 

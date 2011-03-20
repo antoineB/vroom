@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GUILayout>
+  <Window Type="DefaultWindow" Name="hud">
+    <Property Name="UnifiedAreaRect" Value="{{0,0},{0.95,0},{1,0},{1,0}}" />
+
+    <Window Type="Vanilla/StaticText" Name="hud/fps">
+      <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{0.5,0},{1,0}}" />
+      <Property Name="HorizontalAlignment" Value="Center" />
+      <Property Name="Text" Value="nop" />
+      <Property Name="Alpha" Value="0.5" />
+      <Property Name="Font" Value="DejaVuSans-10" />
+      <Property Name="TextColours" Value="AAFF0011" />
+    </Window>
+
+    <Window Type="Vanilla/StaticText" Name="hud/speed">
+      <Property Name="UnifiedAreaRect" Value="{{0.5,0},{0,0},{1,0},{1,0}}" />
+      <Property Name="HorizontalAlignment" Value="Left" />
+      <Property Name="Text" Value="nop" />
+      <Property Name="Alpha" Value="0.5" />
+      <Property Name="Font" Value="DejaVuSans-10" />
+      <Property Name="TextColours" Value="AADDFF11" />
+    </Window>
+
+  </Window>
+</GUILayout>

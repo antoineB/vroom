@@ -1,0 +1,74 @@
+<Window Type="DefaultWindow" Name="root/car_param/geom">
+  <Property Name="UnifiedAreaRect" Value="{{0,0},{0.1,0},{1,0},{0.2,0}}" ></Property>
+  <Window Type="DefaultWindow" Name="root/car_param/geom/box">
+    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{0.5,0}}" ></Property>
+    <Window Type="Vanilla/StaticText" Name="root/car_param/geom/box/name">
+      <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{0.25,0},{1,0}}" ></Property>
+      <Property Name="HorizontalAlignment" Value="Left" ></Property>
+      <Property Name="Text" Value="box dimension:" ></Property>
+      <Property Name="Alpha" Value="0.5" ></Property>
+      <Property Name="Font" Value="DejaVuSans-10" ></Property>
+      <Property Name="TextColours" Value="AADDFF11" ></Property>
+    </Window>
+    <Window Type="Vanilla/Editbox" Name="root/car_param/geom/box/x">
+      <Property Name="UnifiedAreaRect" Value="{{0.25,0},{0,0},{0.5,0},{1,0}}" ></Property>
+      <Property Name="HorizontalAlignment" Value="Left" ></Property>
+      <Property Name="Text" Value="nop" ></Property>
+      <Property Name="Alpha" Value="0.5" ></Property>
+      <Property Name="Font" Value="DejaVuSans-10" ></Property>
+      <Property Name="TextColours" Value="AADDFF11" ></Property>
+    </Window>
+    <Window Type="Vanilla/Editbox" Name="root/car_param/geom/box/y">
+      <Property Name="UnifiedAreaRect" Value="{{0.5,0},{0,0},{0.75,0},{1,0}}" ></Property>
+      <Property Name="HorizontalAlignment" Value="Left" ></Property>
+      <Property Name="Text" Value="nop" ></Property>
+      <Property Name="Alpha" Value="0.5" ></Property>
+      <Property Name="Font" Value="DejaVuSans-10" ></Property>
+      <Property Name="TextColours" Value="AADDFF11" ></Property>
+    </Window>
+    <Window Type="Vanilla/Editbox" Name="root/car_param/geom/box/z">
+      <Property Name="UnifiedAreaRect" Value="{{0.75,0},{0,0},{1,0},{1,0}}" ></Property>
+      <Property Name="HorizontalAlignment" Value="Left" ></Property>
+      <Property Name="Text" Value="nop" ></Property>
+      <Property Name="Alpha" Value="0.5" ></Property>
+      <Property Name="Font" Value="DejaVuSans-10" ></Property>
+      <Property Name="TextColours" Value="AADDFF11" ></Property>
+    </Window>
+  </Window>
+  <Window Type="DefaultWindow" Name="root/car_param/geom/offset">
+    <Property Name="UnifiedAreaRect" Value="{{0,0},{0.5,0},{1,0},{1,0}}" ></Property>
+    <Window Type="Vanilla/StaticText" Name="root/car_param/geom/offset/name">
+      <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{0.25,0},{1,0}}" ></Property>
+      <Property Name="HorizontalAlignment" Value="Left" ></Property>
+      <Property Name="Text" Value="box offset:" ></Property>
+      <Property Name="Alpha" Value="0.5" ></Property>
+      <Property Name="Font" Value="DejaVuSans-10" ></Property>
+      <Property Name="TextColours" Value="AADDFF11" ></Property>
+    </Window>
+    <Window Type="Vanilla/Editbox" Name="root/car_param/geom/offset/x">
+      <Property Name="UnifiedAreaRect" Value="{{0.25,0},{0,0},{0.5,0},{1,0}}" ></Property>
+      <Property Name="HorizontalAlignment" Value="Left" ></Property>
+      <Property Name="Text" Value="nop" ></Property>
+      <Property Name="Alpha" Value="0.5" ></Property>
+      <Property Name="Font" Value="DejaVuSans-10" ></Property>
+      <Property Name="TextColours" Value="AADDFF11" ></Property>
+    </Window>
+    <Window Type="Vanilla/Editbox" Name="root/car_param/geom/offset/y">
+      <Property Name="UnifiedAreaRect" Value="{{0.5,0},{0,0},{0.75,0},{1,0}}" ></Property>
+      <Property Name="HorizontalAlignment" Value="Left" ></Property>
+      <Property Name="Text" Value="nop" ></Property>
+      <Property Name="Alpha" Value="0.5" ></Property>
+      <Property Name="Font" Value="DejaVuSans-10" ></Property>
+      <Property Name="TextColours" Value="AADDFF11" ></Property>
+    </Window>
+    <Window Type="Vanilla/Editbox" Name="root/car_param/geom/offset/z">
+      <Property Name="UnifiedAreaRect" Value="{{0.75,0},{0,0},{1,0},{1,0}}" ></Property>
+      <Property Name="HorizontalAlignment" Value="Left" ></Property>
+      <Property Name="Text" Value="nop" ></Property>
+      <Property Name="Alpha" Value="0.5" ></Property>
+      <Property Name="Font" Value="DejaVuSans-10" ></Property>
+      <Property Name="TextColours" Value="AADDFF11" ></Property>
+    </Window>
+  </Window>
+
+</Window>
