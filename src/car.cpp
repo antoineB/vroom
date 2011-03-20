@@ -36,6 +36,10 @@ void Car::fillContact() {
 }
 
 
+void Car::fillContact(Conf::Car::Param &mod) {
+  memcpy(&Car::type.contact.surface.mu, &mod.contact.surface.mu, sizeof(mod.contact.surface) - sizeof(mod.contact.surface.mode));
+}
+
 Car::~Car(){}
 
 
@@ -163,7 +167,7 @@ void Car::createPhysics() {
 }
 
 
-void Car::createPhysics(CarParam &mod) {
+void Car::createPhysics(Conf::Car::Param &mod) {
   memcpy(&ph.mass, &mod.mass, sizeof(dMass));
 
   ph.geom = addBox( mod.box[0], mod.box[1], mod.box[2]);
@@ -204,7 +208,7 @@ void Car::createJoints() {
   }
 }
 
-void Car::createJoints(CarParam &mod) {
+void Car::createJoints(Conf::Car::Param &mod) {
   for(int i = 0; i < 4; i++) {
     ph.joints[i] = World::getSingletonPtr()->addHinge2(ph.body , ph.wheels[i].ph.body, 0);
 
@@ -234,7 +238,7 @@ void Car::disposePhysics() {
   disposeJoints();
 }
 
-void Car::disposePhysics(CarParam &mod) {
+void Car::disposePhysics(Conf::Car::Param &mod) {
   disposeGeoms(mod);
   disposeJoints(mod);
 }
@@ -246,7 +250,7 @@ void Car::disposeGeoms() {
 }
 
 
-void Car::disposeGeoms(CarParam &mod) {
+void Car::disposeGeoms(Conf::Car::Param &mod) {
   dGeomSetPosition (ph.geom, Conf::Car::POS[0], Conf::Car::POS[1], Conf::Car::POS[2]);
   dGeomSetOffsetPosition(ph.geom, mod.offset[0], mod.offset[1], mod.offset[2]);
 }
@@ -264,7 +268,7 @@ void Car::disposeJoints() {
   }    
 }
 
-void Car::disposeJoints(CarParam &mod) {
+void Car::disposeJoints(Conf::Car::Param &mod) {
   for(int i = 0; i < 4; i++) {
     dJointSetHinge2Anchor(ph.joints[i],
 			  Conf::Car::POS[0] + Conf::Wheel::POS[i][0], 
@@ -277,7 +281,7 @@ void Car::disposeJoints(CarParam &mod) {
 }
 
 
-void Car::reset(CarParam &mod) {
+void Car::reset(Conf::Param &mod) {
   dJointDestroy(ph.joints[0]);
   dJointDestroy(ph.joints[1]);
   dJointDestroy(ph.joints[2]);
@@ -285,13 +289,18 @@ void Car::reset(CarParam &mod) {
   dGeomDestroy(ph.geom);
   dBodyDestroy(ph.body);
 
-  ph.wheels[0].reset(mod.wheels[0]);
-  ph.wheels[1].reset(mod.wheels[0]);
-  ph.wheels[2].reset(mod.wheels[0]);
-  ph.wheels[3].reset(mod.wheels[0]);
+  ph.wheels[0].reset(mod.car.wheels[0]);
+  ph.wheels[1].reset(mod.car.wheels[1]);
+  ph.wheels[2].reset(mod.car.wheels[2]);
+  ph.wheels[3].reset(mod.car.wheels[3]);
 
-  createPhysics(mod);
-  disposePhysics(mod);
+  createPhysics(mod.car);
+  disposePhysics(mod.car);
+
+  Wheel::fillContact(mod.car.wheel_contact);
+  Car::fillContact(mod.car);
+  FlatGround::fillContact(mod.ground);
+  Obstacle::fillContact(mod.obstacles);
 }
 
 

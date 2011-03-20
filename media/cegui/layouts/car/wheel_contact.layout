@@ -1,0 +1,93 @@
+<Window Type="DefaultWindow" Name="root/contact/wheel">
+  <Property Name="UnifiedAreaRect" Value="{{0,0},{0.25,0},{1,0},{0.5,0}}" ></Property>
+  <Window Type="Vanilla/StaticText" Name="root/contact/wheel/name">
+    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{0.5,0},{0.25,0}}" ></Property>
+    <Property Name="Text" Value="wheel contact" ></Property>
+    <Property Name="Alpha" Value="0.5" ></Property>
+    <Property Name="TextColours" Value="AADDFF11" ></Property>
+  </Window>
+  <Window Type="Vanilla/StaticText" Name="root/contact/wheel/mu/name">
+    <Property Name="UnifiedAreaRect" Value="{{0.5,0},{0,0},{0.75,0},{0.25,0}}" ></Property>
+    <Property Name="Text" Value="mu:" ></Property>
+    <Property Name="Alpha" Value="0.5" ></Property>
+    <Property Name="TextColours" Value="AADDFF11" ></Property>
+  </Window>
+  <Window Type="Vanilla/Editbox" Name="root/contact/wheel/mu/value">
+    <Property Name="UnifiedAreaRect" Value="{{0.75,0},{0,0},{1,0},{0.25,0}}" ></Property>
+    <Property Name="Text" Value="nop" ></Property>
+    <Property Name="Alpha" Value="0.5" ></Property>
+    <Property Name="TextColours" Value="AADDFF11" ></Property>
+  </Window>
+  <Window Type="Vanilla/StaticText" Name="root/contact/wheel/bounce/name">
+    <Property Name="UnifiedAreaRect" Value="{{0,0},{0.25,0},{0.25,0},{0.5,0}}" ></Property>
+    <Property Name="Text" Value="bounce:" ></Property>
+    <Property Name="Alpha" Value="0.5" ></Property>
+    <Property Name="TextColours" Value="AADDFF11" ></Property>
+  </Window>
+  <Window Type="Vanilla/Editbox" Name="root/contact/wheel/bounce/value">
+    <Property Name="UnifiedAreaRect" Value="{{0.25,0},{0.25,0},{0.5,0},{0.5,0}}" ></Property>
+    <Property Name="Text" Value="nop" ></Property>
+    <Property Name="Alpha" Value="0.5" ></Property>
+    <Property Name="TextColours" Value="AADDFF11" ></Property>
+  </Window>
+  <Window Type="Vanilla/StaticText" Name="root/contact/wheel/bounce_vel/name">
+    <Property Name="UnifiedAreaRect" Value="{{0.5,0},{0.25,0},{0.75,0},{0.5,0}}" ></Property>
+    <Property Name="Text" Value="vel:" ></Property>
+    <Property Name="Alpha" Value="0.5" ></Property>
+    <Property Name="TextColours" Value="AADDFF11" ></Property>
+  </Window>
+  <Window Type="Vanilla/Editbox" Name="root/contact/wheel/bounce_vel/value">
+    <Property Name="UnifiedAreaRect" Value="{{0.75,0},{0.25,0},{1,0},{0.5,0}}" ></Property>
+    <Property Name="Text" Value="nop" ></Property>
+    <Property Name="Alpha" Value="0.5" ></Property>
+    <Property Name="TextColours" Value="AADDFF11" ></Property>
+  </Window>
+  <Window Type="Vanilla/StaticText" Name="root/contact/wheel/cfm/name">
+    <Property Name="UnifiedAreaRect" Value="{{0,0},{0.5,0},{0.25,0},{0.75,0}}" ></Property>
+    <Property Name="Text" Value="cfm:" ></Property>
+    <Property Name="Alpha" Value="0.5" ></Property>
+    <Property Name="TextColours" Value="AADDFF11" ></Property>
+  </Window>
+  <Window Type="Vanilla/Editbox" Name="root/contact/wheel/cfm/value">
+    <Property Name="UnifiedAreaRect" Value="{{0.25,0},{0.5,0},{0.5,0},{0.75,0}}" ></Property>
+    <Property Name="Text" Value="nop" ></Property>
+    <Property Name="Alpha" Value="0.5" ></Property>
+    <Property Name="TextColours" Value="AADDFF11" ></Property>
+  </Window>
+  <Window Type="Vanilla/StaticText" Name="root/contact/wheel/erp/name">
+    <Property Name="UnifiedAreaRect" Value="{{0.5,0},{0.5,0},{0.75,0},{0.75,0}}" ></Property>
+    <Property Name="Text" Value="erp:" ></Property>
+    <Property Name="Alpha" Value="0.5" ></Property>
+    <Property Name="TextColours" Value="AADDFF11" ></Property>
+  </Window>
+  <Window Type="Vanilla/Editbox" Name="root/contact/wheel/erp/value">
+    <Property Name="UnifiedAreaRect" Value="{{0.75,0},{0.5,0},{1,0},{0.75,0}}" ></Property>
+    <Property Name="Text" Value="nop" ></Property>
+    <Property Name="Alpha" Value="0.5" ></Property>
+    <Property Name="TextColours" Value="AADDFF11" ></Property>
+  </Window>
+  <Window Type="Vanilla/StaticText" Name="root/contact/wheel/slip1/name">
+    <Property Name="UnifiedAreaRect" Value="{{0,0},{0.75,0},{0.25,0},{1,0}}" ></Property>
+    <Property Name="Text" Value="slip1:" ></Property>
+    <Property Name="Alpha" Value="0.5" ></Property>
+    <Property Name="TextColours" Value="AADDFF11" ></Property>
+  </Window>
+  <Window Type="Vanilla/Editbox" Name="root/contact/wheel/slip1/value">
+    <Property Name="UnifiedAreaRect" Value="{{0.25,0},{0.75,0},{0.5,0},{1,0}}" ></Property>
+    <Property Name="Text" Value="nop" ></Property>
+    <Property Name="Alpha" Value="0.5" ></Property>
+    <Property Name="TextColours" Value="AADDFF11" ></Property>
+  </Window>
+  <Window Type="Vanilla/StaticText" Name="root/contact/wheel/slip2/name">
+    <Property Name="UnifiedAreaRect" Value="{{0.5,0},{0.75,0},{0.75,0},{1,0}}" ></Property>
+    <Property Name="Text" Value="slip2:" ></Property>
+    <Property Name="Alpha" Value="0.5" ></Property>
+    <Property Name="TextColours" Value="AADDFF11" ></Property>
+  </Window>
+  <Window Type="Vanilla/Editbox" Name="root/contact/wheel/slip2/value">
+    <Property Name="UnifiedAreaRect" Value="{{0.75,0},{0.75,0},{1,0},{1,0}}" ></Property>
+    <Property Name="Text" Value="nop" ></Property>
+    <Property Name="Alpha" Value="0.5" ></Property>
+    <Property Name="TextColours" Value="AADDFF11" ></Property>
+  </Window>
+</Window>

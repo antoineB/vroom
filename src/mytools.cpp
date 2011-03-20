@@ -123,11 +123,11 @@ dTriMeshDataID MyTools::dTriMeshDataFromMesh(Ogre::Entity* e){
   Ogre::SubMesh *sub_mesh = e->getSubEntity(0)->getSubMesh();
   
   if(e->getNumSubEntities()>1){
-    _dbg("MyTools:: "<<e->getNumSubEntities()<<" de sub Entity");
+    dbg_("MyTools:: "<<e->getNumSubEntities()<<" de sub Entity");
     return NULL;
   }
   if(e->getMesh()->sharedVertexData){
-    _dbg("shared vertex found");
+    dbg_("shared vertex found");
     return NULL;
   }
   

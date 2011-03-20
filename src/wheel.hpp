@@ -10,18 +10,15 @@
 class Wheel{
   
 public:
-  struct WheelParam {
-    dMass mass;
-  };
-
-
   Wheel();  
   ~Wheel();
 
   void create(dSpaceID space, Ogre::SceneNode *node);
   void update();
 
-  void reset(WheelParam &mod);
+  static void fillContact(dContact &mod);
+
+  void reset(Conf::Wheel::Param &mod);
 
   static DContactType type;
 
@@ -35,12 +32,12 @@ public:
 
 private:
 
-  void fillContact();
+  static void fillContact();
   void createPhysics(dSpaceID s, unsigned int nbWheel, bool sphere = false);
   std::string generateName(unsigned int number);
   void createNodesAndMesh(Ogre::SceneNode *carNode);
   void disposePhysics(unsigned int nbWheel);
-  void createPhysics(dSpaceID s, unsigned int nbWheel, bool sphere, WheelParam &mod);
+  void createPhysics(dSpaceID s, unsigned int nbWheel, bool sphere, Conf::Wheel::Param &mod);
 
   struct Cst {
     std::string nodeName;

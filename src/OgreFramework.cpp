@@ -132,7 +132,7 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
   return true;
 }
 
-static void setCarMass(Car::CarParam &mod) {
+static void setCarMass(Conf::Car::Param &mod) {
   CEGUI::Window *mass = windowMgr_->getWindow("root/car_param/mass/total/value");
   CEGUI::Window *x = windowMgr_->getWindow("root/car_param/mass/pos/x");
   CEGUI::Window *y = windowMgr_->getWindow("root/car_param/mass/pos/y");
@@ -147,7 +147,7 @@ static void setCarMass(Car::CarParam &mod) {
   dMassSetBoxTotal(&mod.mass, v[0], v[1], v[2], v[3]);
 }
 
-static void setCarBox(Car::CarParam &mod) {
+static void setCarBox(Conf::Car::Param &mod) {
   CEGUI::Window *x = windowMgr_->getWindow("root/car_param/geom/box/x");
   CEGUI::Window *y = windowMgr_->getWindow("root/car_param/geom/box/y");
   CEGUI::Window *z = windowMgr_->getWindow("root/car_param/geom/box/z");
@@ -157,7 +157,7 @@ static void setCarBox(Car::CarParam &mod) {
   conv_(z->getText(), mod.box[2]);
 }
 
-static void setCarOffset(Car::CarParam &mod) {
+static void setCarOffset(Conf::Car::Param &mod) {
   CEGUI::Window *x = windowMgr_->getWindow("root/car_param/geom/offset/x");
   CEGUI::Window *y = windowMgr_->getWindow("root/car_param/geom/offset/y");
   CEGUI::Window *z = windowMgr_->getWindow("root/car_param/geom/offset/z");
@@ -167,7 +167,7 @@ static void setCarOffset(Car::CarParam &mod) {
   conv_(z->getText(), mod.offset[2]);
 }
 
-static void setCarJoints(Car::CarParam &mod) {
+static void setCarJoints(Conf::Car::Param &mod) {
   CEGUI::Window *x = windowMgr_->getWindow("root/car_param/joint/front/left/axis1/x");
   CEGUI::Window *y = windowMgr_->getWindow("root/car_param/joint/front/left/axis1/y");
   CEGUI::Window *z = windowMgr_->getWindow("root/car_param/joint/front/left/axis1/z");
@@ -225,14 +225,105 @@ static void setCarJoints(Car::CarParam &mod) {
   conv_(z->getText(), mod.axis2[3][2]);
 }
 
+static void setFlatGroundContact(Conf::FlatGround::Param &mod) {
+    CEGUI::Window *mu = windowMgr_->getWindow("root/contact/ground/mu/value");
+    CEGUI::Window *bounce = windowMgr_->getWindow("root/contact/ground/bounce/value");
+    CEGUI::Window *bounceVel = windowMgr_->getWindow("root/contact/ground/bounce_vel/value");
+    CEGUI::Window *erp = windowMgr_->getWindow("root/contact/ground/erp/value");
+    CEGUI::Window *cfm = windowMgr_->getWindow("root/contact/ground/cfm/value");
+    CEGUI::Window *slip1 = windowMgr_->getWindow("root/contact/ground/slip1/value");
+    CEGUI::Window *slip2 = windowMgr_->getWindow("root/contact/ground/slip2/value");
+    
+    if (mu->getText() == "inf")
+      mod.contact.surface.mu = dInfinity;
+    else
+      conv_(mu->getText(), mod.contact.surface.mu);
+    conv_(bounce->getText(), mod.contact.surface.bounce);
+    conv_(bounceVel->getText(), mod.contact.surface.bounce_vel);
+    conv_(erp->getText(), mod.contact.surface.soft_erp);
+    conv_(cfm->getText(), mod.contact.surface.soft_cfm);
+    conv_(slip1->getText(), mod.contact.surface.slip1);
+    conv_(slip2->getText(), mod.contact.surface.slip2);
+}
+
+static void setObstacleContact(Conf::Obstacle::Param &mod) {
+  //the same as ground for now
+    CEGUI::Window *mu = windowMgr_->getWindow("root/contact/ground/mu/value");
+    CEGUI::Window *bounce = windowMgr_->getWindow("root/contact/ground/bounce/value");
+    CEGUI::Window *bounceVel = windowMgr_->getWindow("root/contact/ground/bounce_vel/value");
+    CEGUI::Window *erp = windowMgr_->getWindow("root/contact/ground/erp/value");
+    CEGUI::Window *cfm = windowMgr_->getWindow("root/contact/ground/cfm/value");
+    CEGUI::Window *slip1 = windowMgr_->getWindow("root/contact/ground/slip1/value");
+    CEGUI::Window *slip2 = windowMgr_->getWindow("root/contact/ground/slip2/value");
+
+    if (mu->getText() == "inf")
+      mod.contact.surface.mu = dInfinity;
+    else
+      conv_(mu->getText(), mod.contact.surface.mu);
+    conv_(bounce->getText(), mod.contact.surface.bounce);
+    conv_(bounceVel->getText(), mod.contact.surface.bounce_vel);
+    conv_(erp->getText(), mod.contact.surface.soft_erp);
+    conv_(cfm->getText(), mod.contact.surface.soft_cfm);
+    conv_(slip1->getText(), mod.contact.surface.slip1);
+    conv_(slip2->getText(), mod.contact.surface.slip2);
+}
+
+
+static void setCarContact(Conf::Car::Param &mod) {
+    CEGUI::Window *mu = windowMgr_->getWindow("root/contact/car/mu/value");
+    CEGUI::Window *bounce = windowMgr_->getWindow("root/contact/car/bounce/value");
+    CEGUI::Window *bounceVel = windowMgr_->getWindow("root/contact/car/bounce_vel/value");
+    CEGUI::Window *erp = windowMgr_->getWindow("root/contact/car/erp/value");
+    CEGUI::Window *cfm = windowMgr_->getWindow("root/contact/car/cfm/value");
+    CEGUI::Window *slip1 = windowMgr_->getWindow("root/contact/car/slip1/value");
+    CEGUI::Window *slip2 = windowMgr_->getWindow("root/contact/car/slip2/value");
+
+    if (mu->getText() == "inf")
+      mod.contact.surface.mu = dInfinity;
+    else
+      conv_(mu->getText(), mod.contact.surface.mu);
+    conv_(bounce->getText(), mod.contact.surface.bounce);
+    conv_(bounceVel->getText(), mod.contact.surface.bounce_vel);
+    conv_(erp->getText(), mod.contact.surface.soft_erp);
+    conv_(cfm->getText(), mod.contact.surface.soft_cfm);
+    conv_(slip1->getText(), mod.contact.surface.slip1);
+    conv_(slip2->getText(), mod.contact.surface.slip2);
+}
+
+static void setWheelContact(Conf::Car::Param &mod) {
+    CEGUI::Window *mu = windowMgr_->getWindow("root/contact/wheel/mu/value");
+    CEGUI::Window *bounce = windowMgr_->getWindow("root/contact/wheel/bounce/value");
+    CEGUI::Window *bounceVel = windowMgr_->getWindow("root/contact/wheel/bounce_vel/value");
+    CEGUI::Window *erp = windowMgr_->getWindow("root/contact/wheel/erp/value");
+    CEGUI::Window *cfm = windowMgr_->getWindow("root/contact/wheel/cfm/value");
+    CEGUI::Window *slip1 = windowMgr_->getWindow("root/contact/wheel/slip1/value");
+    CEGUI::Window *slip2 = windowMgr_->getWindow("root/contact/wheel/slip2/value");
+
+    if (mu->getText() == "inf")
+      mod.contact.surface.mu = dInfinity;
+    else
+      conv_(mu->getText(), mod.wheel_contact.surface.mu);
+    conv_(bounce->getText(), mod.wheel_contact.surface.bounce);
+    conv_(bounceVel->getText(), mod.wheel_contact.surface.bounce_vel);
+    conv_(erp->getText(), mod.wheel_contact.surface.soft_erp);
+    conv_(cfm->getText(), mod.wheel_contact.surface.soft_cfm);
+    conv_(slip1->getText(), mod.wheel_contact.surface.slip1);
+    conv_(slip2->getText(), mod.wheel_contact.surface.slip2);
+}
+
 bool OgreFramework::changeCarValue(const CEGUI::EventArgs &evt) {
   extern Car car;
-  Car::CarParam mod;
+  Conf::Param mod;
 
-  setCarMass(mod);
-  setCarBox(mod);
-  setCarOffset(mod);
-  setCarJoints(mod);
+  setCarMass(mod.car);
+  setCarBox(mod.car);
+  setCarOffset(mod.car);
+  setCarJoints(mod.car);
+
+  setFlatGroundContact(mod.ground);
+  setObstacleContact(mod.obstacles);
+  setCarContact(mod.car);
+  setWheelContact(mod.car);
 
   car.reset(mod);
   return true;

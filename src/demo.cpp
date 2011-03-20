@@ -279,6 +279,84 @@ static void setupCegui() {
     z->setText(s);
   }
 
+  {
+    CEGUI::Window *mu = windowMgr_->getWindow("root/contact/car/mu/value");
+    CEGUI::Window *bounce = windowMgr_->getWindow("root/contact/car/bounce/value");
+    CEGUI::Window *bounceVel = windowMgr_->getWindow("root/contact/car/bounce_vel/value");
+    CEGUI::Window *erp = windowMgr_->getWindow("root/contact/car/erp/value");
+    CEGUI::Window *cfm = windowMgr_->getWindow("root/contact/car/cfm/value");
+    CEGUI::Window *slip1 = windowMgr_->getWindow("root/contact/car/slip1/value");
+    CEGUI::Window *slip2 = windowMgr_->getWindow("root/contact/car/slip2/value");
+    
+    std::string s;
+    convDS_(Car::type.contact.surface.mu, s);
+    mu->setText(s);
+    convDS_(Car::type.contact.surface.bounce, s);
+    bounce->setText(s);
+    convDS_(Car::type.contact.surface.bounce_vel, s);
+    bounceVel->setText(s);
+    convDS_(Car::type.contact.surface.soft_erp, s);
+    erp->setText(s);
+    convDS_(Car::type.contact.surface.soft_cfm, s);
+    cfm->setText(s);
+    convDS_(Car::type.contact.surface.slip1, s);
+    slip1->setText(s);
+    convDS_(Car::type.contact.surface.slip2, s);
+    slip2->setText(s);
+  }
+
+  {
+    CEGUI::Window *mu = windowMgr_->getWindow("root/contact/ground/mu/value");
+    CEGUI::Window *bounce = windowMgr_->getWindow("root/contact/ground/bounce/value");
+    CEGUI::Window *bounceVel = windowMgr_->getWindow("root/contact/ground/bounce_vel/value");
+    CEGUI::Window *erp = windowMgr_->getWindow("root/contact/ground/erp/value");
+    CEGUI::Window *cfm = windowMgr_->getWindow("root/contact/ground/cfm/value");
+    CEGUI::Window *slip1 = windowMgr_->getWindow("root/contact/ground/slip1/value");
+    CEGUI::Window *slip2 = windowMgr_->getWindow("root/contact/ground/slip2/value");
+
+    std::string s;
+    convDS_(FlatGround::type.contact.surface.mu, s);
+    mu->setText(s);
+    convDS_(FlatGround::type.contact.surface.bounce, s);
+    bounce->setText(s);
+    convDS_(FlatGround::type.contact.surface.bounce_vel, s);
+    bounceVel->setText(s);
+    convDS_(FlatGround::type.contact.surface.soft_erp, s);
+    erp->setText(s);
+    convDS_(FlatGround::type.contact.surface.soft_cfm, s);
+    cfm->setText(s);
+    convDS_(FlatGround::type.contact.surface.slip1, s);
+    slip1->setText(s);
+    convDS_(FlatGround::type.contact.surface.slip2, s);
+    slip2->setText(s);
+  }
+
+  {
+    CEGUI::Window *mu = windowMgr_->getWindow("root/contact/wheel/mu/value");
+    CEGUI::Window *bounce = windowMgr_->getWindow("root/contact/wheel/bounce/value");
+    CEGUI::Window *bounceVel = windowMgr_->getWindow("root/contact/wheel/bounce_vel/value");
+    CEGUI::Window *erp = windowMgr_->getWindow("root/contact/wheel/erp/value");
+    CEGUI::Window *cfm = windowMgr_->getWindow("root/contact/wheel/cfm/value");
+    CEGUI::Window *slip1 = windowMgr_->getWindow("root/contact/wheel/slip1/value");
+    CEGUI::Window *slip2 = windowMgr_->getWindow("root/contact/wheel/slip2/value");
+
+    std::string s; 
+    convDS_(Wheel::type.contact.surface.mu, s);
+    mu->setText(s);
+    convDS_(Wheel::type.contact.surface.bounce, s);
+    bounce->setText(s);
+    convDS_(Wheel::type.contact.surface.bounce_vel, s);
+    bounceVel->setText(s);
+    convDS_(Wheel::type.contact.surface.soft_erp, s);
+    erp->setText(s);
+    convDS_(Wheel::type.contact.surface.soft_cfm, s);
+    cfm->setText(s);
+    convDS_(Wheel::type.contact.surface.slip1, s);
+    slip1->setText(s);
+    convDS_(Wheel::type.contact.surface.slip2, s);
+    slip2->setText(s);
+ }
+
   
   Window *button = windowMgr_->getWindow("root/car_param/go");
   

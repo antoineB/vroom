@@ -17,15 +17,7 @@ void Obstacle::initGeom(void* ptr){
   //  geom = World::getSingletonPtr()->addTriMesh(space,data,0,0,0);
   geom = World::getSingletonPtr()->addTriMesh(data);
 
-  type.contact.surface.mode= dContactBounce | dContactSoftCFM
-    | dContactSoftERP | dContactSlip1 | dContactSlip2;
-  type.contact.surface.mu = dInfinity;
-  type.contact.surface.bounce = 0.01;
-  type.contact.surface.bounce_vel = 0.7;
-  type.contact.surface.soft_cfm = 0.01;  
-  type.contact.surface.soft_erp = 0.3;  
-  type.contact.surface.slip1 = 0.05;
-  type.contact.surface.slip2 = 0.05;
+  fillContact();
 
   dGeomSetData(geom,(void*)&type);
 
@@ -46,4 +38,20 @@ void Obstacle::update(){}
 void Obstacle::setMaterial(const char* na) const{
   Ogre::Entity* e=sceneMgr_->getEntity(name);
   e->setMaterialName(na);
+}
+
+void Obstacle::fillContact() {
+  type.contact.surface.mode= dContactBounce | dContactSoftCFM
+    | dContactSoftERP | dContactSlip1 | dContactSlip2;
+  type.contact.surface.mu = dInfinity;
+  type.contact.surface.bounce = 0.01;
+  type.contact.surface.bounce_vel = 0.7;
+  type.contact.surface.soft_cfm = 0.01;  
+  type.contact.surface.soft_erp = 0.3;  
+  type.contact.surface.slip1 = 0.05;
+  type.contact.surface.slip2 = 0.05;
+}
+
+void Obstacle::fillContact(Conf::Obstacle::Param &mod) {
+  memcpy(&Car::type.contact.surface.mu, &mod.contact.surface.mu, sizeof(mod.contact.surface) - sizeof(mod.contact.surface.mode));
 }

@@ -27,6 +27,15 @@ void FlatGround::init(const char* material){
   entGround->setCastShadows(false);
   plane=World::getSingletonPtr()->addPlane(0.0,1.0,0.0,0.0);
 
+  fillContact();
+
+  dGeomSetData(plane,(void*)&type);
+
+  dGeomSetCategoryBits(plane, BitField::getCategorieStaticEnvironement());
+  dGeomSetCollideBits(plane, BitField::getCollideStaticEnvironement());
+}
+
+void FlatGround::fillContact() {
   type.contact.surface.mode= dContactBounce | dContactSoftCFM
     | dContactSoftERP | dContactSlip1 | dContactSlip2;
   type.contact.surface.mu = dInfinity;
@@ -36,9 +45,9 @@ void FlatGround::init(const char* material){
   type.contact.surface.soft_erp = 0.3;  
   type.contact.surface.slip1 = 0.01;
   type.contact.surface.slip2 = 0.01;
+}
 
-  dGeomSetData(plane,(void*)&type);
+void FlatGround::fillContact(Conf::FlatGround::Param &mod) {
+  memcpy(&FlatGround::type.contact.surface.mu, &mod.contact.surface.mu, sizeof(mod.contact.surface) - sizeof(mod.contact.surface.mode));
 
-  dGeomSetCategoryBits(plane, BitField::getCategorieStaticEnvironement());
-  dGeomSetCollideBits(plane, BitField::getCollideStaticEnvironement());
 }

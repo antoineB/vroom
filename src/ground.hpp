@@ -31,11 +31,13 @@ class FlatGround: public Ground{
 
   virtual void init(const char* material);
 
-  static DContactType type;
+  static void fillContact();
 
 public:
-  FlatGround(const char* material);
+  static DContactType type;
 
+  FlatGround(const char* material);
+  static void fillContact(Conf::FlatGround::Param &mod);
 };
 
 #endif

@@ -13,13 +13,16 @@ class Obstacle: public Geom{
   Obstacle(const Obstacle&);
   Obstacle & operator=(const Obstacle&);
 
-  static DContactType type;
+  static void fillContact();
 
 public:
   Obstacle(const char *n, const char* meshName, dReal x=.0, dReal y=.0, dReal z=.0);
   inline void initGeom(void *ptr);
   inline void update();
   void setMaterial(const char* name) const;
+  static void fillContact(Conf::Obstacle::Param &mod);
+
+  static DContactType type;
 };
 
 #endif

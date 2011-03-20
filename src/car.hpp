@@ -10,20 +10,12 @@
 #include "wheel.hpp"
 #include "type.hpp"
 #include "conf.hpp"
+#include "ground.hpp"
+#include "obstacle.hpp"
 
 class Car: public Space{
 
 public:
-  struct CarParam {
-    dMass mass;
-    dReal box[3];
-    dReal offset[3];
-    dReal axis1[4][3];    
-    dReal axis2[4][3];
-    Wheel::WheelParam wheels[4];
-  };
-
-
   Car();
   Car(std::string fileName);
   ~Car();
@@ -45,7 +37,7 @@ public:
 
   void setMass(dReal total, dReal x, dReal y, dReal z);
 
-  void reset(CarParam &mod);
+  void reset(Conf::Param &mod);
   void lowRideFront();
   void lowRideBack();
 
@@ -121,16 +113,17 @@ private:
   void disposeGeoms();
   void disposeJoints();
 
-  void createPhysics(CarParam &mod);
-  void disposePhysics(CarParam &mod);
-  void disposeGeoms(CarParam &mod);
-  void disposeJoints(CarParam &mod);
-  void createJoints(CarParam &mod);
+  void createPhysics(Conf::Car::Param &mod);
+  void disposePhysics(Conf::Car::Param &mod);
+  void disposeGeoms(Conf::Car::Param &mod);
+  void disposeJoints(Conf::Car::Param &mod);
+  void createJoints(Conf::Car::Param &mod);
 
   void createLeftDoorPhysic();
   void createRightDoorPhysic();
 
-  void fillContact();
+  static void fillContact();
+  static void fillContact(Conf::Car::Param &mod);
 
   //should remain constant over the car object life
   struct Cst {

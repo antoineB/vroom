@@ -20,6 +20,10 @@ void Wheel::fillContact() {
   Wheel::type.contact.surface.slip2 = 0.5;
 }
 
+void Wheel::fillContact(dContact &mod) {
+  memcpy(&Wheel::type.contact.surface.mu, &mod.surface.mu, sizeof(mod.surface) - sizeof(mod.surface.mode));
+}
+
 
 void Wheel::createPhysics(dSpaceID space, unsigned int nbWheel, bool sphereWheel) {
   fillContact();
@@ -40,7 +44,7 @@ void Wheel::createPhysics(dSpaceID space, unsigned int nbWheel, bool sphereWheel
 }
 
 
-void Wheel::createPhysics(dSpaceID space, unsigned int nbWheel, bool sphereWheel, WheelParam &mod) {
+void Wheel::createPhysics(dSpaceID space, unsigned int nbWheel, bool sphereWheel, Conf::Wheel::Param &mod) {
   memcpy(&ph.mass, &mod.mass, sizeof(dMass));
 
   if (sphereWheel)
@@ -130,7 +134,7 @@ void Wheel::create(dSpaceID space, Ogre::SceneNode *carNode)
 }
 
 
-void Wheel::reset(WheelParam &mod) {
+void Wheel::reset(Conf::Wheel::Param &mod) {
   static int nb = 0;
   if (nb > 3) nb = 0;
 
