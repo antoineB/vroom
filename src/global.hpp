@@ -13,7 +13,8 @@
  extern Global _glb;
 
 //macros
-#define log_(X) OgreFramework::getSingletonPtr()->m_pLog->logMessage(X);
+#define log_(X) std::clog<<X<<std::endl;
+#define logC_(X) { std::clog<<X<<std::endl; exit(-1); }
 #define sceneMgr_ OgreFramework::getSingletonPtr()->m_pSceneMgr
 #define timer_ OgreFramework::getSingletonPtr()->m_pTimer
 #define renderWnd_ OgreFramework::getSingletonPtr()->m_pRenderWnd

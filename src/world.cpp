@@ -8,7 +8,6 @@ using namespace std;
 
 #define CONSTANT_SIZE sizeof(dReal)*6
 
-#define PI 3.14159265
 #define SIMULATION_PACE 0.5
 #define GRAVITY_X 0.0
 #define GRAVITY_Y -0.2
@@ -17,14 +16,7 @@ using namespace std;
 
 template<> World* Ogre::Singleton<World>::ms_Singleton = 0;
 
-void World::preInit(){
-  cst.pi = PI;
-  cst.simulationPace = SIMULATION_PACE;
-  cst.gravity[0] = GRAVITY_X;
-  cst.gravity[1] = GRAVITY_Y;
-  cst.gravity[2] = GRAVITY_Z;
-  cst.cfm = CFM;
-  
+World::World(string xmlFileName){
   dInitODE();
 
   world = dWorldCreate();
@@ -33,60 +25,26 @@ void World::preInit(){
   space = dHashSpaceCreate(0);
   
   _glb.worldUp = true;
-}
 
-void World::postInit(){
+  parseXml(xmlFileName);
+
   dWorldSetGravity (world, cst.gravity[0], cst.gravity[1], cst.gravity[2]);
   dWorldSetCFM (world, cst.cfm);
   //  dWorldSetERP()
 }
 
-World::World(string xmlFileName){
-  preInit();
-  parseXml(xmlFileName);
-  postInit();
-}
-
-World::World(dReal *array){
-  preInit();
-  memcpy(&cst, array, CONSTANT_SIZE);
-  postInit();
-}
-
 void World::parseXml(string fileName) throw(std::string){
-  std::cout<<"verification"<<std::endl;
-  TiXmlDocument doc(fileName);
-  if(!doc.LoadFile()){
-    throw std::string("IO error in xml file");
-    return ;
-  }
-  TiXmlHandle docH( &doc );
-  TiXmlHandle cstH = docH.FirstChild( "world" ).FirstChild( "constant" );
-  {
-    TiXmlElement *elem;
-    if((elem=cstH.FirstChild( "cfm" ).ToElement()))
-      cst.cfm=World::atodr(elem->GetText());
-    if((elem=cstH.FirstChild( "pi" ).ToElement()))
-      cst.pi=World::atodr(elem->GetText());
-    if((elem=cstH.FirstChild( "simulation_pace" ).ToElement()))
-      cst.simulationPace=World::atodr(elem->GetText());
-    
-    TiXmlHandle gravH=cstH.FirstChild( "gravity" );
-    {
-      if((elem=gravH.FirstChild( "x" ).ToElement()))
-	cst.gravity[0]=World::atodr(elem->GetText());
-      else
-	throw std::string("missing parameter for <gravity>");
-      if((elem=gravH.FirstChild( "y" ).ToElement()))
-	cst.gravity[1]=World::atodr(elem->GetText());
-      else
-	throw std::string("missing parameter for <gravity>");
-      if((elem=gravH.FirstChild( "z" ).ToElement())) 
-	cst.gravity[2]=World::atodr(elem->GetText());
-      else
-	throw std::string("missing parameter for <gravity>");
-    }
-  }
+  Utils::Xml::begin(fileName, "world");
+  
+  TiXmlElement* constant = Utils::Xml::mustNode("constant");
+  
+  cst.cfm = Utils::Xml::mustFloat("cfm", 0, constant);
+  cst.simulationPace = Utils::Xml::mustFloat("simulation-pace", 0, constant);
+  cst.gravity[0] = Utils::Xml::mustFloat("gravity.x", 0, constant);
+  cst.gravity[1] = Utils::Xml::mustFloat("gravity.y", 0, constant);
+  cst.gravity[2] = Utils::Xml::mustFloat("gravity.z", 0, constant);
+
+  Utils::Xml::end();
 }
 
 dReal World::atodr(const char *str){
@@ -190,7 +148,6 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2){
 
 
 #undef CONSTANT_SIZE 
-#undef PI
 #undef SIMULATION_PACE
 #undef GRAVITY_X
 #undef GRAVITY_Y

@@ -4,7 +4,7 @@
     <pi>3.14159265</pi>
     <gravity> <x>0.0</x> <y>-0.3</y> <z>0.0</z> </gravity>
     <cfm>1e-5</cfm>
-    <simulation_pace>0.2</simulation_pace>
+    <simulation-pace>0.2</simulation-pace>
   </constant>
 
 </world>

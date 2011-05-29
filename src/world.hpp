@@ -1,6 +1,8 @@
 #ifndef WORLD_HPP
 #define WORLD_HPP
 
+#include "utils.hpp"
+
 #include <ode/ode.h>
 #include <OGRE/OgreSingleton.h>
 
@@ -14,7 +16,6 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2);
 class World : public Space, public Ogre::Singleton<World> {
   
   struct Constant{
-    dReal pi;
     dReal simulationPace;
     dReal gravity[3];
     dReal cfm;
@@ -29,8 +30,6 @@ class World : public Space, public Ogre::Singleton<World> {
   World(const World&);
   World & operator=(const World&);
 
-  void preInit();
-  void postInit();
   void parseXml(std::string fileName) throw(std::string);
 
   friend void nearCallback (void *data, dGeomID o1, dGeomID o2);  
@@ -38,7 +37,6 @@ class World : public Space, public Ogre::Singleton<World> {
 public:
   ~World();
   World(std::string xmlFileName);
-  World(dReal *cst); //cst[5] -> pi -> simutationPace -> gravity
   dBodyID add( dGeomID g, dMass* m);
   //dGeomID add(dGeomID g, dSpaceID s=0);
   void update();

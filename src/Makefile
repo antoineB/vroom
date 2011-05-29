@@ -6,7 +6,7 @@ CXXFLAGS=-Wall -Wextra -pedent
 CXXFLAGS=
 CHK_SOURCES=%.cpp %.hpp
 
-main: main.cpp demo.o OgreFramework.o car.o wheel.o mytools.o ground.o world.o space.o obstacle.o geom.o movableobstacle.o type.o
+main: main.cpp demo.o OgreFramework.o car.o wheel.o mytools.o ground.o world.o space.o obstacle.o geom.o movableobstacle.o type.o utils.o
 	g++ $(CXXFLAGS) -o $@ $^ $(INCDIRS) $(LIBSDIRS) $(LIBS)
 
 demo.o: demo.cpp
@@ -43,6 +43,9 @@ movableobstacle.o: movableobstacle.cpp
 	g++ $(CXXFLAGS) -o $@ -c $^ $(INCDIRS)
 
 type.o: type.cpp
+	g++ $(CXXFLAGS) -o $@ -c $^ $(INCDIRS)
+
+utils.o: utils.cpp
 	g++ $(CXXFLAGS) -o $@ -c $^ $(INCDIRS)
 
 
