@@ -6,14 +6,6 @@
 
 using namespace std;
 
-#define CONSTANT_SIZE sizeof(dReal)*6
-
-#define SIMULATION_PACE 0.5
-#define GRAVITY_X 0.0
-#define GRAVITY_Y -0.2
-#define GRAVITY_Z 0.0
-#define CFM 1e-5
-
 template<> World* Ogre::Singleton<World>::ms_Singleton = 0;
 
 World::World(string xmlFileName){
@@ -33,7 +25,7 @@ World::World(string xmlFileName){
   //  dWorldSetERP()
 }
 
-void World::parseXml(string fileName) throw(std::string){
+void World::parseXml(string fileName) {
   Utils::Xml::begin(fileName, "world");
   
   TiXmlElement* constant = Utils::Xml::mustNode("constant");
@@ -145,11 +137,3 @@ void nearCallback (void *data, dGeomID o1, dGeomID o2){
   
   c1->dealWith(o1, o2);
 }
-
-
-#undef CONSTANT_SIZE 
-#undef SIMULATION_PACE
-#undef GRAVITY_X
-#undef GRAVITY_Y
-#undef GRAVITY_Z
-#undef CFM

@@ -3,11 +3,11 @@
 
 #include "utils.hpp"
 
-#include <ode/ode.h>
-#include <OGRE/OgreSingleton.h>
-
 #include "global.hpp"
 #include "mytools.hpp"
+
+#include <ode/ode.h>
+#include <OGRE/OgreSingleton.h>
 
 #include "space.hpp"
 
@@ -30,7 +30,7 @@ class World : public Space, public Ogre::Singleton<World> {
   World(const World&);
   World & operator=(const World&);
 
-  void parseXml(std::string fileName) throw(std::string);
+  void parseXml(std::string fileName);
 
   friend void nearCallback (void *data, dGeomID o1, dGeomID o2);  
 
@@ -38,7 +38,6 @@ public:
   ~World();
   World(std::string xmlFileName);
   dBodyID add( dGeomID g, dMass* m);
-  //dGeomID add(dGeomID g, dSpaceID s=0);
   void update();
   dJointID addHinge2(dBodyID b1, dBodyID b2, dJointGroupID jg=0);
   dJointID addHinge(dBodyID b1, dBodyID b2, dJointGroupID jg=0);

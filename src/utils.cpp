@@ -92,8 +92,17 @@ TiXmlElement* Utils::Xml::mustNode(std::string &name, int childPos, TiXmlElement
        mustQuit = true;
        end();
      }
-
    }
+
+  for (int i = 0; i < childPos; ++i) {
+    elem = elem->NextSiblingElement();
+    if (!elem) {
+      log_("impossible to find a " + name);
+      mustQuit = true;
+      end();
+    }
+  }
+
   return elem;
 }
 

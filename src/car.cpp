@@ -198,11 +198,11 @@ void Car::createJoints() {
     dJointSetHinge2Param (ph.joints[i],dParamLoStop,0);
     dJointSetHinge2Param (ph.joints[i],dParamHiStop,0);
   
-    if (i > 1) {
+    if (i > 1) { //back wheels
       dJointSetHinge2Param (ph.joints[i],dParamStopERP, 1.0); //normaly to get the the back wheel not rotate
       dJointSetHinge2Param (ph.joints[i],dParamStopCFM, 0.0);
     }
-    else {
+    else { //front wheels
       //choose ERP, CFm for front wheels
     }
   }
