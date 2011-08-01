@@ -5,17 +5,141 @@
   <engine>
   </engine>
 
-  <global-position x="" y="" z="" />
+  <name></name>
+
+  <global-position>
+    <x></x>
+    <y></y>
+    <z></z>
+  </global-position>
 
   <wheels>
-    <wheelUri uri="" />
-    <wheelUri uri="" />
-    <wheelUri uri="" />
-    <wheelUri uri="" />
+    <uri></uri>
+    <uri></uri>
+    <uri></uri>
+    <uri></uri>
   </wheels>
 
-  <graity-center x="" y="" z="" />
-  <mass value="" />
+  <graity-center>
+    <x></x>
+    <y></y>
+    <z></z>
+  </graity-center>
+ 
+  <mass></mass>
+
+  <rotation>
+    <x></x>
+    <y></y>
+    <z></z>
+  </rotation>
+
+  <box>
+    <x>7.48</x>
+    <y>0.6</y>
+    <z>17.56</z>
+  </box>
+
+<joints>
+  <!--
+      ERP = h kp / (h kp + kd) 
+      CFM = 1 / (h kp + kd) 
+      KP = 40.0
+      KD = 5.0
+  -->
+    
+  <front-right>
+    <axis1> 
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis1>
+    <axis2>
+      <x>1</x>
+      <y>0</y>
+      <z>0</z>
+    </axis2>
+    <cfm>0.077</cfm>
+    <erp>0.615</erp>
+  </front-right>
+
+  <front-left>
+    <axis1>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis1>
+    <axis2>
+      <x>1</x>
+      <y>0</y>
+      <z>0</z>
+    </axis2>
+    <cfm>0.077</cfm>
+    <erp>0.615</erp>
+  </front-left>
   
-  <mesh uri="" />
+  <back-right>
+    <axis1>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis1>
+    <axis2>
+      <x>1</x>
+      <y>0</y>
+      <z>0</z>
+    </axis2>
+    <cfm>0.077</cfm>
+    <erp>0.615</erp>
+  </back-right>
+  
+  <back-left>
+    <axis1>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis1>
+    <axis2>
+      <x>1</x>
+      <y>0</y>
+      <z>0</z>
+    </axis2>
+    <cfm>0.077</cfm>
+    <erp>0.615</erp>
+  </back-left>
+</joints>
+
+
+  <material>
+    <bonet></bonet>
+    <back></back>
+    <front></front>
+    <bottom></bottom>
+    <top></top>
+    <wind_window></wind_window>
+    <back_top></back_top>
+    <back_window></back_window>
+    <wind_window_frame></wind_window_frame>
+    <left_back></left_back>
+    <left_front></left_front>
+    <right_back></right_back>
+    <right_front></right_front>
+  </material>
+
+  <meshes>
+    <bonet></bonet>
+    <back></back>
+    <front></front>
+    <bottom></bottom>
+    <top></top>
+    <wind_window></wind_window>
+    <back_top></back_top>
+    <back_window></back_window>
+    <wind_window_frame></wind_window_frame>
+    <left_back></left_back>
+    <left_front></left_front>
+    <right_back></right_back>
+    <right_front></right_front>
+  </meshes>
+  
 </car>

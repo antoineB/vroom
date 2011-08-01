@@ -4,12 +4,12 @@
   <nature>cylinder</nature>
   <position>
     <x>-3.15</x>
-    <y>-0.2</y>
+    <y>-0.3</y>
     <z>5.0</z>
   </position>
   <radius>1.20</radius>
   <width>0.5</width>
-  <mass>10</mass>
+  <mass>2.25</mass>
 
   <tire-mesh>wheel_tire.mesh</tire-mesh>
   <tire-material>Wheels/Tire</tire-material>

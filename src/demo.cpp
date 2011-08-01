@@ -436,7 +436,8 @@ void demo::setupDemoScene(){
   }
    
   extern Car car;
-  car.init("car", sceneMgr_->getRootSceneNode());
+  //car.init("car", sceneMgr_->getRootSceneNode());
+  car.initXml("../xml/car.xml", sceneMgr_->getRootSceneNode());
 }
 
 

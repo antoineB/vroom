@@ -8,13 +8,6 @@ using namespace Utils;
 
 DContactType Car::type(Type::CAR);
 
-Car::Car(const char *fileName) {
-  Xml::begin(fileName, "car");
-  
-  
-  Xml::end();
-}
-
 void Car::update() {
   //graphical
   MyTools::byOdeToOgre(ph.geom, cst.carNode);
@@ -68,6 +61,16 @@ void Car::createPhysics() {
   createJoints();
 }
 
+void Car::createPhysics(Utils::Xml &x) {
+  ph.geom = addBox(x.mustOReal("box.x"), x.mustOReal("box.y"), x.mustOReal("box.z"));
+  dGeomSetData(ph.geom,(void*)&Car::type);
+  dGeomSetData((dGeomID)space,(void*)&Car::type);
+  dMassSetBoxTotal(&ph.mass, x.mustOReal("mass"), x.mustOReal("box.x"),
+		   x.mustOReal("box.y"), x.mustOReal("box.z"));
+  ph.body = World::getSingletonPtr()->add(ph.geom, &ph.mass);
+
+  createJoints(x);
+}
 
 void Car::createPhysics(Conf::Car::Param &mod) {
   memcpy(&ph.mass, &mod.mass, sizeof(dMass));
@@ -110,6 +113,39 @@ void Car::createJoints() {
   }
 }
 
+void Car::createJoints(Utils::Xml &x) {
+  for(int i = 0; i < 4; i++) {
+    ph.joints[i] = World::getSingletonPtr()->addHinge2(ph.body , ph.wheels[i].ph.body, 0);
+    dJointSetHinge2Param (ph.joints[i],dParamLoStop,0);
+    dJointSetHinge2Param (ph.joints[i],dParamHiStop,0);
+  
+    if (i > 1) {  //to get the the back wheel not rotate in y
+      dJointSetHinge2Param (ph.joints[i],dParamStopERP, 1.0);
+      dJointSetHinge2Param (ph.joints[i],dParamStopCFM, 0.0);
+    }
+  }
+  dJointSetHinge2Param(ph.joints[0], dParamSuspensionERP, 
+		       x.mustOReal("joints.front-right.erp"));
+  dJointSetHinge2Param(ph.joints[0], dParamSuspensionCFM,
+		       x.mustOReal("joints.front-right.cfm"));
+  
+  dJointSetHinge2Param(ph.joints[1], dParamSuspensionERP, 
+		       x.mustOReal("joints.front-left.erp"));
+  dJointSetHinge2Param(ph.joints[1], dParamSuspensionCFM, 
+		       x.mustOReal("joints.front-left.cfm"));
+  
+  dJointSetHinge2Param(ph.joints[2], dParamSuspensionERP, 
+		       x.mustOReal("joints.back-right.erp"));
+  dJointSetHinge2Param(ph.joints[2], dParamSuspensionCFM, 
+		       x.mustOReal("joints.back-right.cfm"));
+  
+  dJointSetHinge2Param(ph.joints[3], dParamSuspensionERP, 
+		       x.mustOReal("joints.back-left.erp"));
+  dJointSetHinge2Param(ph.joints[3], dParamSuspensionCFM,
+		       x.mustOReal("joints.back-left.cfm"));
+    
+}
+
 void Car::createJoints(Conf::Car::Param &mod) {
   for(int i = 0; i < 4; i++) {
     ph.joints[i] = World::getSingletonPtr()->addHinge2(ph.body , ph.wheels[i].ph.body, 0);
@@ -140,6 +176,11 @@ void Car::disposePhysics() {
   disposeJoints();
 }
 
+void Car::disposePhysics(Utils::Xml &x) {
+  disposeGeoms(x);
+  disposeJoints(x);
+}
+
 void Car::disposePhysics(Conf::Car::Param &mod) {
   disposeGeoms(mod);
   disposeJoints(mod);
@@ -149,6 +190,18 @@ void Car::disposePhysics(Conf::Car::Param &mod) {
 void Car::disposeGeoms() {
   dGeomSetPosition (ph.geom, Conf::Car::POS[0], Conf::Car::POS[1], Conf::Car::POS[2]);
   dGeomSetOffsetPosition(ph.geom, Conf::Car::POSOFFSET[0], Conf::Car::POSOFFSET[1], Conf::Car::POSOFFSET[2]);
+}
+
+void Car::disposeGeoms(Utils::Xml &x) {
+    Ogre::Real a = x.mustOReal("gravity-center.x");
+    Ogre::Real b = x.mustOReal("gravity-center.y");
+    Ogre::Real c = x.mustOReal("gravity-center.z");
+
+  dBodySetPosition(ph.body, a, b, c);
+  dGeomSetOffsetPosition(ph.geom,   
+			 x.mustOReal("global-position.x") - a,
+			 x.mustOReal("global-position.y") - b,
+			 x.mustOReal("global-position.z") - c);
 }
 
 
@@ -168,6 +221,57 @@ void Car::disposeJoints() {
     dJointSetHinge2Axis1(ph.joints[i], Conf::Car::AXIS1[i][0], Conf::Car::AXIS1[i][1], Conf::Car::AXIS1[i][2]);
     dJointSetHinge2Axis2(ph.joints[i], Conf::Car::AXIS2[i][0], Conf::Car::AXIS2[i][1], Conf::Car::AXIS2[i][2]);
   }    
+}
+
+void Car::disposeJoints(Utils::Xml &x) {
+  Ogre::Real a = x.mustOReal("global-position.x");
+  Ogre::Real b = x.mustOReal("global-position.y");
+  Ogre::Real c = x.mustOReal("global-position.z");
+
+  std::string uris[] = {
+    "../xml/" + x.mustString("wheels.uri", 0),
+    "../xml/" + x.mustString("wheels.uri", 1),
+    "../xml/" + x.mustString("wheels.uri", 2),
+    "../xml/" + x.mustString("wheels.uri", 3)
+  };			
+
+  std::string names[] = {
+    "joints.front-right.axis1.x", "joints.front-right.axis1.y", "joints.front-right.axis1.z",
+    "joints.front-right.axis2.x", "joints.front-right.axis2.y", "joints.front-right.axis2.z",
+
+    "joints.front-left.axis1.x", "joints.front-left.axis1.y", "joints.front-left.axis1.z",
+    "joints.front-left.axis2.x", "joints.front-left.axis2.y", "joints.front-left.axis2.z",
+
+    "joints.back-right.axis1.x", "joints.back-right.axis1.y", "joints.back-right.axis1.z",
+    "joints.back-right.axis2.x", "joints.back-right.axis2.y", "joints.back-right.axis2.z",
+
+    "joints.back-left.axis1.x", "joints.back-left.axis1.y", "joints.back-left.axis1.z",
+    "joints.back-left.axis2.x", "joints.back-left.axis2.y", "joints.front-left.axis2.z"   
+  };
+
+  for (int i = 0; i < 4; i++) {
+    {
+      Utils::Xml w(uris[i].c_str(), "wheel");
+      dJointSetHinge2Anchor(ph.joints[i],
+			    a + w.mustOReal("position.x"), 
+			    b + w.mustOReal("position.y"),
+			    c + w.mustOReal("position.z")
+			    );
+
+      std::cout<<a + w.mustOReal("position.x") << " - " << b + w.mustOReal("position.y") << " - " << c + w.mustOReal("position.z") << std::endl;
+		
+    }
+    dJointSetHinge2Axis1(ph.joints[i], 
+			 x.mustOReal(names[i * 6].c_str()),
+			 x.mustOReal(names[i * 6 + 1].c_str()),
+			 x.mustOReal(names[i * 6 + 2].c_str())
+			 );
+    dJointSetHinge2Axis2(ph.joints[i], 
+			 x.mustOReal(names[i * 6 + 3].c_str()),
+			 x.mustOReal(names[i * 6 + 4].c_str()),
+			 x.mustOReal(names[i * 6 + 5].c_str())
+			 );
+  }
 }
 
 void Car::disposeJoints(Conf::Car::Param &mod) {
@@ -206,7 +310,7 @@ void Car::reset(Conf::Param &mod) {
 }
 
 
-void Car::init(const char *nodeName, Ogre::SceneNode *root){
+void Car::init(const char *nodeName, Ogre::SceneNode *root) {
   envUp_();
 
   createSpace();
@@ -214,10 +318,10 @@ void Car::init(const char *nodeName, Ogre::SceneNode *root){
   createNodesAndMeshes(nodeName, root);
   createCamNodes();
 
-  ph.wheels[0].createXml("../xml/wheel_front_right.xml", space);
-  ph.wheels[1].createXml("../xml/wheel_front_left.xml", space);
-  ph.wheels[2].createXml("../xml/wheel_back_right.xml", space);
-  ph.wheels[3].createXml("../xml/wheel_back_left.xml", space);
+  ph.wheels[0].initXml("../xml/wheel_front_right.xml", space);
+  ph.wheels[1].initXml("../xml/wheel_front_left.xml", space);
+  ph.wheels[2].initXml("../xml/wheel_back_right.xml", space);
+  ph.wheels[3].initXml("../xml/wheel_back_left.xml", space);
 
   
   createPhysics();
@@ -226,6 +330,71 @@ void Car::init(const char *nodeName, Ogre::SceneNode *root){
   MyTools::byOdeToOgre(ph.geom, cst.carNode);
 }
 
+void Car::createNodesAndMeshes(Utils::Xml &x) {
+  Ogre::SceneNode *node = sceneMgr_->getRootSceneNode()->createChildSceneNode(cst.nodeName);
+  Ogre::SceneNode *fnode = node->createChildSceneNode("ford");
+
+  cst.carNode = node;
+  cst.subCarNode = fnode;
+
+  fnode->scale(0.35, 0.35, 0.35);
+  fnode->yaw(Ogre::Degree(x.mustOReal("rotation.y")));
+  fnode->translate(0.0, 1.9, 0.0);
+
+  std::string names[] = {
+    "bonet", "back", "front", "bottom", "top", "wind_window", "back_top",
+    "back_window", "wind_window_frame", "left_back", "left_front",
+    "right_back", "right_front"
+  };
+      
+  for (int i = 0; i < 13; i++) {
+    std::string mesh("meshes." + names[i]);
+    std::string mat("materials." + names[i]);
+    createAndAttachEntity(names[i], x.mustString(mesh.c_str()), x.mustString(mat.c_str()), fnode);
+  }
+
+  //  createLeftDoorGraphic();
+  //  createRightDoorGraphic();
+}
+
+void Car::initXml(const char *xmlFile, Ogre::SceneNode *root) {
+  envUp_();
+
+  createSpace();
+
+  Utils::Xml x(xmlFile, "car");
+
+  cst.nodeName = x.mustString("name");
+  
+  createNodesAndMeshes(x);
+
+  std::cerr<<"mesh and nodes created"<<std::endl;
+  //createCamNodes(x);
+
+  std::string uris[] = {
+    "../xml/" + x.mustString("wheels.uri", 0),
+    "../xml/" + x.mustString("wheels.uri", 1),
+    "../xml/" + x.mustString("wheels.uri", 2),
+    "../xml/" + x.mustString("wheels.uri", 3)
+  };			
+
+  for (int i = 0; i < 4; i++)
+    ph.wheels[i].initXml(uris[i].c_str(), space);
+
+  std::cerr<<"wheels created"<<std::endl;
+
+  
+  createPhysics(x);
+
+  std::cerr<<"physics created"<<std::endl;
+
+  disposePhysics(x);
+
+  std::cerr<<"physics disposed"<<std::endl;
+
+
+  MyTools::byOdeToOgre(ph.geom, cst.carNode);
+}
 
 void Car::printRotationMatrix() {
   const dReal *R = dGeomGetRotation(ph.geom);
@@ -556,6 +725,6 @@ void Car::createCamNodes() {
   camT->translate(0.0, 4.0, 5.0);
 
   //don't what it used for
-  cam->setAutoTracking (true, camT);
-  cam->setFixedYawAxis (true); 
+  cam->setAutoTracking(true, camT);
+  cam->setFixedYawAxis(true); 
 }

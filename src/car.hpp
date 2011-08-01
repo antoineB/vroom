@@ -62,6 +62,8 @@ public:
   void setBackWheelsCfm(dReal cfm);
   void setFrontWheelsCfm(dReal cfm);
 
+  void initXml(const char *xmlFile, Ogre::SceneNode *root);
+
   struct Ph {
     Wheel wheels[4];
     dJointID joints[4];
@@ -78,6 +80,8 @@ private:
 
   bool brake;
 
+
+  void createNodesAndMeshes(Utils::Xml &x);
 
   float speed,steer;
   void updateMotor();
@@ -114,6 +118,12 @@ private:
 
   static void fillContact();
   static void fillContact(Conf::Car::Param &mod);
+
+  void createPhysics(Utils::Xml &x);
+  void createJoints(Utils::Xml &x);
+  void disposePhysics(Utils::Xml &x);
+  void disposeGeoms(Utils::Xml &x);
+  void disposeJoints(Utils::Xml &x);
 
   //should remain constant over the car object life
   struct Cst {

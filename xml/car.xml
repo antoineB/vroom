@@ -1,0 +1,146 @@
+<!--
+    * All positions are relative to global-position
+-->
+<car>
+  <engine>
+  </engine>
+
+  <name>car</name>
+
+  <global-position>
+    <x>0</x>
+    <y>4.3.0</y>
+    <z>0</z>
+  </global-position>
+
+  <gravity-center>
+    <x>0</x>
+    <y>4.0</y>
+    <z>0</z>
+  </gravity-center>
+ 
+  <mass>180</mass>
+
+  <rotation>
+    <x></x>
+    <y>180</y>
+    <z></z>
+  </rotation>
+
+  <box>
+    <x>7.48</x>
+    <y>0.6</y>
+    <z>17.56</z>
+  </box>
+
+<joints>
+  <!--
+      ERP = h kp / (h kp + kd) 
+      CFM = 1 / (h kp + kd) 
+      KP = 40.0
+      KD = 5.0
+  -->
+    
+  <front-right>
+    <axis1>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis1>
+    <axis2>
+      <x>1</x>
+      <y>0</y>
+      <z>0</z>
+    </axis2>
+    <cfm>0.077</cfm>
+    <erp>0.615</erp>
+  </front-right>
+
+  <front-left>
+    <axis1>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis1>
+    <axis2>
+      <x>1</x>
+      <y>0</y>
+      <z>0</z>
+    </axis2>
+    <cfm>0.077</cfm>
+    <erp>0.615</erp>
+  </front-left>
+  
+  <back-right>
+    <axis1>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis1>
+    <axis2>
+      <x>1</x>
+      <y>0</y>
+      <z>0</z>
+    </axis2>
+    <cfm>0.077</cfm>
+    <erp>0.615</erp>
+  </back-right>
+  
+  <back-left>
+    <axis1>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis1>
+    <axis2>
+      <x>1</x>
+      <y>0</y>
+      <z>0</z>
+    </axis2>
+    <cfm>0.077</cfm>
+    <erp>0.615</erp>
+  </back-left>
+</joints>
+
+
+  <wheels>
+    <uri>wheel_front_right.xml</uri>
+    <uri>wheel_front_left.xml</uri>
+    <uri>wheel_back_right.xml</uri>
+    <uri>wheel_back_left.xml</uri>
+  </wheels>
+
+  <materials>
+    <bonet>Ford/Top</bonet>
+    <back>Ford/Back</back>
+    <front>Ford/Front</front>
+    <bottom>Ford/Bottom</bottom>
+    <top>Ford/Top</top>
+    <wind_window>Ford/TopWindow</wind_window>
+    <back_top>Ford/Top</back_top>
+    <back_window>Ford/TopWindow</back_window>
+    <wind_window_frame>Ford/Top</wind_window_frame>
+
+    <left_back>Ford/LeftDoor</left_back>
+    <left_front>Ford/LeftDoor</left_front>
+    <right_back>Ford/RightDoor</right_back>
+    <right_front>Ford/RightDoor</right_front>
+  </materials>
+
+  <meshes>
+    <bonet>bonet.mesh</bonet>
+    <back>back.mesh</back>
+    <front>front.mesh</front>
+    <bottom>bottom.mesh</bottom>
+    <top>top.mesh</top>
+    <wind_window>wind_window.mesh</wind_window>
+    <back_top>back_top.mesh</back_top>
+    <back_window>back_window.mesh</back_window>
+    <wind_window_frame>wind_window_frame.mesh</wind_window_frame>
+    <left_back>left_back.mesh</left_back>
+    <left_front>left_front.mesh</left_front>
+    <right_back>right_back.mesh</right_back>
+    <right_front>right_front.mesh</right_front>
+  </meshes>
+  
+</car>

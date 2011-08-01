@@ -29,6 +29,7 @@ int main(int argc, char **argv){
   //set globals variables
   memset(&_glb,0,sizeof(_glb));
 
+
   //set up world
   new World("world.xml");
 

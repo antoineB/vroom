@@ -27,7 +27,7 @@ public:
   Wheel();  
   ~Wheel();
 
-  void createXml(const char* xmlFile, dSpaceID space);
+  void initXml(const char* xmlFile, dSpaceID space);
   void update();
 
   static void fillContact(dContact &mod);

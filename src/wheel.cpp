@@ -89,15 +89,16 @@ void Wheel::disposePhysics(Utils::Xml &x) {
 		       Ogre::Degree(x.mustOReal("rotation.y")).valueRadians());
     dBodySetRotation(ph.body, R);
     
+    Utils::Xml w("../xml/car.xml", "car");
     dGeomSetPosition(ph.geom, 
-		     Conf::Car::POS[0] + x.mustOReal("position.x"), 
-		     Conf::Car::POS[1] + x.mustOReal("position.y"), 
-		     Conf::Car::POS[2] + x.mustOReal("position.z")
+		     w.mustOReal("global-position.x") + x.mustOReal("position.x"), 
+		     w.mustOReal("global-position.y") + x.mustOReal("position.y"), 
+		     w.mustOReal("global-position.z") + x.mustOReal("position.z")
 		     );
 }
 
 
-void Wheel::createXml(const char* xmlFile, dSpaceID space) {
+void Wheel::initXml(const char* xmlFile, dSpaceID space) {
   Utils::Xml x(xmlFile, "wheel");
   
   cst.xmlFile = xmlFile;

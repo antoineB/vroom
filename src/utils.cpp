@@ -49,7 +49,8 @@ void Utils::Xml::end() {
 }
 
 Utils::Xml::~Xml() {
-  end();
+  if (documantHandle != NULL)
+    delete documantHandle;
 }
 
 TiXmlElement* Utils::Xml::mustNode(const char* name, int childPos, TiXmlElement* xmlE) {
