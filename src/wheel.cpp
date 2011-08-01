@@ -79,7 +79,7 @@ void Wheel::createNodesAndMesh(Utils::Xml &x) {
   e->setMaterialName(x.mustString("hubcap-material"));
   n->attachObject(e);
 
-  n->scale(Conf::Wheel::SCALE[0], Conf::Wheel::SCALE[1], Conf::Wheel::SCALE[2]);
+  n->scale(x.mustOReal("scale.x"), x.mustOReal("scale.y"), x.mustOReal("scale.z"));
 }
 
 

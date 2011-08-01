@@ -21,4 +21,9 @@
     <y>90</y>
     <z></z>
   </rotation>
+  <scale>
+    <x>2.45</x>
+    <y>2.45</y>
+    <z>2.45</z>
+  </scale>
 </wheel>

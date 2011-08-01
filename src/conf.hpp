@@ -5,56 +5,7 @@
 
 namespace Conf {
 
-  namespace Wheel {
-    //the position of the wheel went car is in {O, O, O}
-    const dReal POS[4][3] = {
-      { 3.05, +0.0, -5.85 },
-      { -3.05, +0.0, -5.85 },
-      { 3.15, -0.2, 5.0 },
-      { -3.15, -0.2, 5.0 }
-    };
-    
-    const dReal DENSITY = 1;
-    const dReal RADIUS = 1.20;
-    const dReal WIDTH = 0.5;
-
-    const dReal SCALE[3] = { 2.45, 2.45, 2.45 };
-
-    struct Param {
-      dMass mass;
-    };
-
-  };
-
   namespace Car {
-    const dReal POS[3] = { 0, 4., 0 };
-    const dReal POSOFFSET[3] = { 0.0, 0.3, 0.0 };
-    const dReal BOX[3] = { 7.48, 0.6, 17.56 };
-
-    const dReal AXIS1[4][3] = {
-      {0, 1, 0},
-      {0, 1, 0},
-      {0, 1, 0},
-      {0, 1, 0}
-    };
-    
-    const dReal AXIS2[4][3] = {
-      {1, 0, 0},
-      {1, 0, 0},
-      {1, 0, 0},
-      {1, 0, 0}
-    };
-
-    struct Param {
-      dMass mass;
-      dReal box[3];
-      dReal offset[3];
-      dReal axis1[4][3];    
-      dReal axis2[4][3];
-      Conf::Wheel::Param wheels[4];
-      dContact contact;
-      dContact wheel_contact;
-    };
 
 
     namespace Door {
@@ -94,28 +45,6 @@ namespace Conf {
     };
   };
 
-  namespace FlatGround {
-
-    struct Param {
-      dContact contact;
-    };
-
-  };
-
-  namespace Obstacle {
-
-    struct Param {
-      dContact contact;
-    };
-    
-  };
-
-
-  struct Param {
-    struct FlatGround::Param ground;
-    struct Obstacle::Param obstacles;
-    struct Car::Param car;
-  };
 };
 
 #endif

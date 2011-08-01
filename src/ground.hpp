@@ -37,7 +37,6 @@ public:
   static DContactType type;
 
   FlatGround(const char* material);
-  static void fillContact(Conf::FlatGround::Param &mod);
 };
 
 #endif

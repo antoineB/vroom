@@ -3,24 +3,5 @@
   <Window Type="DefaultWindow" Name="root" >
     <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" ></Property>
     <LayoutImport RessourceGroup="Layouts" Filename="car/wheel.layout"></LayoutImport>
-    <Window Type="DefaultWindow" Name="root/contact">
-      <Property Name="UnifiedAreaRect" Value="{{0.7,0},{0,0},{1,0},{1,0}}" ></Property>
-      <LayoutImport RessourceGroup="Layouts" Filename="car/car_contact.layout"></LayoutImport>
-      <LayoutImport RessourceGroup="Layouts" Filename="car/wheel_contact.layout"></LayoutImport>
-      <LayoutImport RessourceGroup="Layouts" Filename="car/ground_contact.layout"></LayoutImport>
-    </Window>
-    <Window Type="DefaultWindow" Name="root/car_param">
-      <Property Name="UnifiedAreaRect" Value="{{0,0},{0.1,0},{0.7,0},{1,0}}" ></Property>
-      <LayoutImport RessourceGroup="Layouts" Filename="car/box.layout"></LayoutImport>
-      <LayoutImport RessourceGroup="Layouts" Filename="car/mass.layout"></LayoutImport>
-      <LayoutImport RessourceGroup="Layouts" Filename="car/joints.layout"></LayoutImport>
-      <Window Type="Vanilla/Button" Name="root/car_param/go">
-	<Property Name="UnifiedAreaRect" Value="{{0,0},{0.95,0},{0.1,0},{1,0}}" ></Property>
-	<Property Name="Alpha" Value="0.5" ></Property>
-	<Property Name="Font" Value="DejaVuSans-10" ></Property>
-	<Property Name="TextColours" Value="AADDFF11" ></Property>
-	<Property Name="Text" Value="GO" ></Property>
-      </Window>
-    </Window>
   </Window>
 </GUILayout>

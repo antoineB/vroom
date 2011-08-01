@@ -20,8 +20,6 @@ public:
   inline void initGeom(void *ptr);
   inline void update();
   void setMaterial(const char* name) const;
-  static void fillContact(Conf::Obstacle::Param &mod);
-
   static DContactType type;
 };
 

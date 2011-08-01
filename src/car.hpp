@@ -13,12 +13,25 @@
 #include "obstacle.hpp"
 
 class Car: public Space{
-
 public:
+  //should remain constant over the car object life
+  struct Cst {
+    std::string nodeName;
+    Ogre::SceneNode *carNode;
+    Ogre::SceneNode *subCarNode;
+    Ogre::SceneNode *leftDoorNode;
+    Ogre::SceneNode *rightDoorNode;
+  };
+
+  struct Ph {
+    dJointID joints[4];
+    dBodyID body;
+    dGeomID geom;
+    dMass mass;
+  };
+
   Car();
-  Car(const char *fileName);
   ~Car();
-  void init(const char *n, Ogre::SceneNode *no);
   void update();
 
   void dropDoors();
@@ -36,7 +49,6 @@ public:
 
   void setMass(dReal total, dReal x, dReal y, dReal z);
 
-  void reset(Conf::Param &mod);
   void lowRideFront();
   void lowRideBack();
 
@@ -44,10 +56,6 @@ public:
   Ogre::Vector3 getPosition();
   Ogre::Vector3 getDirection();
   Ogre::Quaternion getOrientation();
-
-
-  void parseXml(std::string fileName);
-  void parseXml(TiXmlHandle handle);
 
   void setBrake(bool b);
 
@@ -64,32 +72,19 @@ public:
 
   void initXml(const char *xmlFile, Ogre::SceneNode *root);
 
-  struct Ph {
-    Wheel wheels[4];
-    dJointID joints[4];
-    dBodyID body;
-    dGeomID geom;
-    dMass mass;
-  };
-
+  Wheel wheels[4];
   struct Ph ph;
-
+  struct Cst cst;
   static DContactType type;
 
 private:
-
   bool brake;
-
 
   void createNodesAndMeshes(Utils::Xml &x);
 
   float speed,steer;
   void updateMotor();
   void updateSteering();
-  
-
-  void setMesh(std::string name);
-  void setMaterial(std::string name);
 
   void rotateWheels(dMatrix3 *R);
   void printRotationMatrix();
@@ -97,44 +92,16 @@ private:
   void createAndAttachEntity(const std::string &name, const std::string &meshName, const std::string &MaterialName, Ogre::SceneNode *node) const ;
   void createLeftDoorGraphic();
   void createRightDoorGraphic();
-  void createNodesAndMeshes(std::string nodeName, Ogre::SceneNode *parentNode);
   void createCamNodes();
 
   void createSpace();
-  void createPhysics();
-  void createJoints();
-  void disposePhysics();
-  void disposeGeoms();
-  void disposeJoints();
-
-  void createPhysics(Conf::Car::Param &mod);
-  void disposePhysics(Conf::Car::Param &mod);
-  void disposeGeoms(Conf::Car::Param &mod);
-  void disposeJoints(Conf::Car::Param &mod);
-  void createJoints(Conf::Car::Param &mod);
-
-  void createLeftDoorPhysic();
-  void createRightDoorPhysic();
-
+  
   static void fillContact();
-  static void fillContact(Conf::Car::Param &mod);
-
+  
   void createPhysics(Utils::Xml &x);
   void createJoints(Utils::Xml &x);
   void disposePhysics(Utils::Xml &x);
   void disposeGeoms(Utils::Xml &x);
   void disposeJoints(Utils::Xml &x);
-
-  //should remain constant over the car object life
-  struct Cst {
-    std::string nodeName;
-    Ogre::SceneNode *carNode;
-    Ogre::SceneNode *subCarNode;
-    Ogre::SceneNode *leftDoorNode;
-    Ogre::SceneNode *rightDoorNode;
-  };
-
-  struct Cst cst;
-
 };
 #endif

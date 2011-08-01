@@ -51,7 +51,3 @@ void Obstacle::fillContact() {
   type.contact.surface.slip1 = 0.05;
   type.contact.surface.slip2 = 0.05;
 }
-
-void Obstacle::fillContact(Conf::Obstacle::Param &mod) {
-  memcpy(&Car::type.contact.surface.mu, &mod.contact.surface.mu, sizeof(mod.contact.surface) - sizeof(mod.contact.surface.mode));
-}

@@ -46,8 +46,3 @@ void FlatGround::fillContact() {
   type.contact.surface.slip1 = 0.01;
   type.contact.surface.slip2 = 0.01;
 }
-
-void FlatGround::fillContact(Conf::FlatGround::Param &mod) {
-  memcpy(&FlatGround::type.contact.surface.mu, &mod.contact.surface.mu, sizeof(mod.contact.surface) - sizeof(mod.contact.surface.mode));
-
-}
