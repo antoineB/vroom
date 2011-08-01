@@ -4,9 +4,16 @@
 #include "world.hpp"
 #include <math.h>
 
+using namespace Utils;
 
 DContactType Car::type(Type::CAR);
 
+Car::Car(const char *fileName) {
+  Xml::begin(fileName, "car");
+  
+  
+  Xml::end();
+}
 
 void Car::update() {
   //graphical
@@ -35,118 +42,13 @@ void Car::fillContact() {
   Car::type.contact.surface.slip2 = 0.07;
 }
 
-
 void Car::fillContact(Conf::Car::Param &mod) {
   memcpy(&Car::type.contact.surface.mu, &mod.contact.surface.mu, sizeof(mod.contact.surface) - sizeof(mod.contact.surface.mode));
 }
 
 Car::~Car(){}
 
-
 Car::Car(): speed(0.0), steer(0.0), brake(false){}
-
-
-void Car::dropDoors() {
-  if (dJointIsEnabled(ph.leftDoor.joint)) {
-    dJointDisable(ph.leftDoor.joint);
-    dJointDisable(ph.rightDoor.joint);
-  }
-  else {
-    dJointEnable(ph.leftDoor.joint);
-    dJointEnable(ph.rightDoor.joint);
-  }
-}
-
-
-void Car::createLeftDoorPhysic() {
-  using namespace Conf::Car::Door;
-
-  ph.leftDoor.geom = addBox ( BOX_BOUND[0], BOX_BOUND[1], BOX_BOUND[2]);
-  
-  dMassSetBox(&ph.leftDoor.mass, DENSITY, BOX_MASS[0], BOX_MASS[1], BOX_MASS[2]);
-  ph.leftDoor.body = World::getSingletonPtr()->add(ph.leftDoor.geom, &ph.leftDoor.mass);
-  dGeomSetData(ph.leftDoor.geom, (void*)&Car::type);
-  
-  //rotation 90
-  dMatrix3 R;
-  dRFromAxisAndAngle(R, 0.0, 1.0, 0.0, Conf::Math::PI);
-  dBodySetRotation(ph.leftDoor.body, R);
-  //translation
-  {
-    const dReal xb = 1.183 * 0.35;
-    const dReal zb = 7.61 * 0.35;
-    const dReal yb = 0.38 * 0.35;
-    
-    dGeomSetOffsetPosition(ph.leftDoor.geom, xb, -yb, -zb);
-  }
-  
-  dBodySetPosition(ph.leftDoor.body, 
-		   Conf::Car::POS[0] + Left::POS[0], 
-		   Conf::Car::POS[1] + Left::POS[1] +2.5,
-		   Conf::Car::POS[2] + Left::POS[2]
-		   );
-
-  //creation du joint
-  ph.leftDoor.joint = World::getSingletonPtr()->addHinge(ph.leftDoor.body, ph.body, 0);
-  dJointSetHingeParam (ph.leftDoor.joint, dParamLoStop, -Conf::Math::PI/3);
-  dJointSetHingeParam (ph.leftDoor.joint, dParamHiStop, .0);
-  //    dJointSetHingeParam (ph.leftDoor.joint, dParamStopERP, 1.0);
-  //    dJointSetHingeParam (ph.leftDoor.joint, dParamStopCFM, 1.0);
-  
-  dJointSetHingeAxis(ph.leftDoor.joint,  Left::JOINT_AXIS[0], Left::JOINT_AXIS[1], Left::JOINT_AXIS[2]);
-  dJointSetHingeAnchor(ph.leftDoor.joint,
-		       Conf::Car::POS[0] + Left::JOINT_POS[0], 
-		       Conf::Car::POS[1] + Left::JOINT_POS[1],
-		       Conf::Car::POS[2] + Left::JOINT_POS[2]
-		       );
-  
-  MyTools::byOdeToOgre(ph.leftDoor.body, cst.leftDoorNode); 
-}
-
-
-void Car::createRightDoorPhysic() {
-  using namespace Conf::Car::Door;
-    
-  ph.rightDoor.geom = addBox ( BOX_BOUND[0], BOX_BOUND[1], BOX_BOUND[2]);
-  dMassSetBox(&ph.rightDoor.mass, DENSITY, BOX_MASS[0], BOX_MASS[1], BOX_MASS[2]);
-  ph.rightDoor.body = World::getSingletonPtr()->add(ph.rightDoor.geom, &ph.rightDoor.mass);
-  dGeomSetData(ph.rightDoor.geom, (void*)&Car::type);
-    
-  //rotation 90
-  dMatrix3 R;
-  dRFromAxisAndAngle(R, 0.0, 1.0, 0.0, -Conf::Math::PI);
-  dBodySetRotation(ph.rightDoor.body, R);
-  //translation
-  {
-    const dReal xb = 1.183 * 0.35;
-    const dReal zb = 7.61 * 0.35;
-    const dReal yb = 0.38 * 0.35;
-
-    dGeomSetOffsetPosition(ph.rightDoor.geom, -xb, -yb, -zb);
-  }
-  dBodySetPosition(ph.rightDoor.body, 
-		   Conf::Car::POS[0] + Right::POS[0], 
-		   Conf::Car::POS[1] + Right::POS[1] +2.5,
-		   Conf::Car::POS[2] + Right::POS[2]
-		   );
-
-  //creation du joint
-  ph.rightDoor.joint = World::getSingletonPtr()->addHinge(ph.rightDoor.body, ph.body, 0);
-  dJointSetHingeParam (ph.rightDoor.joint, dParamLoStop, .0);
-  dJointSetHingeParam (ph.rightDoor.joint, dParamHiStop, Conf::Math::PI/3);
-  //    dJointSetHingeParam (ph.rightDoor.joint, dParamStopERP, 1.0);
-  //    dJointSetHingeParam (ph.rightDoor.joint, dParamStopCFM, 1.0);
-
-  dJointSetHingeAxis(ph.rightDoor.joint, Right::JOINT_AXIS[0], Right::JOINT_AXIS[1], Right::JOINT_AXIS[2]);
-  dJointSetHingeAnchor(ph.rightDoor.joint, 			 
-		       Conf::Car::POS[0] + Right::JOINT_POS[0], 
-		       Conf::Car::POS[1] + Right::JOINT_POS[1],
-		       Conf::Car::POS[2] + Right::JOINT_POS[2]
-		       );
-
-  MyTools::byOdeToOgre(ph.rightDoor.body, cst.rightDoorNode);    
-}
-
 
 void Car::createSpace() {
   space = World::getSingletonPtr()->addSimpleSpace();
@@ -289,10 +191,10 @@ void Car::reset(Conf::Param &mod) {
   dGeomDestroy(ph.geom);
   dBodyDestroy(ph.body);
 
-  ph.wheels[0].reset(mod.car.wheels[0]);
-  ph.wheels[1].reset(mod.car.wheels[1]);
-  ph.wheels[2].reset(mod.car.wheels[2]);
-  ph.wheels[3].reset(mod.car.wheels[3]);
+  ph.wheels[0].reset();
+  ph.wheels[1].reset();
+  ph.wheels[2].reset();
+  ph.wheels[3].reset();
 
   createPhysics(mod.car);
   disposePhysics(mod.car);
@@ -312,19 +214,14 @@ void Car::init(const char *nodeName, Ogre::SceneNode *root){
   createNodesAndMeshes(nodeName, root);
   createCamNodes();
 
-  {
-    Ogre::SceneNode* carNode=sceneMgr_->getRootSceneNode();
-    for(int i=0; i<4; i++)
-      ph.wheels[i].create(space, carNode);
-  }
+  ph.wheels[0].createXml("../xml/wheel_front_right.xml", space);
+  ph.wheels[1].createXml("../xml/wheel_front_left.xml", space);
+  ph.wheels[2].createXml("../xml/wheel_back_right.xml", space);
+  ph.wheels[3].createXml("../xml/wheel_back_left.xml", space);
+
   
   createPhysics();
   disposePhysics();
-
-  /*
-  createLeftDoorPhysic();
-  createRightDoorPhysic();
-  */
 
   MyTools::byOdeToOgre(ph.geom, cst.carNode);
 }

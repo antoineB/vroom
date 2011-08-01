@@ -1,0 +1,21 @@
+<!--
+    * All positions are relative to global-position
+-->
+<car>
+  <engine>
+  </engine>
+
+  <global-position x="" y="" z="" />
+
+  <wheels>
+    <wheelUri uri="" />
+    <wheelUri uri="" />
+    <wheelUri uri="" />
+    <wheelUri uri="" />
+  </wheels>
+
+  <graity-center x="" y="" z="" />
+  <mass value="" />
+  
+  <mesh uri="" />
+</car>

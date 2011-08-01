@@ -16,6 +16,6 @@ namespace MyTools{
   void byOdeToOgre(dBodyID b, SceneNode* n);
   void byOdeToOgre(dGeomID g, SceneNode* n);
   dTriMeshDataID dTriMeshDataFromMesh(Ogre::Entity* e);
-};
+}
 
 #endif

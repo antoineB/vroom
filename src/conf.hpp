@@ -5,11 +5,6 @@
 
 namespace Conf {
 
-  namespace Math {
-    const dReal PI = 3.14159265;
-  };
-
-
   namespace Wheel {
     //the position of the wheel went car is in {O, O, O}
     const dReal POS[4][3] = {

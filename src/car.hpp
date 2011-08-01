@@ -5,7 +5,6 @@
 
 //#include "global.hpp"
 #include "OgreFramework.hpp"
-#include "parsexml.hpp"
 #include "space.hpp"
 #include "wheel.hpp"
 #include "type.hpp"
@@ -17,7 +16,7 @@ class Car: public Space{
 
 public:
   Car();
-  Car(std::string fileName);
+  Car(const char *fileName);
   ~Car();
   void init(const char *n, Ogre::SceneNode *no);
   void update();
@@ -63,21 +62,12 @@ public:
   void setBackWheelsCfm(dReal cfm);
   void setFrontWheelsCfm(dReal cfm);
 
-  struct PhDoor {
-    dGeomID geom;
-    dBodyID body;
-    dJointID joint;
-    dMass mass;
-  };
-
   struct Ph {
     Wheel wheels[4];
     dJointID joints[4];
     dBodyID body;
     dGeomID geom;
     dMass mass;
-    struct PhDoor leftDoor;
-    struct PhDoor rightDoor;
   };
 
   struct Ph ph;

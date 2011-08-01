@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wheel>
+  <name>wbl</name>
+  <nature>cylinder</nature>
+  <position>
+    <x>-3.15</x>
+    <y>-0.2</y>
+    <z>5.0</z>
+  </position>
+  <radius>1.20</radius>
+  <width>0.5</width>
+  <mass>10</mass>
+
+  <tire-mesh>wheel_tire.mesh</tire-mesh>
+  <tire-material>Wheels/Tire</tire-material>
+  <hubcap-mesh>wheel_hubcap.mesh</hubcap-mesh>
+  <hubcap-material>Wheels/Hubcap</hubcap-material>
+
+  <rotation>
+    <x></x>
+    <y>-90</y>
+    <z></z>
+  </rotation>
+</wheel>

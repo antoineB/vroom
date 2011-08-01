@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wheel>
+  <name></name><!-- must be single -->
+  <nature></nature><!-- /sphere/ or /cylinder/ -->
+  <position>
+    <x></x><!-- float -->
+    <y></y>
+    <z></z>
+  </position>
+  <radius></radius><!-- float -->
+  <width></width><!-- float, 0 if sphere -->
+  <mass></mass><!-- float -->
+
+  <tire-mesh></tire-mesh><!-- string -->
+  <tire-material></tire-material>
+  <hubcap-mesh></hubcap-mesh>
+  <hubcap-material></hubcap-material>
+
+  <rotation><!-- in degree -->
+    <x></x>
+    <y></y>
+    <z></z>
+  </rotation>
+</wheel>
