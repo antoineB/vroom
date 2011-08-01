@@ -1,12 +1,14 @@
 #ifndef WHEEL_HPP
 #define WHEEL_HPP
 
+#include "utils.hpp"
+#include "type.hpp"
+#include "conf.hpp"
+
 #include <OGRE/OgreSceneNode.h>
 
 #include <ode/ode.h>
 
-#include "type.hpp"
-#include "conf.hpp"
 
 class Wheel{
 public:
@@ -40,9 +42,9 @@ private:
 
   static void fillContact();
 
-  void createNodesAndMeshXml();
-  void createPhysicsXml(dSpaceID s);
-  void disposePhysicsXml();
+  void createNodesAndMesh(Utils::Xml &x);
+  void createPhysics(Utils::Xml &x, dSpaceID s);
+  void disposePhysics(Utils::Xml &x);
 
 
   struct Cst cst;

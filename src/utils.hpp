@@ -7,10 +7,22 @@
 
 namespace Utils {
 
-namespace Xml {
-  void begin(const char* fileName, const char* root);
-  void begin(std::string &fileName, const char* root);
+class Xml {
+private:
+  TiXmlDocument *documantHandle;
+  TiXmlElement* docElem;
+  bool mustQuit;
+  
+  Xml(const Xml&);
+
+  void init(std::string &fileName, const char* root);
   void end();
+  
+public:
+
+  Xml(const char* fileName, const char* root);
+  Xml(std::string &fileName, const char* root);
+  ~Xml();
 
   TiXmlElement* mustNode(std::string &name, int childPos = 0, TiXmlElement* xmlE = NULL);
   std::string mustString(std::string &name, int childPos, TiXmlElement* xmlE = NULL);
@@ -46,7 +58,7 @@ namespace Xml {
   Ogre::Real mustORealA(const char *name, TiXmlElement* xmlE);
 
 
-}
+};
 
 }
 

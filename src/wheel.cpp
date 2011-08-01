@@ -4,9 +4,6 @@
 
 #include <OGRE/OgreMath.h>
 
-using namespace Utils;
-
-
 DContactType Wheel::type(Type::CAR_WHEEL);
 
 
@@ -43,24 +40,22 @@ void Wheel::reset() {
   dGeomDestroy(ph.geom);
   dBodyDestroy(ph.body);
 
-  Xml::begin(cst.xmlFile, "wheel");
+  Utils::Xml x(cst.xmlFile, "wheel");
   
-  createPhysicsXml(space);
-  disposePhysicsXml();
-
-  Xml::end();
+  createPhysics(x, space);
+  disposePhysics(x);
 }
 
 
-void Wheel::createPhysicsXml(dSpaceID space) {
+void Wheel::createPhysics(Utils::Xml &x, dSpaceID space) {
 
-  if (Xml::mustString("nature") == "sphere") {
-    ph.geom = dCreateSphere(space, Xml::mustOReal("radius"));
-    dMassSetSphereTotal(&ph.mass, Xml::mustOReal("mass"), Xml::mustOReal("radius"));    
+  if (x.mustString("nature") == "sphere") {
+    ph.geom = dCreateSphere(space, x.mustOReal("radius"));
+    dMassSetSphereTotal(&ph.mass, x.mustOReal("mass"), x.mustOReal("radius"));    
   }
   else {
-    ph.geom = dCreateCylinder(space, Xml::mustOReal("radius"), Xml::mustOReal("width"));
-    dMassSetCylinderTotal(&ph.mass, Xml::mustOReal("mass"), 1, Xml::mustOReal("radius"), Xml::mustOReal("width"));    
+    ph.geom = dCreateCylinder(space, x.mustOReal("radius"), x.mustOReal("width"));
+    dMassSetCylinderTotal(&ph.mass, x.mustOReal("mass"), 1, x.mustOReal("radius"), x.mustOReal("width"));    
   }
   
   dGeomSetData(ph.geom,(void*)&Wheel::type);
@@ -68,52 +63,51 @@ void Wheel::createPhysicsXml(dSpaceID space) {
 }
 
 
-void Wheel::createNodesAndMeshXml() {
+void Wheel::createNodesAndMesh(Utils::Xml &x) {
   Ogre::Entity *e;
   Ogre::SceneNode *n;
 
     n  = sceneMgr_->getRootSceneNode()->createChildSceneNode(cst.nodeName);
   cst.wheelNode = n;
   
-  e = sceneMgr_->createEntity(cst.nodeName+"t", Xml::mustString("tire-mesh"));
-  e->setMaterialName(Xml::mustString("tire-material"));
+  e = sceneMgr_->createEntity(cst.nodeName+"t", x.mustString("tire-mesh"));
+  e->setMaterialName(x.mustString("tire-material"));
   e->setCastShadows(true);
   n->attachObject(e);
 
-  e = sceneMgr_->createEntity(cst.nodeName+"h", Xml::mustString("hubcap-mesh"));
-  e->setMaterialName(Xml::mustString("hubcap-material"));
+  e = sceneMgr_->createEntity(cst.nodeName+"h", x.mustString("hubcap-mesh"));
+  e->setMaterialName(x.mustString("hubcap-material"));
   n->attachObject(e);
 
   n->scale(Conf::Wheel::SCALE[0], Conf::Wheel::SCALE[1], Conf::Wheel::SCALE[2]);
 }
 
 
-void Wheel::disposePhysicsXml() {
+void Wheel::disposePhysics(Utils::Xml &x) {
     dMatrix3 R;
     dRFromAxisAndAngle(R, 0.0, 1.0, 0.0, 
-		       Ogre::Degree(Xml::mustOReal("rotation.y")).valueRadians());
+		       Ogre::Degree(x.mustOReal("rotation.y")).valueRadians());
     dBodySetRotation(ph.body, R);
     
     dGeomSetPosition(ph.geom, 
-		     Conf::Car::POS[0] + Xml::mustOReal("position.x"), 
-		     Conf::Car::POS[1] + Xml::mustOReal("position.y"), 
-		     Conf::Car::POS[2] + Xml::mustOReal("position.z")
+		     Conf::Car::POS[0] + x.mustOReal("position.x"), 
+		     Conf::Car::POS[1] + x.mustOReal("position.y"), 
+		     Conf::Car::POS[2] + x.mustOReal("position.z")
 		     );
 }
 
 
 void Wheel::createXml(const char* xmlFile, dSpaceID space) {
-  Xml::begin(xmlFile, "wheel");
+  Utils::Xml x(xmlFile, "wheel");
   
   cst.xmlFile = xmlFile;
-  cst.nodeName = Xml::mustString("name");
+  cst.nodeName = x.mustString("name");
   
-  createNodesAndMeshXml();
-  createPhysicsXml(space);
+  createNodesAndMesh(x);
+  createPhysics(x, space);
 
-  disposePhysicsXml();
+  disposePhysics(x);
   
   MyTools::byOdeToOgre(ph.geom, cst.wheelNode);
 
-  Xml::end();
 }

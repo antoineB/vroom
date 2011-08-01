@@ -26,17 +26,16 @@ World::World(string xmlFileName){
 }
 
 void World::parseXml(string fileName) {
-  Utils::Xml::begin(fileName, "world");
+  Utils::Xml x(fileName, "world");
   
-  TiXmlElement* constant = Utils::Xml::mustNode("constant");
+  TiXmlElement* constant = x.mustNode("constant");
   
-  cst.cfm = Utils::Xml::mustFloat("cfm", 0, constant);
-  cst.simulationPace = Utils::Xml::mustFloat("simulation-pace", 0, constant);
-  cst.gravity[0] = Utils::Xml::mustFloat("gravity.x", 0, constant);
-  cst.gravity[1] = Utils::Xml::mustFloat("gravity.y", 0, constant);
-  cst.gravity[2] = Utils::Xml::mustFloat("gravity.z", 0, constant);
+  cst.cfm = x.mustFloat("cfm", 0, constant);
+  cst.simulationPace = x.mustFloat("simulation-pace", 0, constant);
+  cst.gravity[0] = x.mustFloat("gravity.x", 0, constant);
+  cst.gravity[1] = x.mustFloat("gravity.y", 0, constant);
+  cst.gravity[2] = x.mustFloat("gravity.z", 0, constant);
 
-  Utils::Xml::end();
 }
 
 dReal World::atodr(const char *str){

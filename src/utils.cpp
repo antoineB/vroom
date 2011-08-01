@@ -7,22 +7,18 @@
 
 #include <OGRE/OgreStringConverter.h>
 
-namespace Utils {
-  namespace Xml {
-    TiXmlDocument *documantHandle = NULL;
-    TiXmlElement* docElem = NULL;
-    bool mustQuit;
-  }
-}
-
-void Utils::Xml::begin(const char *fileName, const char *root) {
+Utils::Xml::Xml(const char *fileName, const char *root) {
   std::string r(fileName);
-  Utils::Xml::begin(r, root);
+  Utils::Xml::init(r, root);
 }
 
-void Utils::Xml::begin(std::string &fileName, const char *root) {
-  assert(documantHandle == NULL);
- 
+Utils::Xml::Xml(std::string &fileName, const char *root) {
+  Utils::Xml::init(fileName, root);
+}
+
+void Utils::Xml::init(std::string &fileName, const char *root) {
+  documantHandle = NULL;
+  docElem = NULL; 
   mustQuit = false;
   
   documantHandle = new TiXmlDocument(fileName);
@@ -50,6 +46,10 @@ void Utils::Xml::end() {
 
   if (mustQuit) 
     exit(-1);
+}
+
+Utils::Xml::~Xml() {
+  end();
 }
 
 TiXmlElement* Utils::Xml::mustNode(const char* name, int childPos, TiXmlElement* xmlE) {
