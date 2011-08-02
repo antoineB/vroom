@@ -31,7 +31,7 @@ int main(int argc, char **argv){
 
 
   //set up world
-  new World("world.xml");
+  new World("../xml/world.xml");
 
   try{
     demo de;

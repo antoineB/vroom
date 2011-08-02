@@ -1,10 +1,10 @@
 <world>
   
   <constant>
-    <pi>3.14159265</pi>
     <gravity> <x>0.0</x> <y>-0.3</y> <z>0.0</z> </gravity>
     <cfm>1e-5</cfm>
-    <simulation-pace>0.2</simulation-pace>
+    <erp>0.2</erp>
+    <simulation-pace>0.15</simulation-pace>
   </constant>
 
 </world>

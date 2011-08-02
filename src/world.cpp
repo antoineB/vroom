@@ -22,7 +22,7 @@ World::World(string xmlFileName){
 
   dWorldSetGravity (world, cst.gravity[0], cst.gravity[1], cst.gravity[2]);
   dWorldSetCFM (world, cst.cfm);
-  //  dWorldSetERP()
+  dWorldSetERP(world, cst.erp);
 }
 
 void World::parseXml(string fileName) {
@@ -31,6 +31,7 @@ void World::parseXml(string fileName) {
   TiXmlElement* constant = x.mustNode("constant");
   
   cst.cfm = x.mustFloat("cfm", 0, constant);
+  cst.erp = x.mustOReal("erp", 0, constant);
   cst.simulationPace = x.mustFloat("simulation-pace", 0, constant);
   cst.gravity[0] = x.mustFloat("gravity.x", 0, constant);
   cst.gravity[1] = x.mustFloat("gravity.y", 0, constant);

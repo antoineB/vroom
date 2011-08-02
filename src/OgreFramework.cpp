@@ -29,7 +29,8 @@ OgreFramework::OgreFramework(){
   moveCursor = false;
   editing = false;
 
-  inCarView = 1;
+  inCarView = false;
+  inCarView2 = true;
 }
 
 bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener,
@@ -267,7 +268,7 @@ bool OgreFramework::keyPressed(const OIS::KeyEvent &keyEventRef){
     break;
 
   case OIS::KC_C :
-    inCarView=(inCarView+1)%4;
+    inCarView = !inCarView;
     break;
   }
 
@@ -314,18 +315,24 @@ void OgreFramework::updateOgre(double timeSinceLastFrame){
   m_TranslateVector = Vector3::ZERO;
 
   getInput();
-  if (inCarView == 0)
+
+  if (inCarView)
     myMoveCamera();   
-  else if (inCarView == 1) 
-    moveCamera();  
-  else if (inCarView == 2) 
-    myMoveCamera2();
   else
-    myMoveCamera3();
+    moveCamera();  
 }
 
 #define QUICK 3
-void OgreFramework::moveCamera(){
+void OgreFramework::moveCamera() {
+  if (inCarView2) {
+    m_pCamera->detachFromParent();
+
+    m_pCamera->setPosition(Vector3(0, 5, 5));
+    m_pCamera->lookAt(Vector3(0, 0, 0));
+
+    inCarView2 = false;
+  }
+    
   if(m_pKeyboard->isKeyDown(OIS::KC_LSHIFT)) 
     m_pCamera->moveRelative(m_TranslateVector);
   else 
@@ -335,24 +342,15 @@ void OgreFramework::moveCamera(){
 	  m_pCamera->moveRelative(m_TranslateVector / 10);
 }
 
-void OgreFramework::myMoveCamera3(){
-  m_pCamera->detachFromParent();
-  sceneMgr_->getSceneNode("cam_pos")->attachObject(m_pCamera);
-}
-
-void OgreFramework::myMoveCamera(){
-  extern Car car;
-  Ogre::Vector3 vec = car.getPosition();
-  vec.y += 3.2;
-  vec.z += 1.0;
-  m_pCamera->setPosition(vec);
-  m_pCamera->setOrientation(car.getOrientation());
-}
-
-
-void OgreFramework::myMoveCamera2() {
-  extern Car car;
-  m_pCamera->setDirection(car.getPosition());
+void OgreFramework::myMoveCamera() {
+  if (!inCarView2) {
+    m_pCamera->detachFromParent();
+    sceneMgr_->getSceneNode("cam_pos")->attachObject(m_pCamera);
+    m_pCamera->setPosition(0, 0, 0);
+    m_pCamera->setOrientation(sceneMgr_->getSceneNode("cam_target")->getOrientation());
+    
+    inCarView2 = true;
+  }
 }
 
 void OgreFramework::getInput(){

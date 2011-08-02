@@ -52,6 +52,12 @@ void Car::createPhysics(Utils::Xml &x) {
 		   x.mustOReal("box.y"), x.mustOReal("box.z"));
   ph.body = World::getSingletonPtr()->add(ph.geom, &ph.mass);
 
+  cst.brakeForce = x.mustOReal("engine.brake-force");
+  cst.gasForce = x.mustOReal("engine.gas-force");
+  cst.steeringForce = x.mustOReal("engine.steering-force");
+  cst.lowRiderForce = x.mustOReal("lowrider-force");
+
+
   createJoints(x);
 }
 
@@ -189,7 +195,7 @@ void Car::initXml(const char *xmlFile, Ogre::SceneNode *root) {
   
   createNodesAndMeshes(x);
 
-  //createCamNodes(x);
+  createCamNodes(x);
 
   std::string uris[] = {
     "../xml/" + x.mustString("wheels.uri", 0),
@@ -265,12 +271,12 @@ void Car::updateSteering() {
  
     for(int i=0; i<2; i++)
     {
-      dReal v = st - dJointGetHinge2Angle1 (ph.joints[i]);
-      if (v > 0.1) v = 0.1;
-      if (v < -0.1) v = -0.1;
-      v *= 10.0;
+      dReal v = st - dJointGetHinge2Angle1(ph.joints[i]);
+      if (v > 0.1) v = 1;
+      if (v < -0.1) v = -1;
+
       dJointSetHinge2Param (ph.joints[i],dParamVel,v);
-      dJointSetHinge2Param (ph.joints[i],dParamFMax,1.2);
+      dJointSetHinge2Param (ph.joints[i],dParamFMax,cst.steeringForce);
       dJointSetHinge2Param (ph.joints[i],dParamLoStop, -0.65);
       dJointSetHinge2Param (ph.joints[i],dParamHiStop, 0.65);
       dJointSetHinge2Param (ph.joints[i],dParamFudgeFactor,1.0);
@@ -281,12 +287,12 @@ void Car::updateSteering() {
 
 void Car::lowRideFront() {
   
-  dBodyAddRelForceAtRelPos(ph.body, 0.0, 500.0, 0.0, 0.0, 0.0, dGeomGetPosition(wheels[0].ph.geom)[2]);
+  dBodyAddRelForceAtRelPos(ph.body, 0.0, cst.lowRiderForce, 0.0, 0.0, 0.0, dGeomGetPosition(wheels[0].ph.geom)[2]);
 }
 
 
 void Car::lowRideBack() {
-  dBodyAddForceAtRelPos(ph.body, 0.0, 500.0, 0.0, 0.0, 0.0, dGeomGetPosition(wheels[2].ph.geom)[2]);
+  dBodyAddForceAtRelPos(ph.body, 0.0, cst.lowRiderForce, 0.0, 0.0, 0.0, dGeomGetPosition(wheels[2].ph.geom)[2]);
 }
 
 
@@ -304,11 +310,10 @@ void Car::setBrake(bool b){
 
 
 void Car::updateMotor(){
-  if(brake){
-    for(int i = 2; i<4; i++){
-      //a quoi sert de mettre la vitesse a zero?
+  if (brake) {
+    for(int i = 2; i<4; i++) {
       dJointSetHinge2Param(ph.joints[i], dParamVel2, 0);
-      dJointSetHinge2Param(ph.joints[i], dParamFMax2, 5*10.5);        
+      dJointSetHinge2Param(ph.joints[i], dParamFMax2, cst.brakeForce);        
       }
     return ;
     }
@@ -330,7 +335,7 @@ void Car::updateMotor(){
 
   for (int i = 2; i < 4; i++) {
     dJointSetHinge2Param(ph.joints[i], dParamVel2, sp);
-    dJointSetHinge2Param(ph.joints[i], dParamFMax2, 4.0 * 10.0);    
+    dJointSetHinge2Param(ph.joints[i], dParamFMax2, cst.gasForce);    
   }
 }
 
@@ -487,16 +492,13 @@ void Car::setMass(dReal total, dReal x, dReal y, dReal z) {
   std::cout<<total<<" "<<x<<" "<<y<<" "<<z<<std::endl;
 }
 
-void Car::createCamNodes() {
-  Ogre::SceneNode *cam = cst.subCarNode->createChildSceneNode("cam_pos");
-  //MUST BE CHANGE
-  cam->translate(0.0, 9.0, -15.0);
+void Car::createCamNodes(Utils::Xml &x) {
+  Ogre::SceneNode *cam = cst.carNode->createChildSceneNode("cam_pos");
+  cam->setPosition(0.0, 8, 20.0);
   
-  Ogre::SceneNode *camT = cst.subCarNode->createChildSceneNode("cam_target");
-  //MUST BE CHANGE
-  camT->translate(0.0, 4.0, 5.0);
+  Ogre::SceneNode *camT = cst.carNode->createChildSceneNode("cam_target");
+  camT->setPosition(0.0, 1.0, -7.0);
 
-  //don't what it used for
   cam->setAutoTracking(true, camT);
   cam->setFixedYawAxis(true); 
 }

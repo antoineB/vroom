@@ -19,6 +19,7 @@ class World : public Space, public Ogre::Singleton<World> {
     dReal simulationPace;
     dReal gravity[3];
     dReal cfm;
+    dReal erp;
   };
 
   struct Constant cst;

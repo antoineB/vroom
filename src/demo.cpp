@@ -8,7 +8,7 @@
 #include "obstacle.hpp"
 #include "movableobstacle.hpp"
 
-static dContact ballContact(){
+static dContact ballContact() {
   dContact contact;
   contact.surface.mode= dContactBounce | dContactSoftCFM
     | dContactSoftERP | dContactSlip1 | dContactSlip2;
@@ -22,9 +22,7 @@ static dContact ballContact(){
   return contact;
 }
 
-
-
-void createBall(std::string name, dReal x, dReal y, dReal z){
+void createBall(std::string name, dReal x, dReal y, dReal z) {
   Ogre::Entity* e;
   e=sceneMgr_->createEntity(name.c_str(), "sphere.mesh");
   Ogre::SceneNode* n;
@@ -53,7 +51,7 @@ void createBall(std::string name, dReal x, dReal y, dReal z){
   MyTools::byOdeToOgre(b, n);
 }
 
-static dContact boxContact(){
+static dContact boxContact() {
   dContact contact;
   contact.surface.mode= dContactBounce | dContactSoftCFM
     | dContactSoftERP | dContactSlip1 | dContactSlip2;
@@ -67,8 +65,7 @@ static dContact boxContact(){
   return contact;
 }
 
-void createBox(std::string name, dReal x, dReal y, dReal z) 
-{
+void createBox(std::string name, dReal x, dReal y, dReal z) {
   Ogre::Entity* e;
   e=sceneMgr_->createEntity(name.c_str(), "cube.mesh");
   Ogre::SceneNode* n;
@@ -97,12 +94,12 @@ void createBox(std::string name, dReal x, dReal y, dReal z)
   MyTools::byOdeToOgre(b, n);
 }
 
-demo::demo(){
+demo::demo() {
   m_pCubeNode		= 0;
   m_pCubeEntity		= 0;
 }
 
-demo::~demo(){
+demo::~demo() {
   delete OgreFramework::getSingletonPtr();
 }
 
@@ -140,10 +137,9 @@ static void setupCegui() {
 					   OgreFramework::getSingletonPtr()));
   }
 
-  }
+}
 
-
-void demo::startDemo(){
+void demo::startDemo() {
   new OgreFramework();
   if(!OgreFramework::getSingletonPtr()->initOgre("demo v1.0", this, 0))
     return;
@@ -161,9 +157,26 @@ void demo::startDemo(){
   runDemo();
 }
 
+static void debugDrawNode() {
+  Ogre::Entity *e0 = sceneMgr_->createEntity("db_cam_pos", "collision_point.mesh");
+  Ogre::Entity *e1 = sceneMgr_->createEntity("db_cam_target", "collision_point.mesh");
+  Ogre::Entity *e2 = sceneMgr_->createEntity("db_ford", "collision_point.mesh");
+
+  Ogre::SceneNode *n0 = sceneMgr_->getSceneNode("cam_pos");
+  e0->setMaterialName("Collision/Red");
+  n0->attachObject(e0);
+
+  Ogre::SceneNode *n1 = sceneMgr_->getSceneNode("cam_target");
+  e1->setMaterialName("Collision/Green");
+  n1->attachObject(e1);
+
+  Ogre::SceneNode *n2 = sceneMgr_->getSceneNode("car");
+  e2->setMaterialName("Collision/Blue");
+  n2->attachObject(e2);
+}
 
 
-void demo::setupDemoScene(){
+void demo::setupDemoScene() {
   sceneMgr_->createLight("Light")->setPosition(75,75,75);
   sceneMgr_->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_MODULATIVE);
   sceneMgr_->setSkyDome(true, "Sky/CloudySky", 5, 8, 100);
@@ -210,14 +223,14 @@ void demo::setupDemoScene(){
     dSpaceRemove(space,stair2.getGeom());
     dSpaceAdd(stairSpace,stair2.getGeom());
   }
-   
+
   extern Car car;
   car.initXml("../xml/car.xml", sceneMgr_->getRootSceneNode());
+
+  debugDrawNode();
 }
 
-
-
-void demo::forFrameDo(unsigned int time){
+void demo::forFrameDo(unsigned int time) {
   _glb.nbFrame++;
   
   //simulation loop
@@ -237,10 +250,11 @@ void demo::forFrameDo(unsigned int time){
   }
     
 }
-void demo::runDemo(){
+
+void demo::runDemo() {
   log_("Start main loop");
 	
-  double timeSinceLastFrame =0;
+  double timeSinceLastFrame = 0;
 
   log_("reset stats");
   renderWnd_->resetStatistics();
@@ -279,7 +293,7 @@ void demo::runDemo(){
   log_("Shutdown OGRE");
 }
 
-bool demo::keyPressed(const OIS::KeyEvent &keyEventRef){
+bool demo::keyPressed(const OIS::KeyEvent &keyEventRef) {
   OgreFramework::getSingletonPtr()->keyPressed(keyEventRef);
   
   extern Car car;
@@ -346,7 +360,7 @@ bool demo::keyPressed(const OIS::KeyEvent &keyEventRef){
   return true;
 }
 
-bool demo::keyReleased(const OIS::KeyEvent &keyEventRef){
+bool demo::keyReleased(const OIS::KeyEvent &keyEventRef) {
   OgreFramework::getSingletonPtr()->keyReleased(keyEventRef);
 
   extern Car car;

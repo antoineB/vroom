@@ -21,6 +21,10 @@ public:
     Ogre::SceneNode *subCarNode;
     Ogre::SceneNode *leftDoorNode;
     Ogre::SceneNode *rightDoorNode;
+    float brakeForce;
+    float gasForce;
+    float steeringForce;
+    float lowRiderForce;
   };
 
   struct Ph {
@@ -92,12 +96,11 @@ private:
   void createAndAttachEntity(const std::string &name, const std::string &meshName, const std::string &MaterialName, Ogre::SceneNode *node) const ;
   void createLeftDoorGraphic();
   void createRightDoorGraphic();
-  void createCamNodes();
-
   void createSpace();
   
   static void fillContact();
-  
+
+  void createCamNodes(Utils::Xml &x);
   void createPhysics(Utils::Xml &x);
   void createJoints(Utils::Xml &x);
   void disposePhysics(Utils::Xml &x);

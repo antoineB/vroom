@@ -3,7 +3,12 @@
 -->
 <car>
   <engine>
+    <brake-force>100</brake-force>
+    <gas-force>200</gas-force>
+    <steering-force>10</steering-force>
   </engine>
+
+  <lowrider-force>5000</lowrider-force>
 
   <name>car</name>
 
@@ -19,7 +24,7 @@
     <z>0</z>
   </gravity-center>
  
-  <mass>180</mass>
+  <mass>1200</mass>
 
   <rotation>
     <x></x>
@@ -52,8 +57,8 @@
       <y>0</y>
       <z>0</z>
     </axis2>
-    <cfm>0.077</cfm>
-    <erp>0.615</erp>
+    <cfm>0.01</cfm>
+    <erp>0.9</erp>
   </front-right>
 
   <front-left>
@@ -67,8 +72,8 @@
       <y>0</y>
       <z>0</z>
     </axis2>
-    <cfm>0.077</cfm>
-    <erp>0.615</erp>
+    <cfm>0.01</cfm>
+    <erp>0.9</erp>
   </front-left>
   
   <back-right>
@@ -82,8 +87,8 @@
       <y>0</y>
       <z>0</z>
     </axis2>
-    <cfm>0.077</cfm>
-    <erp>0.615</erp>
+    <cfm>0.01</cfm>
+    <erp>0.9</erp>
   </back-right>
   
   <back-left>
@@ -97,8 +102,8 @@
       <y>0</y>
       <z>0</z>
     </axis2>
-    <cfm>0.077</cfm>
-    <erp>0.615</erp>
+    <cfm>0.01</cfm>
+    <erp>0.9</erp>
   </back-left>
 </joints>
 

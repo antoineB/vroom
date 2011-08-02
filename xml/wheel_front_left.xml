@@ -9,7 +9,7 @@
   </position>
   <radius>1.20</radius>
   <width>0.5</width>
-  <mass>2.25</mass>
+  <mass>10</mass>
 
   <tire-mesh>wheel_tire.mesh</tire-mesh>
   <tire-material>Wheels/Tire</tire-material>

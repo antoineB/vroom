@@ -90,7 +90,8 @@ private:
   bool editing;
   bool moveCursor;
 
-  int inCarView;
+  bool inCarView;
+  bool inCarView2;
   void myMoveCamera();
   void myMoveCamera2();
   void myMoveCamera3();
