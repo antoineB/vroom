@@ -10,8 +10,6 @@ DContactType Car::type(Type::CAR);
 void Car::update() {
   //graphical
   MyTools::byOdeToOgre(ph.geom, cst.carNode);
-  //  MyTools::byOdeToOgre(ph.leftDoor.body, cst.leftDoorNode);
-  //  MyTools::byOdeToOgre(ph.rightDoor.body, cst.rightDoorNode);
 
   for (int i = 0; i < 4; i++)
     wheels[i].update();
@@ -36,7 +34,7 @@ void Car::fillContact() {
 
 Car::~Car(){}
 
-Car::Car(): speed(0.0), steer(0.0), brake(false){}
+Car::Car(): brake(false), speed(0.0), steer(0.0){}
 
 void Car::createSpace() {
   space = World::getSingletonPtr()->addSimpleSpace();
@@ -45,11 +43,16 @@ void Car::createSpace() {
 }
 
 void Car::createPhysics(Utils::Xml &x) {
-  ph.geom = addBox(x.mustOReal("box.x"), x.mustOReal("box.y"), x.mustOReal("box.z"));
+	Ogre::Entity *e = sceneMgr_->createEntity(x.mustString("body"));
+	dTriMeshDataID data = MyTools::dTriMeshDataFromMesh(e);
+	ph.geom = addTriMesh(data);
+
   dGeomSetData(ph.geom,(void*)&Car::type);
   dGeomSetData((dGeomID)space,(void*)&Car::type);
-  dMassSetBoxTotal(&ph.mass, x.mustOReal("mass"), x.mustOReal("box.x"),
-		   x.mustOReal("box.y"), x.mustOReal("box.z"));
+  dMassSetTrimeshTotal(&ph.mass, x.mustOReal("mass"), ph.geom);
+  ph.mass.c[0] = 0;
+  ph.mass.c[1] = 0;
+  ph.mass.c[2] = 0;
   ph.body = World::getSingletonPtr()->add(ph.geom, &ph.mass);
 
   cst.brakeForce = x.mustOReal("engine.brake-force");
@@ -166,15 +169,16 @@ void Car::createNodesAndMeshes(Utils::Xml &x) {
 
   fnode->scale(0.35, 0.35, 0.35);
   fnode->yaw(Ogre::Degree(x.mustOReal("rotation.y")));
-  fnode->translate(0.0, 1.9, 0.0);
+  //fnode->translate(0.0, 1.9, 0.0);
 
   std::string names[] = {
     "bonet", "back", "front", "bottom", "top", "wind_window", "back_top",
     "back_window", "wind_window_frame", "left_back", "left_front",
-    "right_back", "right_front"
+    "right_back", "right_front", "left_door", "left_little_window", "left_window",
+    "right_door", "right_little_window", "right_window"
   };
       
-  for (int i = 0; i < 13; i++) {
+  for (int i = 0; i < 19; i++) {
     std::string mesh("meshes." + names[i]);
     std::string mat("materials." + names[i]);
     createAndAttachEntity(names[i], x.mustString(mesh.c_str()), x.mustString(mat.c_str()), fnode);
@@ -286,13 +290,14 @@ void Car::updateSteering() {
 
 
 void Car::lowRideFront() {
-  
-  dBodyAddRelForceAtRelPos(ph.body, 0.0, cst.lowRiderForce, 0.0, 0.0, 0.0, dGeomGetPosition(wheels[0].ph.geom)[2]);
+	const dReal *p = dGeomGetPosition(wheels[1].ph.geom);
+  dBodyAddForceAtPos(ph.body, 0.0, cst.lowRiderForce, 0.0, p[0], p[1], p[2]);
 }
 
 
 void Car::lowRideBack() {
-  dBodyAddForceAtRelPos(ph.body, 0.0, cst.lowRiderForce, 0.0, 0.0, 0.0, dGeomGetPosition(wheels[2].ph.geom)[2]);
+	const dReal *p = dGeomGetPosition(wheels[2].ph.geom);
+  dBodyAddForceAtPos(ph.body, 0.0, cst.lowRiderForce, 0.0, p[0], p[1], p[2]);
 }
 
 
@@ -451,32 +456,6 @@ void Car::setBackWheelsCfm(dReal cfm) {
 void Car::setFrontWheelsCfm(dReal cfm) {
   dJointSetHinge2Param(ph.joints[0], dParamSuspensionCFM, cfm);
   dJointSetHinge2Param(ph.joints[1], dParamSuspensionCFM, cfm);
-}
-
-
-void Car::createLeftDoorGraphic() {
-  Ogre::SceneNode *lnode = sceneMgr_->getRootSceneNode()->createChildSceneNode("left_door");
-    
-  cst.leftDoorNode = lnode;
-
-  lnode->scale(0.35, 0.35, 0.35);
-
-  createAndAttachEntity("left_door", "left_door.mesh", "Ford/LeftDoor", lnode);
-  createAndAttachEntity("left_window", "left_window.mesh", "Ford/LeftWindow", lnode);
-  createAndAttachEntity("left_little_window", "left_little_window.mesh", "Ford/LeftWindow", lnode);
-}
-
-
-void Car::createRightDoorGraphic() {
-  Ogre::SceneNode *rnode = sceneMgr_->getRootSceneNode()->createChildSceneNode("right_door");
-
-  cst.rightDoorNode = rnode;
-    
-  rnode->scale(0.35, 0.35, 0.35);
-
-  createAndAttachEntity("right_door", "right_door.mesh", "Ford/RightDoor", rnode); 
-  createAndAttachEntity("right_window", "right_window.mesh", "Ford/RightWindow", rnode); 
-  createAndAttachEntity("right_little_window", "right_little_window.mesh", "Ford/RightWindow", rnode); 
 }
 
 

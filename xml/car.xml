@@ -20,7 +20,7 @@
 
   <gravity-center>
     <x>0</x>
-    <y>4.0</y>
+    <y>3.0</y>
     <z>0</z>
   </gravity-center>
  
@@ -130,6 +130,12 @@
     <left_front>Ford/LeftDoor</left_front>
     <right_back>Ford/RightDoor</right_back>
     <right_front>Ford/RightDoor</right_front>
+    <right_door>Ford/RightDoor</right_door>
+    <left_door>Ford/LeftDoor</left_door>
+    <left_window>Ford/LeftWindow</left_window>
+    <left_little_window>Ford/LeftWindow</left_little_window>
+    <right_window>Ford/RightWindow</right_window>
+    <right_little_window>Ford/RightWindo</right_little_window>
   </materials>
 
   <meshes>
@@ -146,6 +152,12 @@
     <left_front>left_front.mesh</left_front>
     <right_back>right_back.mesh</right_back>
     <right_front>right_front.mesh</right_front>
+    <right_door>right_door.mesh</right_door>
+    <left_door>left_door.mesh</left_door>
+    <left_window>left_window.mesh</left_window>
+    <left_little_window>left_little_window.mesh</left_little_window>
+    <right_window>right_window.mesh</right_window>
+    <right_little_window>right_little_window.mesh</right_little_window>
   </meshes>
-  
+  <body>body.mesh</body>
 </car>

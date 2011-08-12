@@ -12,7 +12,7 @@
 #include "ground.hpp"
 #include "obstacle.hpp"
 
-class Car: public Space{
+class Car: public Space {
 public:
   //should remain constant over the car object life
   struct Cst {
@@ -83,10 +83,11 @@ public:
 
 private:
   bool brake;
+  float speed,steer;
+
 
   void createNodesAndMeshes(Utils::Xml &x);
 
-  float speed,steer;
   void updateMotor();
   void updateSteering();
 
@@ -94,8 +95,6 @@ private:
   void printRotationMatrix();
 
   void createAndAttachEntity(const std::string &name, const std::string &meshName, const std::string &MaterialName, Ogre::SceneNode *node) const ;
-  void createLeftDoorGraphic();
-  void createRightDoorGraphic();
   void createSpace();
   
   static void fillContact();

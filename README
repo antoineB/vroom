@@ -6,8 +6,20 @@
    OGRE - 3D engine - www.ogre3d.org/
    TinyXML - xml parser - www.grinninglizard.com/tinyxml/
    OIS - object oriented input system - provided with ogre sdk
+   CEGUI - gui interface - www.cegui.org.uk
 ** src/Makefile
    change the INCDIRS variable to suit your ode and ogre includes directories
    change the LIBDIRS variable to suit your libraries directories
 ** src/plugins.cfg
    change the pluginFolder to your Ogre's plugins folder
+* keys
+*** camera
+	c - to switch in camera mode
+	z,q,d,s - move camera
+	shift, ctrl - move at different speed
+*** car
+	arrows - move
+	space - sort of brake
+	i,k - to add force, sort of lowriding
+*** gui
+	e - on/off gui to change erp/cfm for wheel joints
