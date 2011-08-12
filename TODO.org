@@ -1,28 +1,14 @@
-* TODO organise the code in a better way
-* TODO reduce code
-* TODO make a physic prop like a stop panel
-** it must resist to a certain force
-* TODO make the difference between front wheel and back wheel
-* TODO make schemas of axis of the car
-* TODO make sure after all dPSaceCollide that the back wheel don't change in Y direction
-* TODO understand what is the interest of swaybars
-* TODO make a swaybar like to the front wheel Y changing direction not together
-* TODO make sure that the sway bar can be implemented in wheel joint instead of wheel body
-* TODO correct the fps managing system
-  the time to wait between frames is hard coded
-* TODO there is a little bounce when the car is stoped
-** happen only when wheels touching the ground (or other dGeom) 
-** see Damping and auto-disable
 * TODO back wheels turn in high speed turn
-* TODO make a doc about the schema of the main algorithm
-  NEED TO BE MORE EXPLAINNED  
-* TODO add spring in wheel
-* TODO make the door can be closed
-* TODO make a mesh bound for the car than suit the graphical view better
-  now it's just a box
-  use a sphere for the wheels?
-  use one body for the car dans 5 geoms (+ 2 geoms for the doors) ( 5 = 4 wheel + 1 car)
-* TODO make it runnable on Windows
+** TODO make sure after all dPSaceCollide that the back wheel don't change in Y direction
+* TODO make the call to dSpacecollid idependent to FPS
+* TODO add a graphical spring in wheel
+** its length must be 1 in Y, to be Y scaled with ((car.Y) - (wheel.Y))
 * TODO correct the ogre materiel bug
 * TODO arrange the include order
   the good way is projet header followed by lib header
+* TODO change the organisation of collision
+** it must be more easiest to understand who collide who
+	but not so mess as nearCallBack, maybe reuse DContactType
+** for now its elements as its dCollide elements, this must be set up in an xml
+	file
+** or i don't know
