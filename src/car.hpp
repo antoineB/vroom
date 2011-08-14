@@ -19,8 +19,6 @@ public:
     std::string nodeName;
     Ogre::SceneNode *carNode;
     Ogre::SceneNode *subCarNode;
-    Ogre::SceneNode *leftDoorNode;
-    Ogre::SceneNode *rightDoorNode;
     float brakeForce;
     float gasForce;
     float steeringForce;
