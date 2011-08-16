@@ -1,8 +1,6 @@
 #ifndef CAR_HPP
 #define CAR_HPP
 
-#include <ode/ode.h>
-
 //#include "global.hpp"
 #include "OgreFramework.hpp"
 #include "space.hpp"
@@ -11,6 +9,9 @@
 #include "conf.hpp"
 #include "ground.hpp"
 #include "obstacle.hpp"
+
+#include <ode/ode.h>
+
 
 class Car: public Space {
 public:
@@ -77,7 +78,9 @@ public:
   Wheel wheels[4];
   struct Ph ph;
   struct Cst cst;
-  static DContactType type;
+  
+  DContactType type;
+  DContactType spaceType;
 
 private:
   bool brake;
@@ -95,13 +98,13 @@ private:
   void createAndAttachEntity(const std::string &name, const std::string &meshName, const std::string &MaterialName, Ogre::SceneNode *node) const ;
   void createSpace();
   
-  static void fillContact();
-
   void createCamNodes(Utils::Xml &x);
   void createPhysics(Utils::Xml &x);
   void createJoints(Utils::Xml &x);
   void disposePhysics(Utils::Xml &x);
   void disposeGeoms(Utils::Xml &x);
   void disposeJoints(Utils::Xml &x);
+
+  void setupContacs(Utils::Xml &x);
 };
 #endif

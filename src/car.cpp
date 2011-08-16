@@ -5,8 +5,6 @@
 
 using namespace Utils;
 
-DContactType Car::type(Type::CAR);
-
 static void updateJointsGraph(Car *c) {
 
 	for (int i = 0; i < 4; ++i) {
@@ -74,24 +72,12 @@ void Car::update() {
 	updateSteering();
 }
 
-void Car::fillContact() {
-	Car::type.contact.surface.mode = dContactBounce | dContactSoftCFM
-			| dContactSoftERP | dContactSlip1 | dContactSlip2;
-	Car::type.contact.surface.mu = dInfinity;
-	Car::type.contact.surface.bounce = 0.01;
-	Car::type.contact.surface.bounce_vel = 0.7;
-	Car::type.contact.surface.soft_cfm = 0.01;
-	Car::type.contact.surface.soft_erp = 0.3;
-	Car::type.contact.surface.slip1 = 0.07;
-	Car::type.contact.surface.slip2 = 0.07;
-}
-
 Car::~Car() {
 }
 
 Car::Car() :
-		brake(false), speed(0.0), steer(0.0) {
-}
+  brake(false), speed(0.0), steer(0.0), 
+  type(Type::UNDEFINED), spaceType(Type::UNDEFINED) {}
 
 void Car::createSpace() {
 	space = World::getSingletonPtr()->addSimpleSpace();
@@ -104,8 +90,6 @@ void Car::createPhysics(Utils::Xml &x) {
 	dTriMeshDataID data = MyTools::dTriMeshDataFromMesh(e);
 	ph.geom = addTriMesh(data);
 
-	dGeomSetData(ph.geom, (void*) &Car::type);
-	dGeomSetData((dGeomID) space, (void*) &Car::type);
 	dMassSetTrimeshTotal(&ph.mass, x.mustOReal("mass"), ph.geom);
 	ph.mass.c[0] = 0;
 	ph.mass.c[1] = 0;
@@ -269,11 +253,19 @@ void Car::initXml(const char *xmlFile, Ogre::SceneNode *root) {
 	disposeGeoms(x);
 	disposeJoints(x);
 
-
+	setupContacs(x);
 
 	MyTools::byOdeToOgre(ph.geom, cst.carNode);
 
 	createJointsGraph(this);
+}
+
+void Car::setupContacs(Utils::Xml &x) {
+  x.fillDContact("contact", this->type);
+  x.fillDContact("space-contact", this->spaceType);
+  
+  dGeomSetData(ph.geom, &(this->type));
+  dGeomSetData((dGeomID) space, &(this->spaceType));
 }
 
 void Car::printRotationMatrix() {
@@ -359,11 +351,11 @@ void Car::lowRideBack() {
 void Car::setBrake(bool b) {
 	brake = b;
 	if (brake == true) {
-		Wheel::type.contact.surface.slip1 = 1.0;
-		Wheel::type.contact.surface.slip2 = 1.0;
+		type.contact.surface.slip1 = 1.0;
+		type.contact.surface.slip2 = 1.0;
 	} else {
-		Wheel::type.contact.surface.slip1 = 0.5;
-		Wheel::type.contact.surface.slip2 = 0.5;
+		type.contact.surface.slip1 = 0.5;
+		type.contact.surface.slip2 = 0.5;
 	}
 }
 

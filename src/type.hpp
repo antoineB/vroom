@@ -3,6 +3,8 @@
 
 #include <ode/ode.h>
 
+#include <string>
+
 /**
  * This class is used to be associated with a geom. So during the the
  * collision the geom type could be easily retrieved.
@@ -27,28 +29,6 @@ public:
 	  CAR_WHEEL_LEFT_BACK,
       CAR_SPACE,
       CAR_SUBFRAME,
-      CAR_BONNET,
-      CAR_TOP,
-      CAR_LUGGAGE_COMPARTMENT,
-      CAR_WINDSCREEN,
-	CAR_FRONT_WINDSCREEN,
-	CAR_BACK_WINDSCREEN,
-      CAR_BUMPER,
-	CAR_BACK_BUMPER,
-	CAR_FRONT_BUMPER,
-      CAR_FENDER,
-	CAR_FRONT_FENDER,
-	  CAR_FRONT_LEFT_FENDER,
-	  CAR_FRONT_RIGHT_FENDER,
-	CAR_BACK_FENDER,
-	  CAR_BACK_LEFT_FENDER,
-	  CAR_BACK_RIGHT_FENDER,
-      CAR_DOOR,
-	CAR_LEFT_DOOR,
-	CAR_RIGHT_DOOR,
-      CAR_WINDOW_DOOR,
-	CAR_LEFT_WINDOW_DOOR,
-	CAR_RIGHT_WINDOW_DOOR,
 
     GLOBAL_SPACE,
     GROUND_SPACE,
@@ -57,9 +37,55 @@ public:
     OBSTACLE,
     MOVABLE_OBSTACLE, //could resist to a certain amount of strike before being a MOVABLE_ELEMENT
     MOVABLE_ELEMENT,
-    MOVABLE_ELEMNT_SPACE,
+    MOVABLE_ELEMENT_SPACE,
+
+    UNDEFINED,
   };
  
+  static TypeList stringToType(std::string & s) {
+    if (s == "NONE")
+      return NONE;
+    if (s == "CAR")
+      return CAR;
+    if (s == "CAR_WHEEL")
+      return CAR_WHEEL;
+    if (s == "CAR_WHEEL_FRONT")
+      return CAR_WHEEL_FRONT;
+    if (s == "CAR_WHEEL_RIGHT_FRONT")
+      return CAR_WHEEL_RIGHT_FRONT;
+    if (s == "CAR_WHEEL_LEFT_FRONT")
+      return CAR_WHEEL_LEFT_FRONT;
+    if (s == "CAR_WHEEL_BACK")
+      return CAR_WHEEL_BACK;
+    if (s == "CAR_WHEEL_RIGHT_BACK")
+      return CAR_WHEEL_RIGHT_BACK;
+    if (s == "CAR_WHEEL_LEFT_BACK")
+      return CAR_WHEEL_LEFT_BACK;
+    if (s == "CAR_SPACE")
+      return CAR_SPACE;
+    if (s == "CAR_SUBFRAME")
+      return CAR_SUBFRAME;
+    
+    if (s == "GLOBAL_SPACE")
+      return GLOBAL_SPACE;
+    if (s == "GROUND_SPACE")
+      return GROUND_SPACE;
+    if (s == "GROUND")
+      return GROUND;
+    if (s == "OBSTACLE_SPACE")
+      return OBSTACLE_SPACE;
+    if (s == "OBSTACLE")
+      return OBSTACLE;
+    if (s == "MOVABLE_OBSTACLE")
+      return MOVABLE_OBSTACLE;
+    if (s == "MOVABLE_ELEMENT")
+      return MOVABLE_ELEMENT;
+    if (s == "MOVABLE_ELEMENT_SPA")
+      return MOVABLE_ELEMENT_SPACE;
+
+    return UNDEFINED;
+  }
+
   TypeList type;
 
   /**

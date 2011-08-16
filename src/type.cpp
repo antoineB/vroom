@@ -60,7 +60,7 @@ static void standartNullDealing(dGeomID g1, dContact c1, dGeomID g2) {
   const int  MAX_CONTACT_POINTS = 16;
   dContact contact[MAX_CONTACT_POINTS];
 
-  memcpy(&(contact->surface.mode), &(c1.surface.mode), sizeof(dSurfaceParameters));
+  memcpy(&(contact[0].surface.mode), &(c1.surface.mode), sizeof(dSurfaceParameters));
 
   for(int i=1; i<MAX_CONTACT_POINTS; i++)
     memcpy(contact+i, contact, sizeof(*contact));

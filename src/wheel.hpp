@@ -30,22 +30,19 @@ public:
   void initXml(const char* xmlFile, dSpaceID space);
   void update();
 
-  static void fillContact(dContact &mod);
-
   void reset();
 
-  static DContactType type;
+  DContactType type;
 
   struct Ph ph;
 
 private:
 
-  static void fillContact();
-
   void createNodesAndMesh(Utils::Xml &x);
   void createPhysics(Utils::Xml &x, dSpaceID s);
   void disposePhysics(Utils::Xml &x);
 
+  void setupContact(Utils::Xml &x);
 
   struct Cst cst;
 };

@@ -27,4 +27,28 @@
     <y>2.45</y>
     <z>2.45</z>
   </scale>
+
+<contact>
+    <type>CAR_WHEEL</type>
+
+  <surface>
+    <mode> 
+      <li>dContactBounce</li> 
+      <li> dContactSoftCFM</li>
+      <li>dContactSoftERP</li>
+      <li>dContactSlip1</li>
+      <li>dContactSlip2</li>
+    </mode>
+
+    <mu>dInfinity</mu>
+    <bounce>1.0</bounce>
+    <bounce_vel>0.1</bounce_vel>
+    <soft_cfm>0.01</soft_cfm>  
+    <soft_erp>0.3</soft_erp>
+    <slip1>0.01</slip1>
+    <slip2>0.01</slip2>
+
+  </surface>
+</contact>
+
 </wheel>

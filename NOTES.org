@@ -14,10 +14,13 @@
 *** create the graphical part
 *** create the physics
 *** dispose the physics
+*** setup the contact info
 *** update node with geom
 ** create the physical part
 *** create boby, geom, mass
 *** create joints
 ** dispose geom
 ** dipose joints
+** setup the contact info
 ** update node with geom position
+** _draw the suspension_

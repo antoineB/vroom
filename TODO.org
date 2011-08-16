@@ -1,7 +1,7 @@
 * TODO back wheels turn in high speed turn
 ** TODO make sure after all dPSaceCollide that the back wheel don't change in Y direction
 * TODO make the call to dSpacecollid idependent to FPS
-* TODO add a graphical spring in wheel
+* DONE add a graphical spring in wheel
 ** its length must be 1 in Y, to be Y scaled with ((car.Y) - (wheel.Y))
 * TODO correct the ogre materiel bug
 * TODO arrange the include order

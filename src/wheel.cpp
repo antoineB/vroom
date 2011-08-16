@@ -4,27 +4,7 @@
 
 #include <OGRE/OgreMath.h>
 
-DContactType Wheel::type(Type::CAR_WHEEL);
-
-
-Wheel::Wheel(){}
-
-
-void Wheel::fillContact() {
-  Wheel::type.contact.surface.mode= dContactBounce | dContactSoftCFM
-    | dContactSoftERP | dContactSlip1 | dContactSlip2;
-  Wheel::type.contact.surface.mu = dInfinity;
-  Wheel::type.contact.surface.bounce = 1.0;
-  Wheel::type.contact.surface.bounce_vel = 0.1;
-  Wheel::type.contact.surface.soft_cfm = 0.01;  
-  Wheel::type.contact.surface.soft_erp = 0.3;  
-  Wheel::type.contact.surface.slip1 = 0.5;
-  Wheel::type.contact.surface.slip2 = 0.5;
-}
-
-void Wheel::fillContact(dContact &mod) {
-  memcpy(&Wheel::type.contact.surface.mu, &mod.surface.mu, sizeof(mod.surface) - sizeof(mod.surface.mode));
-}
+Wheel::Wheel(): type(Type::UNDEFINED) {}
 
 
 void Wheel::update() {
@@ -58,7 +38,6 @@ void Wheel::createPhysics(Utils::Xml &x, dSpaceID space) {
     dMassSetCylinderTotal(&ph.mass, x.mustOReal("mass"), 1, x.mustOReal("radius"), x.mustOReal("width"));    
   }
   
-  dGeomSetData(ph.geom,(void*)&Wheel::type);
   ph.body = World::getSingletonPtr()->add(ph.geom, &ph.mass);
 }
 
@@ -70,6 +49,7 @@ void Wheel::createNodesAndMesh(Utils::Xml &x) {
     n  = sceneMgr_->getRootSceneNode()->createChildSceneNode(cst.nodeName);
   cst.wheelNode = n;
   
+
   e = sceneMgr_->createEntity(cst.nodeName+"t", x.mustString("tire-mesh"));
   e->setMaterialName(x.mustString("tire-material"));
   e->setCastShadows(true);
@@ -109,6 +89,13 @@ void Wheel::initXml(const char* xmlFile, dSpaceID space) {
 
   disposePhysics(x);
   
+  setupContact(x);
+
   MyTools::byOdeToOgre(ph.geom, cst.wheelNode);
 
+}
+
+void Wheel::setupContact(Utils::Xml &x) {
+	x.fillDContact("contact", this->type);
+	dGeomSetData(ph.geom, &(this->type));
 }

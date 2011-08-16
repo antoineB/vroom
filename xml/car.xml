@@ -159,5 +159,52 @@
     <right_window>right_window.mesh</right_window>
     <right_little_window>right_little_window.mesh</right_little_window>
   </meshes>
+
   <body>body.mesh</body>
+
+  <contact>
+        <type>CAR</type>
+
+  <surface>
+    <mode> 
+      <li>dContactBounce</li> 
+      <li> dContactSoftCFM</li>
+      <li>dContactSoftERP</li>
+      <li>dContactSlip1</li>
+      <li>dContactSlip2</li>
+    </mode>
+
+    <mu>dInfinity</mu>
+    <bounce>0.01</bounce>
+    <bounce_vel>0.7</bounce_vel>
+    <soft_cfm>0.01</soft_cfm>  
+    <soft_erp>0.3</soft_erp>
+    <slip1>0.07</slip1>
+    <slip2>0.07</slip2>
+
+  </surface>
+  </contact>
+
+  <space-contact>
+        <type>CAR_SPACE</type>
+
+  <surface>
+    <mode> 
+      <li>dContactBounce</li> 
+      <li> dContactSoftCFM</li>
+      <li>dContactSoftERP</li>
+      <li>dContactSlip1</li>
+      <li>dContactSlip2</li>
+    </mode>
+
+    <mu>dInfinity</mu>
+    <bounce>0.01</bounce>
+    <bounce_vel>0.7</bounce_vel>
+    <soft_cfm>0.01</soft_cfm>  
+    <soft_erp>0.3</soft_erp>
+    <slip1>0.07</slip1>
+    <slip2>0.07</slip2>
+
+  </surface>
+  </space-contact>
 </car>

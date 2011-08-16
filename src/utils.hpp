@@ -2,6 +2,7 @@
 #define UTILS_HPP
 
 #include "global.hpp"
+#include "type.hpp"
 
 #include "tinyxml.h"
 
@@ -57,6 +58,8 @@ public:
   long mustLongA(const char *name, TiXmlElement* xmlE);
   Ogre::Real mustORealA(const char *name, TiXmlElement* xmlE);
 
+
+  void fillDContact(const char* contactNodeName, DContactType &ctc);
 
 };
 

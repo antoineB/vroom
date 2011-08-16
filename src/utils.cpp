@@ -126,6 +126,9 @@ std::string Utils::Xml::mustString(std::string &name, int childPos, TiXmlElement
 float Utils::Xml::mustFloat(std::string &name, int childPos, TiXmlElement* xmlE) {
   float f;
 
+  if (strcmp(mustNode(name, childPos, xmlE)->GetText(),"dInfinity") == 0)
+	  return (float)dInfinity;
+
   try {
     f = boost::lexical_cast<float>(mustNode(name, childPos, xmlE)->GetText());
   }
@@ -138,11 +141,17 @@ float Utils::Xml::mustFloat(std::string &name, int childPos, TiXmlElement* xmlE)
 }
 
 Ogre::Real Utils::Xml::mustOReal(std::string &name, int childPos, TiXmlElement* xmlE) {
-  return Ogre::StringConverter::parseReal(mustNode(name, childPos, xmlE)->GetText());
+	  if (strcmp(mustNode(name, childPos, xmlE)->GetText(), "dInfinity") == 0)
+		  return (Ogre::Real)dInfinity;
+
+	return Ogre::StringConverter::parseReal(mustNode(name, childPos, xmlE)->GetText());
 }
 
 double Utils::Xml::mustDouble(std::string &name, int childPos, TiXmlElement* xmlE) {
   double f;
+
+  if (strcmp(mustNode(name, childPos, xmlE)->GetText(), "dInfinity") == 0)
+	  return (double)dInfinity;
 
   try {
     f = boost::lexical_cast<double>(mustNode(name, childPos, xmlE)->GetText());
@@ -193,6 +202,9 @@ std::string Utils::Xml::mustStringA(std::string &name, TiXmlElement* xmlE) {
 float Utils::Xml::mustFloatA(std::string &name, TiXmlElement* xmlE) {
   float f;
 
+  if (*xmlE->Attribute(name) == "dInfinity")
+	  return (float)dInfinity;
+
   try {
     f = boost::lexical_cast<float>(xmlE->Attribute(name));
   }
@@ -206,6 +218,9 @@ float Utils::Xml::mustFloatA(std::string &name, TiXmlElement* xmlE) {
 
 double Utils::Xml::mustDoubleA(std::string &name, TiXmlElement* xmlE) {
   double f;
+
+  if (*xmlE->Attribute(name) == "dInfinity")
+	  return (double)dInfinity;
 
   try {
     f = boost::lexical_cast<double>(xmlE->Attribute(name));
@@ -249,6 +264,10 @@ long Utils::Xml::mustLongA(std::string &name, TiXmlElement* xmlE) {
 Ogre::Real Utils::Xml::mustORealA(std::string &name, TiXmlElement* xmlE) {
   if (xmlE->Attribute(name) == NULL)
     log_("unable to convert to long " + name);
+
+  if (*xmlE->Attribute(name) == "dInfinity")
+	  return (Ogre::Real)dInfinity;
+
   std::string s = (xmlE->Attribute(name))->c_str();
   return Ogre::StringConverter::parseReal(s);
 }
@@ -283,3 +302,71 @@ Ogre::Real Utils::Xml::mustORealA(const char *name, TiXmlElement* xmlE) {
   return Utils::Xml::mustORealA(s, xmlE);
 }
 
+static int stringToConst(const char *str) {
+	if (strcmp(str,"dContactBounce") == 0)
+		return dContactBounce;
+	if (strcmp(str, "dContactSoftCFM") == 0)
+		return dContactSoftCFM;
+	if (strcmp(str, "dContactSoftERP") == 0)
+		return dContactSoftERP;
+	if (strcmp(str, "dContactSlip1") == 0)
+		return dContactSlip1;
+	if (strcmp(str , "dContactSlip2") == 0)
+		return dContactSlip2;
+	if (strcmp(str, "dContactMu2") == 0)
+		return dContactMu2;
+	if (strcmp(str, "dContactFDir1") == 0)
+		return dContactFDir1;
+
+/*	if (str == "dContactMotion1")
+		return dContactMotion1;
+	if (str == "dContactMotion2")
+		return dContactMotion2;
+	if (str == "dContactMotionN")
+		return dContactMotionN;*/
+
+	if (strcmp(str, "dContactApprox0") == 0)
+		return dContactApprox0;
+	if (strcmp(str, "dContactApprox1_1") == 0)
+		return dContactApprox1_1;
+	if (strcmp(str, "dContactApprox1_2") == 0)
+		return dContactApprox1_2;
+	if (strcmp(str , "dContactApprox1") == 0)
+		return dContactApprox1;
+
+	return 0;
+}
+
+void Utils::Xml::fillDContact(const char* contactNodeName, DContactType &ctc) {
+	TiXmlElement* e = mustNode(contactNodeName);
+	std::string type = mustString("type",0, e);
+	ctc.type = Type::stringToType(type);
+
+	ctc.contact.surface.mode = 0;
+	TiXmlElement *mode = mustNode("surface.mode.li", 0, e);
+	while (mode) {
+		ctc.contact.surface.mode |= stringToConst(mode->GetText());
+		mode = mode->NextSiblingElement();
+	}
+
+	if (ctc.contact.surface.mode & dContactBounce) {
+	  ctc.contact.surface.bounce = mustOReal("surface.bounce", 0, e);
+	  ctc.contact.surface.bounce_vel = mustOReal("surface.bounce_vel", 0, e);
+	}
+	ctc.contact.surface.mu = mustOReal("surface.mu", 0, e);
+	
+	if (ctc.contact.surface.mode & dContactMu2)
+	  ctc.contact.surface.mu2 = mustOReal("surface.mu2", 0, e);
+	if (ctc.contact.surface.mode & dContactSlip1)
+	  ctc.contact.surface.slip1 = mustOReal("surface.slip1", 0, e);
+	if (ctc.contact.surface.mode & dContactSlip2)
+	  ctc.contact.surface.slip2 = mustOReal("surface.slip2", 0, e);
+	if (ctc.contact.surface.mode & dContactSoftCFM)
+	  ctc.contact.surface.soft_cfm = mustOReal("surface.soft_cfm", 0, e);
+	if (ctc.contact.surface.mode & dContactSoftERP)
+	  ctc.contact.surface.soft_erp = mustOReal("surface.soft_erp", 0, e);
+/*	ctc.contact.surface.motion1
+	ctc.contact.surface.motion2
+	ctc.contact.surface.motionN
+	*/
+}
